@@ -5,6 +5,7 @@ import { uploadFile } from '@/lib/upload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
+import { Toaster } from '@/components/ui/toaster'
 
 export function FileUpload() {
   const [isUploading, setIsUploading] = useState(false)
@@ -37,18 +38,21 @@ export function FileUpload() {
   }
 
   return (
-    <div className="space-y-4">
-      <Input
-        type="file"
-        onChange={handleFileUpload}
-        disabled={isUploading}
-        accept=".pdf,.doc,.docx,.txt"  // Adjust accepted file types as needed
-      />
-      {isUploading && (
-        <div className="text-sm text-muted-foreground">
-          Uploading file...
-        </div>
-      )}
-    </div>
+    <>
+      <div className="space-y-4">
+        <Input
+          type="file"
+          onChange={handleFileUpload}
+          disabled={isUploading}
+          accept=".pdf,.doc,.docx,.txt"  // Adjust accepted file types as needed
+        />
+        {isUploading && (
+          <div className="text-sm text-muted-foreground">
+            Uploading file...
+          </div>
+        )}
+      </div>
+      <Toaster />
+    </>
   )
 }
