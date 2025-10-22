@@ -5,155 +5,236 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
-import { Toaster } from '@/components/ui/toaster'
-import { Mail, Phone, MapPin } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react'
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast: showToast } = useToast()
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      // Simulate form submission
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Success - clear form
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      alert('Message sent successfully! We\'ll get back to you soon.')
+    } catch (error) {
+      alert('Failed to send message. Please try again.')
+    } finally {
       setIsSubmitting(false)
-      showToast({
-        title: "Message sent",
-        description: "We'll get back to you as soon as possible.",
-        variant: "default",
-      })
-      // Reset form
-      (e.target as HTMLFormElement).reset()
-    }, 1000)
+    }
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-8">Contact Us</h1>
-      
-      <div className="grid gap-8 lg:grid-cols-2">
-        {/* Contact Form */}
-        <Card className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Send us a message</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium mb-1">
-                Name
-              </label>
-              <Input
-                id="name"
-                name="name"
-                required
-                placeholder="Your name"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-1">
-                Email
-              </label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                placeholder="your.email@example.com"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="subject" className="block text-sm font-medium mb-1">
-                Subject
-              </label>
-              <Input
-                id="subject"
-                name="subject"
-                required
-                placeholder="What is this about?"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium mb-1">
-                Message
-              </label>
-              <Textarea
-                id="message"
-                name="message"
-                required
-                placeholder="Your message..."
-                rows={5}
-              />
-            </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Sending..." : "Send Message"}
-            </Button>
-          </form>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primis-navy to-primis-blue bg-clip-text text-transparent">
+            Get In Touch
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Have questions or need assistance? We&apos;re here to help. Send us a message and we&apos;ll respond as soon as possible.
+          </p>
+        </div>
 
-        {/* Contact Information */}
-        <div className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <Mail className="w-5 h-5 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-muted-foreground">info@primis.edu</p>
-                </div>
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Contact Form - Takes 2 columns */}
+          <div className="lg:col-span-2">
+            <Card className="p-6 md:p-8 shadow-lg">
+              <div className="flex items-center gap-3 mb-6">
+                <Send className="h-6 w-6 text-primis-navy" />
+                <h2 className="text-2xl font-semibold">Send Us a Message</h2>
               </div>
               
-              <div className="flex items-start space-x-3">
-                <Phone className="w-5 h-5 mt-1 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Phone</p>
-                  <p className="text-muted-foreground">+1 (555) 123-4567</p>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium mb-2">
+                      Full Name *
+                    </label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      placeholder="John Doe"
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium mb-2">
+                      Email Address *
+                    </label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      placeholder="john.doe@example.com"
+                      className="w-full"
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 mt-1 text-muted-foreground" />
+                
                 <div>
-                  <p className="font-medium">Address</p>
-                  <p className="text-muted-foreground">
-                    123 Education Street<br />
-                    Learning City, ED 12345<br />
-                    United States
-                  </p>
+                  <label htmlFor="subject" className="block text-sm font-medium mb-2">
+                    Subject *
+                  </label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    placeholder="How can we help you?"
+                    className="w-full"
+                  />
                 </div>
-              </div>
-            </div>
-          </Card>
+                
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium mb-2">
+                    Message *
+                  </label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    placeholder="Tell us more about your inquiry..."
+                    rows={6}
+                    className="w-full resize-none"
+                  />
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  className="w-full md:w-auto px-8 bg-primis-navy hover:bg-primis-navy/90"
+                  disabled={isSubmitting}
+                  size="lg"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="animate-pulse">Sending...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send Message
+                    </>
+                  )}
+                </Button>
+              </form>
+            </Card>
+          </div>
 
-          <Card className="p-6">
-            <h2 className="text-2xl font-semibold mb-4">Office Hours</h2>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Monday - Friday</span>
-                <span className="text-muted-foreground">9:00 AM - 6:00 PM</span>
+          {/* Contact Information Sidebar */}
+          <div className="space-y-6">
+            {/* Contact Details */}
+            <Card className="p-6 shadow-lg">
+              <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 p-2 rounded-full bg-primis-navy/10">
+                    <Mail className="w-4 h-4 text-primis-navy" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">Email</p>
+                    <a href="mailto:info@primis.edu" className="text-sm text-muted-foreground hover:text-primis-navy transition-colors">
+                      info@primis.edu
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 p-2 rounded-full bg-primis-navy/10">
+                    <Phone className="w-4 h-4 text-primis-navy" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">Phone</p>
+                    <a href="tel:+15551234567" className="text-sm text-muted-foreground hover:text-primis-navy transition-colors">
+                      +1 (555) 123-4567
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 p-2 rounded-full bg-primis-navy/10">
+                    <MapPin className="w-4 h-4 text-primis-navy" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">Address</p>
+                    <p className="text-sm text-muted-foreground">
+                      123 Education Street<br />
+                      Learning City, ED 12345<br />
+                      United States
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>Saturday</span>
-                <span className="text-muted-foreground">10:00 AM - 4:00 PM</span>
+            </Card>
+
+            {/* Office Hours */}
+            <Card className="p-6 shadow-lg">
+              <div className="flex items-center gap-2 mb-4">
+                <Clock className="h-5 w-5 text-primis-navy" />
+                <h3 className="text-xl font-semibold">Office Hours</h3>
               </div>
-              <div className="flex justify-between">
-                <span>Sunday</span>
-                <span className="text-muted-foreground">Closed</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b">
+                  <span className="text-sm font-medium">Monday - Friday</span>
+                  <span className="text-sm text-muted-foreground">9:00 AM - 6:00 PM</span>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b">
+                  <span className="text-sm font-medium">Saturday</span>
+                  <span className="text-sm text-muted-foreground">10:00 AM - 4:00 PM</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">Sunday</span>
+                  <span className="text-sm text-red-500">Closed</span>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+
+            {/* Quick Info */}
+            <Card className="p-6 bg-primis-navy text-white shadow-lg">
+              <h3 className="text-lg font-semibold mb-2">Need Immediate Help?</h3>
+              <p className="text-sm text-white/80 mb-4">
+                For urgent matters, please call us directly during office hours.
+              </p>
+              <Button 
+                variant="secondary" 
+                className="w-full"
+                asChild
+              >
+                <a href="tel:+15551234567">
+                  <Phone className="mr-2 h-4 w-4" />
+                  Call Now
+                </a>
+              </Button>
+            </Card>
+          </div>
         </div>
       </div>
-      <Toaster />
     </div>
   )
 }
