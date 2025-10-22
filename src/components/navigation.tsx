@@ -75,6 +75,8 @@ export function Navigation({ className }: NavigationProps) {
     if (!user) {
       return [
         { href: '/', label: 'Home', icon: Home },
+        { href: '/about', label: 'About', icon: BookOpen },
+        { href: '/contact', label: 'Contact', icon: Users },
       ]
     }
 
