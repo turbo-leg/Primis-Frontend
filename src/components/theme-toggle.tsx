@@ -24,17 +24,17 @@ export function ThemeToggle() {
   return (
     <Button
       variant="ghost"
-      size="icon"
+      size="sm"
       onClick={toggleTheme}
       disabled={!mounted}
-      className="text-white hover:text-white hover:bg-white/20 transition-all border-2 border-white/50 hover:border-white bg-white/10 shadow-lg"
+      className="text-white/80 hover:text-white rounded-full h-8 w-8 p-0 hover:bg-white/10 transition-colors"
       aria-label="Toggle theme"
       title={mounted ? (theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode') : 'Loading...'}
     >
       {mounted && theme === 'dark' ? (
-        <Sun className="h-5 w-5" />
+        <Sun className="h-4 w-4 transition-transform hover:rotate-12" />
       ) : (
-        <Moon className="h-5 w-5" />
+        <Moon className="h-4 w-4 transition-transform hover:-rotate-12" />
       )}
     </Button>
   )

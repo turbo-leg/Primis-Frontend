@@ -12,15 +12,15 @@ export function LanguageSwitcher() {
   const pathWithoutLocale = pathname.replace(/^\/(en|mn)/, '') || '/';
 
   return (
-    <div className="flex items-center gap-1 bg-white/10 rounded-lg p-1">
+    <div className="flex items-center">
       <Link
         href={pathWithoutLocale}
         locale="en"
         className={`
-          px-3 py-1.5 rounded-md text-sm font-semibold transition-all duration-200
+          w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors
           ${locale === 'en' 
-            ? 'bg-white text-primis-navy shadow-sm pointer-events-none' 
-            : 'text-white/70 hover:text-white hover:bg-white/5'
+            ? 'bg-white text-primis-navy shadow-sm' 
+            : 'text-white/80 hover:text-white hover:bg-white/10'
           }
         `}
         title="English"
@@ -31,10 +31,10 @@ export function LanguageSwitcher() {
         href={pathWithoutLocale}
         locale="mn"
         className={`
-          px-3 py-1.5 rounded-md text-sm font-semibold transition-all duration-200
+          w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition-colors
           ${locale === 'mn' 
-            ? 'bg-white text-primis-navy shadow-sm pointer-events-none' 
-            : 'text-white/70 hover:text-white hover:bg-white/5'
+            ? 'bg-white text-primis-navy shadow-sm' 
+            : 'text-white/80 hover:text-white hover:bg-white/10'
           }
         `}
         title="Монгол"
