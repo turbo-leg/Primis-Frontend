@@ -109,6 +109,7 @@ export default function AdminDashboard() {
     
     try {
       setLoading(true)
+      setError(null) // Clear any previous errors
       
       // Fetch dashboard statistics (all from database now)
       try {
@@ -200,8 +201,12 @@ export default function AdminDashboard() {
         setRecentActivity([])
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching admin dashboard data:', error)
+      setError(error.message === 'Network Error' 
+        ? 'Unable to connect to the backend server. Please ensure the server is running.'
+        : 'An error occurred while fetching dashboard data. Please try again later.'
+      )
     } finally {
       setLoading(false)
     }
@@ -308,6 +313,23 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 dark:border-blue-400"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">Error</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">{error}</p>
+          <Button 
+            onClick={() => fetchDashboardData()} 
+            className="mt-4 dark:bg-blue-600 dark:hover:bg-blue-700"
+          >
+            Retry
+          </Button>
         </div>
       </div>
     )

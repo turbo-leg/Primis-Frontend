@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
-const withNextIntl = require('next-intl/plugin')(
-  './src/i18n/request.ts'
-);
+const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
   // Remove 'output: standalone' for Vercel - not needed as Vercel handles this

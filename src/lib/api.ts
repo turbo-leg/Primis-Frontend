@@ -142,8 +142,16 @@ class ApiClient {
 
   // Generic methods
   async get(url: string, params?: any): Promise<any> {
-    const response = await this.client.get(url, { params })
-    return response.data
+    try {
+      const response = await this.client.get(url, { params })
+      return response.data
+    } catch (error: any) {
+      console.error(`Failed to fetch ${url}:`, error.message)
+      if (error.code === 'ECONNREFUSED' || error.message === 'Network Error') {
+        console.error('Backend server may not be running. Please check if the server is running at:', process.env.NEXT_PUBLIC_API_URL)
+      }
+      throw error
+    }
   }
 
   async post(url: string, data?: any): Promise<any> {
