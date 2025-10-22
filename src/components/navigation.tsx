@@ -75,53 +75,18 @@ export function Navigation({ className }: NavigationProps) {
     if (!user) {
       return [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/about', label: 'About', icon: BookOpen },
-        { href: '/contact', label: 'Contact', icon: Users },
       ]
     }
 
-    const baseItems = [
-      { href: '/dashboard', label: 'Dashboard', icon: Home },
+    return [
+      { 
+        href: `/dashboard/${userType}`, 
+        label: 'Dashboard', 
+        icon: Home 
+      },
       { href: '/courses', label: 'Courses', icon: BookOpen },
-      { href: '/calendar', label: 'Calendar', icon: Calendar },
+      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
     ]
-
-    const settingsItem = { href: '/dashboard/settings', label: 'Settings', icon: Settings }
-
-    switch (userType) {
-      case 'student':
-        return [
-          ...baseItems,
-          { href: '/assignments', label: 'Assignments', icon: BookOpen },
-          { href: '/attendance', label: 'Attendance', icon: BarChart3 },
-          { href: '/grades', label: 'Grades', icon: BarChart3 },
-          settingsItem,
-        ]
-      case 'teacher':
-        return [
-          ...baseItems,
-          { href: '/students', label: 'Students', icon: Users },
-          { href: '/attendance/mark', label: 'Mark Attendance', icon: BarChart3 },
-          { href: '/assignments/grade', label: 'Grade Assignments', icon: BookOpen },
-          { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-          settingsItem,
-        ]
-      case 'admin':
-        return [
-          ...baseItems,
-          { href: '/users', label: 'User Management', icon: Users },
-          { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-          { href: '/reports', label: 'Reports', icon: BarChart3 },
-          settingsItem,
-        ]
-      case 'parent':
-        return [
-          ...baseItems,
-          settingsItem,
-        ]
-      default:
-        return baseItems
-    }
   }
 
   const menuItems = getMenuItems()
@@ -139,64 +104,67 @@ export function Navigation({ className }: NavigationProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center space-x-2 text-white/80 hover:text-white px-3 py-2 rounded-md hover:bg-primis-navy-light transition-all duration-200"
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="text-sm font-light">{item.label}</span>
-                </Link>
-              )
-            })}
+          <div className="hidden md:flex flex-1 justify-center">
+            <div className="flex items-center space-x-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center space-x-2 text-white/80 hover:text-white px-4 py-2 rounded-md hover:bg-primis-navy-light transition-all duration-200"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="text-sm font-medium">{item.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
           </div>
 
           {/* User Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center">
             {/* Desktop-only controls - hidden on mobile */}
-            <div className="hidden md:flex items-center space-x-4">
-              {/* Theme Toggle */}
-              <ThemeToggle />
-              
-              {/* Language Switcher */}
-              <LanguageSwitcher />
+            <div className="hidden md:flex items-center space-x-3">
+              {/* Theme and Language */}
+              <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-primis-navy-light">
+                <ThemeToggle />
+                <div className="w-px h-4 bg-white/20" />
+                <LanguageSwitcher />
+              </div>
               
               {user ? (
                 <>
-                  {/* Search */}
-                  <Button variant="ghost" size="icon" className="text-white/80 hover:text-white hover:bg-primis-navy-light">
-                    <Search className="h-4 w-4" />
-                  </Button>
-
                   {/* Notifications */}
                   <NotificationBell />
 
-                  {/* User Info */}
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-white">{user.name}</div>
-                      <div className="text-xs text-white/60 capitalize">{userType}</div>
+                  {/* User Profile Group */}
+                  <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-primis-navy-light">
+                    {/* User Info */}
+                    <div className="flex items-center space-x-3">
+                      <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-white">{user.name}</div>
+                        <div className="text-xs text-white/60 capitalize">{userType}</div>
+                      </div>
                     </div>
-                    <div className="h-8 w-8 bg-white/20 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {user.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Logout */}
-                  <Button
-                    onClick={handleLogout}
-                    variant="ghost"
-                    size="icon"
-                    className="text-white/80 hover:text-white hover:bg-primis-navy-light"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </Button>
+                    <div className="w-px h-6 bg-white/20" />
+
+                    {/* Logout */}
+                    <Button
+                      onClick={handleLogout}
+                      variant="ghost"
+                      size="icon"
+                      className="text-white/80 hover:text-white"
+                    >
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </>
               ) : (
                 <>
@@ -281,32 +249,41 @@ export function Navigation({ className }: NavigationProps) {
           {/* Menu Items */}
           <div className="flex-1 py-4 px-2">
             <div className="space-y-1">
-              {/* Notifications Link for mobile */}
               {user && (
-                <Link
-                  href="/dashboard/notifications"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center space-x-3 text-white/80 hover:text-white px-4 py-3 rounded-lg hover:bg-primis-navy-light transition-all duration-200 group"
-                >
-                  <Bell className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-light">Notifications</span>
-                </Link>
+                <div className="mb-4 px-4">
+                  {/* Notifications */}
+                  <div className="mb-4">
+                    <Link
+                      href="/dashboard/notifications"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center space-x-3 text-white/80 hover:text-white px-4 py-3 rounded-lg hover:bg-primis-navy-light transition-all duration-200 group"
+                    >
+                      <Bell className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                      <span className="text-sm font-medium">Notifications</span>
+                    </Link>
+                  </div>
+
+                  <div className="h-px bg-white/10 my-4" />
+                </div>
               )}
               
-              {menuItems.map((item) => {
-                const Icon = item.icon
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center space-x-3 text-white/80 hover:text-white px-4 py-3 rounded-lg hover:bg-primis-navy-light transition-all duration-200 group"
-                  >
-                    <Icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                    <span className="text-sm font-light">{item.label}</span>
-                  </Link>
-                )
-              })}
+              {/* Navigation Items */}
+              <div className="space-y-1">
+                {menuItems.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center space-x-3 text-white/80 hover:text-white px-4 py-3 rounded-lg hover:bg-primis-navy-light transition-all duration-200 group"
+                    >
+                      <Icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </Link>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
