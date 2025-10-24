@@ -100,7 +100,7 @@ export default function ParentDashboard() {
   const fetchChildren = async () => {
     try {
       const parentId = localStorage.getItem('user_id');
-      const response = await fetch(`http://localhost:8000/api/parents/${parentId}/children`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/parents/${parentId}/children`, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ export default function ParentDashboard() {
     try {
       // Fetch courses
       const coursesRes = await fetch(
-        `http://localhost:8000/api/students/${selectedChild.student_id}/courses`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/students/${selectedChild.student_id}/courses`,
         {
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -140,7 +140,7 @@ export default function ParentDashboard() {
 
       // Fetch assignments
       const assignmentsRes = await fetch(
-        `http://localhost:8000/api/students/${selectedChild.student_id}/assignments`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/students/${selectedChild.student_id}/assignments`,
         {
           headers: {
             'Authorization': `Bearer ${authToken}`,
@@ -154,7 +154,7 @@ export default function ParentDashboard() {
 
       // Fetch attendance
       const attendanceRes = await fetch(
-        `http://localhost:8000/api/students/${selectedChild.student_id}/attendance`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/students/${selectedChild.student_id}/attendance`,
         {
           headers: {
             'Authorization': `Bearer ${authToken}`,

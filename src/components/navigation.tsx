@@ -129,9 +129,9 @@ export function Navigation({ className }: NavigationProps) {
             {/* Desktop-only controls - hidden on mobile */}
             <div className="hidden md:flex items-center space-x-3">
               {/* Theme and Language */}
-              <div className="flex items-center space-x-1 bg-primis-navy-light/50 backdrop-blur-sm rounded-full p-1">
+              <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-primis-navy-light">
                 <ThemeToggle />
-                <div className="w-px h-4 bg-white/10 mx-1" />
+                <div className="w-px h-4 bg-white/20" />
                 <LanguageSwitcher />
               </div>
               
