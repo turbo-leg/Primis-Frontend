@@ -533,7 +533,13 @@ export default function CoursePage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${material.url}`, '_blank')}
+                          onClick={() => {
+                            // Check if URL is already absolute (starts with http:// or https://)
+                            const url = material.url.startsWith('http') 
+                              ? material.url 
+                              : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${material.url}`
+                            window.open(url, '_blank')
+                          }}
                         >
                           <Download className="h-4 w-4 mr-1" />
                           {t('courseDetails.materials.download')}
