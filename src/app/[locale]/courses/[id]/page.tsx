@@ -533,12 +533,51 @@ export default function CoursePage() {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => {
-                            // Check if URL is already absolute (starts with http:// or https://)
-                            const url = material.url.startsWith('http') 
-                              ? material.url 
-                              : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${material.url}`
-                            window.open(url, '_blank')
+                          onClick={async () => {
+                            try {
+                              // Check if URL is already absolute (starts with http:// or https://)
+                              const url = material.url.startsWith('http') 
+                                ? material.url 
+                                : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${material.url}`
+                              
+                              // Get file extension from type or title
+                              const getFileExtension = () => {
+                                if (material.title.includes('.')) {
+                                  return material.title.split('.').pop()
+                                }
+                                // Map common types to extensions
+                                const typeMap: { [key: string]: string } = {
+                                  'pdf': 'pdf',
+                                  'document': 'docx',
+                                  'spreadsheet': 'xlsx',
+                                  'presentation': 'pptx',
+                                  'image': 'jpg',
+                                  'video': 'mp4',
+                                  'text': 'txt'
+                                }
+                                return typeMap[material.type.toLowerCase()] || 'pdf'
+                              }
+
+                              const extension = getFileExtension()
+                              const fileName = material.title.includes('.') 
+                                ? material.title 
+                                : `${material.title}.${extension}`
+
+                              // Fetch and download the file
+                              const response = await fetch(url)
+                              const blob = await response.blob()
+                              const downloadUrl = window.URL.createObjectURL(blob)
+                              const link = document.createElement('a')
+                              link.href = downloadUrl
+                              link.download = fileName
+                              document.body.appendChild(link)
+                              link.click()
+                              document.body.removeChild(link)
+                              window.URL.revokeObjectURL(downloadUrl)
+                            } catch (error) {
+                              console.error('Download error:', error)
+                              alert(t('courseDetails.materials.errors.downloadFailed'))
+                            }
                           }}
                         >
                           <Download className="h-4 w-4 mr-1" />
