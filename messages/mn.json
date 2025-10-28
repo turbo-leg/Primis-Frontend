@@ -523,6 +523,11 @@
     "title": "Ирц",
     "markAttendance": "Ирц бүртгэх",
     "attendanceHistory": "Ирцийн түүх",
+    "takeAttendance": "Ирц авах",
+    "takeAttendanceSubtitle": "Оюутнуудын ирцийг бүртгэх",
+    "selectCourse": "Хичээл сонгох",
+    "selectCourseDescription": "Ирц авах хичээлээ сонгоно уу",
+    "accessMessage": "Зөвхөн багш нар энэ хуудсанд нэвтэрч болно",
     "present": "Ирсэн",
     "absent": "Тасалсан",
     "late": "Хоцорсон",
@@ -534,7 +539,17 @@
     "attendanceRate": "Ирцийн түвшин",
     "totalClasses": "Нийт хичээл",
     "classesAttended": "Ирсэн хичээл",
-    "classesMissed": "Тасалсан хичээл"
+    "classesMissed": "Тасалсан хичээл",
+    "errors": {
+      "loadCourses": "Хичээлийг ачаалж чадсангүй",
+      "loadStudents": "Оюутнуудыг ачаалж чадсангүй",
+      "markFailed": "Ирц бүртгэж чадсангүй",
+      "cameraPermissions": "Камерын зөвшөөрөл хүлээн авагдсангүй",
+      "cameraFailed": "Камерыг асааж чадсангүй"
+    },
+    "success": {
+      "marked": "Ирцийг {status} гэж бүртгэлээ"
+    }
   },
   "payments": {
     "title": "Төлбөр",

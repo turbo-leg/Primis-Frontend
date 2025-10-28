@@ -522,6 +522,11 @@
     "title": "Attendance",
     "markAttendance": "Mark Attendance",
     "attendanceHistory": "Attendance History",
+    "takeAttendance": "Take Attendance",
+    "takeAttendanceSubtitle": "Mark student attendance for your courses",
+    "selectCourse": "Select Course",
+    "selectCourseDescription": "Choose a course to take attendance for",
+    "accessMessage": "Only teachers can access this page",
     "present": "Present",
     "absent": "Absent",
     "late": "Late",
@@ -533,7 +538,17 @@
     "attendanceRate": "Attendance Rate",
     "totalClasses": "Total Classes",
     "classesAttended": "Classes Attended",
-    "classesMissed": "Classes Missed"
+    "classesMissed": "Classes Missed",
+    "errors": {
+      "loadCourses": "Failed to load courses",
+      "loadStudents": "Failed to load students",
+      "markFailed": "Failed to mark attendance",
+      "cameraPermissions": "Camera permission denied",
+      "cameraFailed": "Failed to start camera"
+    },
+    "success": {
+      "marked": "Attendance marked as {status}"
+    }
   },
   "payments": {
     "title": "Payments",
