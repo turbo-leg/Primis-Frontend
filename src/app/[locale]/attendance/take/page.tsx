@@ -114,6 +114,30 @@ export default function TakeAttendancePage() {
     if (typeof window === 'undefined') return
     
     try {
+      // First, explicitly request camera permission
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: "environment" } 
+        })
+        // Stop the test stream immediately - we just wanted to check permissions
+        stream.getTracks().forEach(track => track.stop())
+      } catch (permError: any) {
+        console.error('Camera permission denied:', permError)
+        
+        let errorMessage = t('attendance.errors.cameraPermissions')
+        if (permError.name === 'NotAllowedError' || permError.name === 'PermissionDeniedError') {
+          errorMessage = 'Camera access denied. Please allow camera access in your browser settings and try again.'
+        } else if (permError.name === 'NotFoundError') {
+          errorMessage = 'No camera found on this device.'
+        } else if (permError.name === 'NotReadableError') {
+          errorMessage = 'Camera is already in use by another application.'
+        }
+        
+        setScannerError(errorMessage)
+        showMessage('error', errorMessage)
+        return
+      }
+
       // @ts-ignore
       const { Html5Qrcode } = await import('html5-qrcode')
       
@@ -140,10 +164,12 @@ export default function TakeAttendancePage() {
 
       setIsScannerActive(true)
       setScannerError(null)
+      showMessage('success', 'Camera started successfully! Point at student QR codes.')
     } catch (err: any) {
       console.error('Error starting scanner:', err)
-      setScannerError(err.message || t('attendance.errors.cameraFailed'))
-      showMessage('error', t('attendance.errors.cameraPermissions'))
+      const errorMsg = err.message || t('attendance.errors.cameraFailed')
+      setScannerError(errorMsg)
+      showMessage('error', errorMsg)
     }
   }
 
@@ -426,16 +452,25 @@ export default function TakeAttendancePage() {
                       <div className="text-center">
                         <Camera className="h-16 w-16 text-blue-600 mx-auto mb-4" />
                         <h4 className="text-xl font-semibold text-gray-900 mb-2">Start Camera Scanner</h4>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-gray-600 mb-4">
                           Click the button below to start scanning QR codes automatically with your camera
                         </p>
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6 text-left max-w-md mx-auto">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                            <div className="text-sm text-amber-800">
+                              <p className="font-medium mb-1">Camera Permission Required</p>
+                              <p>Your browser will ask for camera access. Please click "Allow" to enable QR code scanning.</p>
+                            </div>
+                          </div>
+                        </div>
                         <Button 
                           onClick={startScanner}
                           className="bg-blue-600 hover:bg-blue-700"
                           size="lg"
                         >
                           <Video className="h-5 w-5 mr-2" />
-                          Start Camera
+                          Start Camera & Request Permission
                         </Button>
                       </div>
                     </div>
