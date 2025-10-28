@@ -122,16 +122,16 @@ export default function RegisterPage() {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-16 sm:py-20">
+      <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-12 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <PrimisLogo variant="light" size="md" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-light text-white mb-4 px-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-white mb-3 sm:mb-4 px-2 sm:px-4">
               {t('auth.registerTitle')}
             </h1>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
+            <p className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto font-light leading-relaxed px-2 sm:px-4">
               {t('auth.registerSubtitle')}
             </p>
           </div>
@@ -139,27 +139,27 @@ export default function RegisterPage() {
       </div>
 
       {/* Registration Form Section */}
-      <div className="bg-gray-50 dark:bg-primis-navy-light py-12 sm:py-16">
-        <div className="max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-50 dark:bg-primis-navy-light py-8 sm:py-12 md:py-16">
+        <div className="max-w-lg mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
 
           {/* Registration Form */}
-          <Card className="shadow-xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center dark:text-white">{t('auth.createAccount')}</CardTitle>
-              <CardDescription className="text-center dark:text-gray-300">
+          <Card className="shadow-xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10 mx-2 sm:mx-0">
+            <CardHeader className="space-y-1 px-4 sm:px-6 pt-6 sm:pt-8">
+              <CardTitle className="text-xl sm:text-2xl text-center dark:text-white">{t('auth.createAccount')}</CardTitle>
+              <CardDescription className="text-center dark:text-gray-300 text-sm sm:text-base">
                 {t('auth.registerDescription')}
               </CardDescription>
             </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent className="px-4 sm:px-6 pb-6 sm:pb-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-4">
               {/* User Type Selection */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('auth.selectRole')}</label>
                 <div className="grid grid-cols-1 gap-3">
                   {userTypes.map((type) => (
                     <div
                       key={type.value}
-                      className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                      className={`p-3 sm:p-4 border rounded-lg cursor-pointer transition-all touch-manipulation ${
                         selectedUserType === type.value
                           ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-400'
                           : 'border-gray-200 dark:border-white/20 hover:border-gray-300 dark:hover:border-white/30'
@@ -167,16 +167,16 @@ export default function RegisterPage() {
                       onClick={() => handleUserTypeSelect(type.value)}
                     >
                       <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium dark:text-white">{type.label}</span>
-                            <Badge variant="outline" className={type.color}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="font-medium dark:text-white text-sm sm:text-base">{type.label}</span>
+                            <Badge variant="outline" className={`${type.color} text-xs`}>
                               {type.label}
                             </Badge>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{type.description}</p>
+                          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 pr-2">{type.description}</p>
                         </div>
-                        <div className={`w-4 h-4 rounded-full border-2 ${
+                        <div className={`w-5 h-5 sm:w-4 sm:h-4 rounded-full border-2 flex-shrink-0 ${
                           selectedUserType === type.value
                             ? 'border-blue-500 dark:border-blue-400 bg-blue-500 dark:bg-blue-400'
                             : 'border-gray-300 dark:border-white/20'
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                     id="name"
                     type="text"
                     placeholder={`${t('auth.firstName')} ${t('auth.lastName')}`}
-                    className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('name')}
                     disabled={isLoading}
                   />
@@ -232,7 +232,7 @@ export default function RegisterPage() {
                     id="email"
                     type="email"
                     placeholder={t('auth.email')}
-                    className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('email')}
                     disabled={isLoading}
                   />
@@ -256,7 +256,7 @@ export default function RegisterPage() {
                     id="phone"
                     type="tel"
                     placeholder={t('auth.phone')}
-                    className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('phone')}
                     disabled={isLoading}
                   />
@@ -281,7 +281,7 @@ export default function RegisterPage() {
                         id="parentEmail"
                         type="email"
                         placeholder={t('auth.parentEmail')}
-                        className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                        className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                         {...register('parentEmail')}
                         disabled={isLoading}
                       />
@@ -305,7 +305,7 @@ export default function RegisterPage() {
                         id="parentPhone"
                         type="tel"
                         placeholder={t('auth.parentPhone')}
-                        className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                        className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                         {...register('parentPhone')}
                         disabled={isLoading}
                       />
@@ -331,14 +331,14 @@ export default function RegisterPage() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder={t('auth.password')}
-                    className="pl-10 pr-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 pr-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('password')}
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white p-1"
                     disabled={isLoading}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -363,14 +363,14 @@ export default function RegisterPage() {
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder={t('auth.confirmPassword')}
-                    className="pl-10 pr-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 pr-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('confirmPassword')}
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white p-1"
                     disabled={isLoading}
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -385,19 +385,19 @@ export default function RegisterPage() {
               </div>
 
               {/* Terms and Conditions */}
-              <div className="flex items-start space-x-2">
+              <div className="flex items-start space-x-3">
                 <input
                   type="checkbox"
                   required
-                  className="rounded border-gray-300 dark:border-white/20 text-blue-600 focus:ring-blue-500 dark:bg-primis-navy/50 mt-1"
+                  className="rounded border-gray-300 dark:border-white/20 text-blue-600 focus:ring-blue-500 dark:bg-primis-navy/50 mt-1 w-4 h-4 flex-shrink-0"
                 />
-                <label className="text-sm text-gray-600 dark:text-gray-300">
+                <label className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {t('auth.agreeTo')} {' '}
-                  <Link href="/terms" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                  <Link href="/terms" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline">
                     {t('auth.termsOfService')}
                   </Link>{' '}
                   {t('common.and')}{' '}
-                  <Link href="/privacy" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                  <Link href="/privacy" className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 underline">
                     {t('auth.privacyPolicy')}
                   </Link>
                 </label>
@@ -406,7 +406,7 @@ export default function RegisterPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
+                className="w-full h-12 sm:h-10 text-base sm:text-sm bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -421,7 +421,7 @@ export default function RegisterPage() {
             </form>
 
             {/* Divider */}
-            <div className="relative my-6">
+            <div className="relative my-6 sm:my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300 dark:border-white/20" />
               </div>
@@ -433,7 +433,7 @@ export default function RegisterPage() {
             {/* Login Link */}
             <div className="text-center">
               <Link href="/login">
-                <Button variant="outline" className="w-full dark:border-white/20 dark:text-white dark:hover:bg-white/10">
+                <Button variant="outline" className="w-full h-12 sm:h-10 text-base sm:text-sm dark:border-white/20 dark:text-white dark:hover:bg-white/10">
                   {t('auth.signInInstead')}
                 </Button>
               </Link>

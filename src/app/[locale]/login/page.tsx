@@ -60,16 +60,16 @@ export default function LoginPage() {
       <Navigation />
       
       {/* Hero Section */}
-      <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-16 sm:py-20">
+      <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-12 sm:py-16 md:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <PrimisLogo variant="light" size="md" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-light text-white mb-4 px-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-white mb-3 sm:mb-4 px-2 sm:px-4">
               {t('auth.loginTitle')}
             </h1>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
+            <p className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto font-light leading-relaxed px-2 sm:px-4">
               {t('auth.loginSubtitle')}
             </p>
           </div>
@@ -77,19 +77,19 @@ export default function LoginPage() {
       </div>
 
       {/* Login Form Section */}
-      <div className="bg-gray-50 dark:bg-primis-navy-light py-12 sm:py-16">
-        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-50 dark:bg-primis-navy-light py-8 sm:py-12 md:py-16">
+        <div className="max-w-md mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
 
           {/* Login Form */}
-          <Card className="shadow-xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl text-center dark:text-white">{t('auth.signIn')}</CardTitle>
-              <CardDescription className="text-center dark:text-gray-300">
+          <Card className="shadow-xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10 mx-2 sm:mx-0">
+            <CardHeader className="space-y-1 px-4 sm:px-6 pt-6 sm:pt-8">
+              <CardTitle className="text-xl sm:text-2xl text-center dark:text-white">{t('auth.signIn')}</CardTitle>
+              <CardDescription className="text-center dark:text-gray-300 text-sm sm:text-base">
                 {t('auth.loginDescription')}
               </CardDescription>
             </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent className="px-4 sm:px-6 pb-6 sm:pb-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-4">
               {/* Email Field */}
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200">
@@ -101,7 +101,7 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     placeholder={t('auth.email')}
-                    className="pl-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('email')}
                     disabled={isLoading}
                   />
@@ -125,7 +125,7 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder={t('auth.password')}
-                    className="pl-10 pr-10 dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
+                    className="pl-10 pr-10 h-12 sm:h-10 text-base sm:text-sm dark:bg-primis-navy/50 dark:border-white/20 dark:text-white dark:placeholder:text-gray-400"
                     {...register('password')}
                     disabled={isLoading}
                   />
@@ -147,17 +147,17 @@ export default function LoginPage() {
               </div>
 
               {/* Forgot Password Link */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    className="rounded border-gray-300 dark:border-white/20 text-blue-600 focus:ring-blue-500 dark:bg-primis-navy/50"
+                    className="rounded border-gray-300 dark:border-white/20 text-blue-600 focus:ring-blue-500 dark:bg-primis-navy/50 w-4 h-4"
                   />
                   <span className="text-sm text-gray-600 dark:text-gray-300">{t('auth.rememberMe')}</span>
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                  className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 text-center sm:text-left"
                 >
                   {t('auth.forgotPassword')}
                 </Link>
@@ -166,7 +166,7 @@ export default function LoginPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
+                className="w-full h-12 sm:h-10 text-base sm:text-sm bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -181,7 +181,7 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="relative my-6">
+            <div className="relative my-6 sm:my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300 dark:border-white/20" />
               </div>
@@ -193,7 +193,7 @@ export default function LoginPage() {
             {/* Register Link */}
             <div className="text-center">
               <Link href="/register">
-                <Button variant="outline" className="w-full dark:border-white/20 dark:text-white dark:hover:bg-white/10">
+                <Button variant="outline" className="w-full h-12 sm:h-10 text-base sm:text-sm dark:border-white/20 dark:text-white dark:hover:bg-white/10">
                   {t('auth.createAccount')}
                 </Button>
               </Link>

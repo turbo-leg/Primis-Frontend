@@ -60,6 +60,7 @@ export default function TakeAttendancePage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [isScannerActive, setIsScannerActive] = useState(false)
   const [scannerError, setScannerError] = useState<string | null>(null)
+  const [fallbackMode, setFallbackMode] = useState(false)
   const scannerRef = useRef<any>(null)
   const qrCodeRegionId = 'qr-reader'
 
@@ -114,81 +115,222 @@ export default function TakeAttendancePage() {
     if (typeof window === 'undefined') return
     
     try {
+      setScannerError(null)
+      setLoading(true)
+      
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Safari.')
+      }
+      
       // First, explicitly request camera permission
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: "environment" } 
+          video: { 
+            facingMode: "environment",
+            width: { ideal: 640 },
+            height: { ideal: 480 }
+          } 
         })
         // Stop the test stream immediately - we just wanted to check permissions
         stream.getTracks().forEach(track => track.stop())
       } catch (permError: any) {
         console.error('Camera permission denied:', permError)
         
-        let errorMessage = t('attendance.errors.cameraPermissions')
+        let errorMessage = 'Camera access denied. Please allow camera access in your browser settings and try again.'
         if (permError.name === 'NotAllowedError' || permError.name === 'PermissionDeniedError') {
-          errorMessage = 'Camera access denied. Please allow camera access in your browser settings and try again.'
+          errorMessage = 'Camera access denied. Please allow camera access in your browser settings and refresh the page.'
         } else if (permError.name === 'NotFoundError') {
-          errorMessage = 'No camera found on this device.'
+          errorMessage = 'No camera found on this device. Please ensure your device has a camera.'
         } else if (permError.name === 'NotReadableError') {
-          errorMessage = 'Camera is already in use by another application.'
+          errorMessage = 'Camera is already in use by another application. Please close other apps using the camera and try again.'
+        } else if (permError.name === 'AbortError') {
+          errorMessage = 'Camera access was aborted. Please try again.'
+        } else if (permError.name === 'OverconstrainedError') {
+          errorMessage = 'Camera constraints not supported. Trying with basic settings...'
         }
         
         setScannerError(errorMessage)
         showMessage('error', errorMessage)
+        setLoading(false)
         return
       }
 
-      // @ts-ignore
-      const { Html5Qrcode } = await import('html5-qrcode')
-      
-      const html5QrCode = new Html5Qrcode(qrCodeRegionId)
-      scannerRef.current = html5QrCode
+      try {
+        // Dynamic import to avoid SSR issues
+        const { Html5Qrcode } = await import('html5-qrcode')
+        
+        // Ensure the DOM element exists
+        const qrRegion = document.getElementById(qrCodeRegionId)
+        if (!qrRegion) {
+          throw new Error('QR scanner region not found in DOM')
+        }
 
-      const qrCodeSuccessCallback = async (decodedText: string) => {
-        console.log('QR Code scanned:', decodedText)
-        await handleQRCodeScanned(decodedText)
+        const html5QrCode = new Html5Qrcode(qrCodeRegionId)
+        scannerRef.current = html5QrCode
+
+        const qrCodeSuccessCallback = async (decodedText: string) => {
+          console.log('QR Code scanned:', decodedText)
+          // Vibrate on success if supported
+          if (navigator.vibrate) {
+            navigator.vibrate(200)
+          }
+          await handleQRCodeScanned(decodedText)
+        }
+
+        const qrCodeErrorCallback = (errorMessage: string) => {
+          // Only log errors that aren't "No QR code found" which is normal
+          if (!errorMessage.includes('No QR code found') && !errorMessage.includes('QR code parse error')) {
+            console.warn('QR scan error:', errorMessage)
+          }
+        }
+
+        const config = { 
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          disableFlip: false,
+          rememberLastUsedCamera: true,
+          supportedScanTypes: [0] // Only QR codes
+        }
+
+        await html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          qrCodeSuccessCallback,
+          qrCodeErrorCallback
+        )
+
+        setIsScannerActive(true)
+        setScannerError(null)
+        setFallbackMode(false)
+        setLoading(false)
+        showMessage('success', 'Camera started successfully! Point at student QR codes.')
+      } catch (html5Error: any) {
+        console.error('Html5-qrcode failed:', html5Error)
+        
+        // Try fallback with qr-scanner library
+        try {
+          await startFallbackScanner()
+        } catch (fallbackError: any) {
+          throw new Error('All QR scanner methods failed. Please try refreshing the page or use manual QR input.')
+        }
       }
-
-      const config = { 
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0
-      }
-
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        config,
-        qrCodeSuccessCallback,
-        undefined
-      )
-
-      setIsScannerActive(true)
-      setScannerError(null)
-      showMessage('success', 'Camera started successfully! Point at student QR codes.')
     } catch (err: any) {
       console.error('Error starting scanner:', err)
-      const errorMsg = err.message || t('attendance.errors.cameraFailed')
+      let errorMsg = err.message || 'Failed to start camera scanner'
+      
+      // More specific error handling
+      if (errorMsg.includes('OverconstrainedError')) {
+        errorMsg = 'Camera settings not supported. Please try a different camera or device.'
+      } else if (errorMsg.includes('NotReadableError')) {
+        errorMsg = 'Camera is being used by another application. Please close other apps using the camera.'
+      } else if (errorMsg.includes('NotFoundError')) {
+        errorMsg = 'No camera found. Please ensure your device has a camera and try again.'
+      }
+      
       setScannerError(errorMsg)
       showMessage('error', errorMsg)
+      setLoading(false)
     }
+  }
+
+  const startFallbackScanner = async () => {
+    const QrScanner = (await import('qr-scanner')).default
+    
+    const qrRegion = document.getElementById(qrCodeRegionId)
+    if (!qrRegion) {
+      throw new Error('QR scanner region not found')
+    }
+
+    // Create video element for qr-scanner
+    const video = document.createElement('video')
+    video.style.width = '100%'
+    video.style.height = '100%'
+    video.style.objectFit = 'cover'
+    qrRegion.appendChild(video)
+
+    const qrScanner = new QrScanner(
+      video,
+      async (result: any) => {
+        console.log('QR Code scanned (fallback):', result.data)
+        if (navigator.vibrate) {
+          navigator.vibrate(200)
+        }
+        await handleQRCodeScanned(result.data)
+      },
+      {
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
+        preferredCamera: 'environment',
+        maxScansPerSecond: 10
+      }
+    )
+
+    scannerRef.current = qrScanner
+    await qrScanner.start()
+    
+    setIsScannerActive(true)
+    setScannerError(null)
+    setFallbackMode(true)
+    setLoading(false)
+    showMessage('success', 'Fallback camera started! Point at student QR codes.')
   }
 
   const stopScanner = async () => {
     if (scannerRef.current && isScannerActive) {
       try {
-        await scannerRef.current.stop()
+        if (fallbackMode) {
+          // For qr-scanner library
+          await scannerRef.current.stop()
+          await scannerRef.current.destroy()
+          
+          // Clean up video element
+          const qrRegion = document.getElementById(qrCodeRegionId)
+          if (qrRegion) {
+            qrRegion.innerHTML = ''
+          }
+        } else {
+          // For html5-qrcode library
+          await scannerRef.current.stop()
+          await scannerRef.current.clear()
+        }
+        
         setIsScannerActive(false)
-      } catch (err) {
+        setScannerError(null)
+        setFallbackMode(false)
+        showMessage('success', 'Camera stopped successfully.')
+      } catch (err: any) {
         console.error('Error stopping scanner:', err)
+        // Force cleanup even if stop fails
+        setIsScannerActive(false)
+        setScannerError(null)
+        setFallbackMode(false)
+        
+        // Clean up DOM
+        const qrRegion = document.getElementById(qrCodeRegionId)
+        if (qrRegion) {
+          qrRegion.innerHTML = ''
+        }
       }
     }
   }
 
+  // Cleanup on unmount or when course changes
   useEffect(() => {
     return () => {
-      stopScanner()
+      if (scannerRef.current && isScannerActive) {
+        stopScanner()
+      }
     }
   }, [])
+
+  // Stop scanner when switching courses
+  useEffect(() => {
+    if (scannerRef.current && isScannerActive) {
+      stopScanner()
+    }
+  }, [selectedCourse])
 
   const handleQRCodeScanned = async (qrData: string) => {
     if (!selectedCourse) return
@@ -448,11 +590,11 @@ export default function TakeAttendancePage() {
                 {/* Camera Scanner Section */}
                 <div className="mb-6">
                   {!isScannerActive ? (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg p-8">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg p-6 sm:p-8">
                       <div className="text-center">
-                        <Camera className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                        <h4 className="text-xl font-semibold text-gray-900 mb-2">Start Camera Scanner</h4>
-                        <p className="text-gray-600 mb-4">
+                        <Camera className="h-12 w-12 sm:h-16 sm:w-16 text-blue-600 mx-auto mb-4" />
+                        <h4 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Start Camera Scanner</h4>
+                        <p className="text-sm sm:text-base text-gray-600 mb-4 px-2">
                           Click the button below to start scanning QR codes automatically with your camera
                         </p>
                         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6 text-left max-w-md mx-auto">
@@ -464,27 +606,51 @@ export default function TakeAttendancePage() {
                             </div>
                           </div>
                         </div>
+                        
+                        {scannerError && (
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-left max-w-md mx-auto">
+                            <div className="flex items-start gap-2">
+                              <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                              <div className="text-sm text-red-800">
+                                <p className="font-medium">Error</p>
+                                <p>{scannerError}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
                         <Button 
                           onClick={startScanner}
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-blue-600 hover:bg-blue-700 h-12 px-6"
                           size="lg"
+                          disabled={loading}
                         >
-                          <Video className="h-5 w-5 mr-2" />
-                          Start Camera & Request Permission
+                          {loading ? (
+                            <>
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                              Starting Camera...
+                            </>
+                          ) : (
+                            <>
+                              <Video className="h-5 w-5 mr-2" />
+                              Start Camera & Request Permission
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-green-50 border border-green-200 rounded-lg gap-3">
                         <div className="flex items-center gap-2">
                           <Video className="h-5 w-5 text-green-600 animate-pulse" />
-                          <span className="font-medium text-green-900">Camera is active - Point at student QR codes</span>
+                          <span className="font-medium text-green-900 text-sm sm:text-base">Camera is active - Point at student QR codes</span>
                         </div>
                         <Button 
                           onClick={stopScanner}
                           variant="outline"
                           size="sm"
+                          className="w-full sm:w-auto"
                         >
                           <VideoOff className="h-4 w-4 mr-2" />
                           Stop Camera
@@ -492,9 +658,9 @@ export default function TakeAttendancePage() {
                       </div>
 
                       {/* QR Scanner Preview */}
-                      <div className="relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '400px' }}>
-                        <div id={qrCodeRegionId} className="w-full"></div>
-                        <div className="absolute top-4 left-4 right-4">
+                      <div className="relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '350px' }}>
+                        <div id={qrCodeRegionId} className="w-full h-full"></div>
+                        <div className="absolute top-4 left-4 right-4 z-10">
                           <div className="bg-black bg-opacity-70 text-white p-3 rounded-lg text-center">
                             <p className="text-sm">Position the QR code within the frame</p>
                           </div>
@@ -515,30 +681,67 @@ export default function TakeAttendancePage() {
 
                 {/* Manual Input Fallback */}
                 <div className="border-t pt-6">
-                  <details className="mb-6">
-                    <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900">
-                      Or enter QR code manually
-                    </summary>
-                    <div className="mt-4 flex gap-4">
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <h5 className="text-sm font-medium text-gray-800 mb-3 flex items-center gap-2">
+                      <QrCode className="h-4 w-4" />
+                      Manual QR Code Entry
+                    </h5>
+                    <p className="text-xs text-gray-600 mb-4">
+                      If the camera scanner isn't working, you can manually enter the QR code data here.
+                      QR codes should be in format: student_123
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <input
                         type="text"
                         placeholder="Enter QR code (e.g., student_123)"
                         value={qrScanInput}
                         onChange={(e) => setQrScanInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleManualQRScan()}
-                        className="flex-1 px-4 py-3 border rounded-md"
+                        className="flex-1 px-4 py-3 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       />
                       <Button 
                         onClick={handleManualQRScan}
-                        disabled={!qrScanInput.trim()}
+                        disabled={!qrScanInput.trim() || loading}
+                        className="w-full sm:w-auto"
+                        size="sm"
                       >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Mark Present
+                        {loading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Mark Attendance
+                          </>
+                        )}
                       </Button>
                     </div>
-                  </details>
+                  </div>
                 </div>
 
+                {/* Troubleshooting Tips */}
+                {scannerError && (
+                  <div className="border-t pt-6">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <h5 className="text-sm font-medium text-blue-800 mb-3 flex items-center gap-2">
+                        <AlertCircle className="h-4 w-4" />
+                        Troubleshooting Tips
+                      </h5>
+                      <ul className="text-xs text-blue-700 space-y-2">
+                        <li>• Make sure you allow camera permissions when prompted</li>
+                        <li>• Try refreshing the page and starting the scanner again</li>
+                        <li>• Ensure no other apps are using your camera</li>
+                        <li>• Use a different browser if the issue persists</li>
+                        <li>• Make sure you're using HTTPS (required for camera access)</li>
+                        <li>• Use manual QR entry as a backup option</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {/* Attendance Summary */}
                 <div className="border-t pt-6">
                   <h4 className="font-semibold text-gray-900 mb-4">Attendance Summary</h4>
                   <div className="grid grid-cols-3 gap-4 mb-6">
