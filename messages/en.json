@@ -133,8 +133,13 @@
   "auth": {
     "login": "Login",
     "loginTitle": "Login to your account",
+    "loginSubtitle": "Access your learning dashboard and continue your educational journey",
+    "loginDescription": "Enter your credentials to access your account",
     "register": "Register",
     "registerTitle": "Create a new account",
+    "registerSubtitle": "Join us and start your journey towards academic excellence",
+    "registerDescription": "Fill in your details to create your account",
+    "createAccount": "Create Account",
     "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm Password",
@@ -161,7 +166,11 @@
     "agreeTo": "I agree to the",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
-    "signInInstead": "Sign in instead"
+    "signInInstead": "Sign in instead",
+    "creatingAccount": "Creating account...",
+    "parentContact": "Parent/Guardian Contact",
+    "parentEmail": "Parent Email",
+    "parentPhone": "Parent Phone"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -216,6 +225,8 @@
       "due": "Due",
       "quickActions": "Quick Actions",
       "commonAdministrativeTasks": "Common administrative tasks",
+      "userManagement": "User Management",
+      "reports": "Reports",
       "createCourse": "Create Course",
       "createNewCourse": "Create New Course",
       "viewReports": "View Reports",

@@ -133,8 +133,13 @@
   "auth": {
     "login": "Нэвтрэх",
     "loginTitle": "Бүртгэлдээ нэвтрэх",
+    "loginSubtitle": "Суралцах самбардаа хандаж, боловсролын аяллаа үргэлжлүүлээрэй",
+    "loginDescription": "Бүртгэлдээ нэвтрэхийн тулд өөрийн мэдээллээ оруулна уу",
     "register": "Бүртгүүлэх",
     "registerTitle": "Шинэ бүртгэл үүсгэх",
+    "registerSubtitle": "Бидэнтэй нэгдэж, боловсролын шилдэг байдалд хүрэх аяллаа эхлүүлээрэй",
+    "registerDescription": "Бүртгэл үүсгэхийн тулд мэдээллээ бөглөнө үү",
+    "createAccount": "Бүртгэл үүсгэх",
     "email": "Имэйл",
     "password": "Нууц үг",
     "confirmPassword": "Нууц үг баталгаажуулах",
@@ -161,7 +166,12 @@
     "agreeTo": "Би зөвшөөрөлтэй",
     "termsOfService": "Үйлчилгээний нөхцөл",
     "privacyPolicy": "Нууцлалын бодлого",
-    "signInInstead": "Оронд нь нэвтрэх"
+    "signInInstead": "Оронд нь нэвтрэх",
+    "creatingAccount": "Бүртгэл үүсгэж байна...",
+    "parentContact": "Эцэг эхийн холбоо барих мэдээлэл",
+    "parentEmail": "Эцэг эхийн имэйл",
+    "parentPhone": "Эцэг эхийн утас",
+    "name": "Нэр"
   },
   "dashboard": {
     "title": "Хянах самбар",
@@ -216,6 +226,8 @@
       "due": "Төлөх",
       "quickActions": "Шуурхай үйлдэл",
       "commonAdministrativeTasks": "Нийтлэг администраторын ажлууд",
+      "userManagement": "Хэрэглэгчийн удирдлага",
+      "reports": "Тайлан",
       "createCourse": "Хичээл үүсгэх",
       "viewReports": "Тайлан харах",
       "systemSettings": "Системийн тохиргоо",

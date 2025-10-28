@@ -9,6 +9,8 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Navigation } from '@/components/navigation'
+import PrimisLogo from '@/components/PrimisLogo'
 import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { getDashboardPath } from '@/utils/auth'
@@ -54,28 +56,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-primis-navy-dark dark:via-primis-navy dark:to-primis-navy-light flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo and Header */}
-        <div className="text-center mb-6 sm:mb-8">
-          <Link href="/" className="inline-flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-white/20 dark:to-white/10 h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex items-center justify-center shadow-lg">
-              <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+    <div className="min-h-screen bg-white dark:bg-primis-navy">
+      <Navigation />
+      
+      {/* Hero Section */}
+      <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-16 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="mb-6">
+              <PrimisLogo variant="light" size="md" />
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{t('common.appName')}</span>
-          </Link>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('auth.loginTitle')}</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{t('auth.login')}</p>
+            <h1 className="text-3xl sm:text-4xl font-serif font-light text-white mb-4 px-4">
+              {t('auth.loginTitle')}
+            </h1>
+            <p className="text-lg text-white/80 max-w-2xl mx-auto font-light leading-relaxed px-4">
+              {t('auth.loginSubtitle')}
+            </p>
+          </div>
         </div>
+      </div>
 
-        {/* Login Form */}
-        <Card className="shadow-xl border-0 bg-white/80 dark:bg-primis-navy-light/50 backdrop-blur-sm dark:border dark:border-white/10">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center dark:text-white">{t('auth.signIn')}</CardTitle>
-            <CardDescription className="text-center dark:text-gray-300">
-              {t('auth.login')}
-            </CardDescription>
-          </CardHeader>
+      {/* Login Form Section */}
+      <div className="bg-gray-50 dark:bg-primis-navy-light py-12 sm:py-16">
+        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* Login Form */}
+          <Card className="shadow-xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl text-center dark:text-white">{t('auth.signIn')}</CardTitle>
+              <CardDescription className="text-center dark:text-gray-300">
+                {t('auth.loginDescription')}
+              </CardDescription>
+            </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Email Field */}
@@ -185,7 +197,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-300 dark:border-white/20" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white dark:bg-primis-navy-light text-gray-500 dark:text-gray-300">{t('auth.dontHaveAccount')}</span>
+                <span className="px-2 bg-white dark:bg-primis-navy text-gray-500 dark:text-gray-300">{t('auth.dontHaveAccount')}</span>
               </div>
             </div>
 
@@ -193,7 +205,7 @@ export default function LoginPage() {
             <div className="text-center">
               <Link href="/register">
                 <Button variant="outline" className="w-full dark:border-white/20 dark:text-white dark:hover:bg-white/10">
-                  {t('auth.register')}
+                  {t('auth.createAccount')}
                 </Button>
               </Link>
             </div>
@@ -203,8 +215,9 @@ export default function LoginPage() {
         {/* Back to Home */}
         <div className="text-center mt-6">
           <Link href="/" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-            ← {t('common.back')} {t('nav.dashboard')}
+            ← {t('nav.backToHome')}
           </Link>
+        </div>
         </div>
       </div>
     </div>
