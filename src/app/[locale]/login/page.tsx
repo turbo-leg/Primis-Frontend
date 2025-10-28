@@ -180,17 +180,6 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            {/* Demo Accounts */}
-            <div className="mt-6 p-4 bg-gray-50 dark:bg-primis-navy/30 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Demo Accounts:</h4>
-              <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1">
-                <div>Student: john.smith@student.com / password123</div>
-                <div>Teacher: dr.wilson@teacher.com / password123</div>
-                <div>Admin: admin@college.com / password123</div>
-                <div>Parent: mary.johnson@parent.com / password123</div>
-              </div>
-            </div>
-
             {/* Divider */}
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
