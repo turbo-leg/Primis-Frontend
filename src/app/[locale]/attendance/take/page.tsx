@@ -61,6 +61,7 @@ export default function TakeAttendancePage() {
   const [isScannerActive, setIsScannerActive] = useState(false)
   const [scannerError, setScannerError] = useState<string | null>(null)
   const [fallbackMode, setFallbackMode] = useState(false)
+  const [markingAttendance, setMarkingAttendance] = useState<number | null>(null)
   const scannerRef = useRef<any>(null)
   const fallbackScannerRef = useRef<any>(null)
   const qrCodeRegionId = 'qr-reader'
@@ -77,10 +78,24 @@ export default function TakeAttendancePage() {
   }, [user, userType])
 
   useEffect(() => {
-    if (selectedCourse) {
+    if (selectedCourse && attendanceDate) {
       fetchEnrollments()
+      fetchExistingAttendance()
     }
-  }, [selectedCourse])
+  }, [selectedCourse, attendanceDate])
+
+  const fetchExistingAttendance = async () => {
+    if (!selectedCourse || !attendanceDate) return
+    
+    try {
+      const existingAttendance = await apiClient.getCourseAttendance(selectedCourse.course_id, attendanceDate)
+      const markedStudentIds = new Set(existingAttendance.map((att: any) => Number(att.student_id)))
+      setAttendanceMarked(markedStudentIds)
+    } catch (error) {
+      console.error('Error fetching existing attendance:', error)
+      // Don't show error message for this, it's not critical
+    }
+  }
 
   const fetchCourses = async () => {
     try {
@@ -359,13 +374,14 @@ export default function TakeAttendancePage() {
     if (!selectedCourse) return
 
     try {
-      const response = await apiClient.post('/api/v1/attendance/scan-qr', {
+      // Use the correct QR scan endpoint
+      const response = await apiClient.scanQRAttendance({
         qr_data: qrData,
         course_id: selectedCourse.course_id,
         attendance_date: attendanceDate
       })
 
-      showMessage('success', response.message)
+      showMessage('success', response.message || 'Attendance marked successfully')
       
       // Extract student_id from the QR code (format: student_123)
       const studentId = parseInt(qrData.replace('student_', ''))
@@ -375,7 +391,19 @@ export default function TakeAttendancePage() {
       const audio = new Audio('/success-sound.mp3')
       audio.play().catch(() => {}) // Ignore if sound fails
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || t('attendance.errors.markFailed'))
+      console.error('QR scan error:', error)
+      
+      let errorMsg = 'Failed to mark attendance from QR code.'
+      
+      if (error.response?.data?.detail) {
+        errorMsg = error.response.data.detail
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message
+      } else if (error.message) {
+        errorMsg = error.message
+      }
+      
+      showMessage('error', errorMsg)
     }
   }
 
@@ -390,20 +418,33 @@ export default function TakeAttendancePage() {
     if (!qrScanInput.trim() || !selectedCourse) return
 
     try {
-      const response = await apiClient.post('/api/v1/attendance/scan-qr', {
+      // Use the correct QR scan endpoint  
+      const response = await apiClient.scanQRAttendance({
         qr_data: qrScanInput,
         course_id: selectedCourse.course_id,
         attendance_date: attendanceDate
       })
 
-      showMessage('success', response.message)
+      showMessage('success', response.message || 'Attendance marked successfully')
       setQrScanInput('')
       
       // Extract student_id from the QR code (format: student_123)
       const studentId = parseInt(qrScanInput.replace('student_', ''))
       setAttendanceMarked(prev => new Set(prev).add(studentId))
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || t('attendance.errors.markFailed'))
+      console.error('Manual QR scan error:', error)
+      
+      let errorMsg = 'Failed to mark attendance from QR code.'
+      
+      if (error.response?.data?.detail) {
+        errorMsg = error.response.data.detail
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message
+      } else if (error.message) {
+        errorMsg = error.message
+      }
+      
+      showMessage('error', errorMsg)
     }
   }
 
@@ -411,15 +452,21 @@ export default function TakeAttendancePage() {
     if (!selectedCourse) return
 
     try {
-      setLoading(true)
+      setMarkingAttendance(studentId)
       
-      // Use the specific markAttendance method from apiClient
-      const response = await apiClient.markAttendance({
+      // Create the attendance data according to backend schema
+      const attendanceData = {
         student_id: studentId,
         course_id: selectedCourse.course_id,
-        attendance_date: attendanceDate,
-        status: status
-      })
+        attendance_date: new Date(attendanceDate).toISOString(),
+        status: status,
+        notes: null
+      }
+      
+      console.log('Marking attendance with data:', attendanceData)
+      
+      // Use the correct API endpoint for marking attendance
+      const response = await apiClient.markAttendance(attendanceData)
 
       showMessage('success', `Student attendance marked as ${status.toUpperCase()}`)
       setAttendanceMarked(prev => new Set(prev).add(studentId))
@@ -446,20 +493,28 @@ export default function TakeAttendancePage() {
         errorMsg = error.message
       }
       
-      // Handle specific error cases
+      // Handle specific error cases based on backend responses
       if (error.response?.status === 404) {
         errorMsg = 'Student or course not found. Please refresh the page and try again.'
       } else if (error.response?.status === 400) {
-        errorMsg = 'Invalid attendance data. Please check the course and date.'
-      } else if (error.response?.status === 409) {
-        errorMsg = 'Attendance already marked for this student today.'
+        if (error.response.data?.detail?.includes('already marked')) {
+          errorMsg = 'Attendance already marked for this student today.'
+          // If attendance is already marked, add to our local state
+          setAttendanceMarked(prev => new Set(prev).add(studentId))
+        } else {
+          errorMsg = 'Invalid attendance data. Please check the course and date.'
+        }
+      } else if (error.response?.status === 403) {
+        errorMsg = 'You are not authorized to mark attendance for this course.'
+      } else if (error.response?.status === 422) {
+        errorMsg = 'Invalid data format. Please try again.'
       } else if (error.code === 'ECONNREFUSED' || error.message === 'Network Error') {
         errorMsg = 'Cannot connect to server. Please check your internet connection.'
       }
       
       showMessage('error', errorMsg)
     } finally {
-      setLoading(false)
+      setMarkingAttendance(null)
     }
   }
 
@@ -924,60 +979,93 @@ export default function TakeAttendancePage() {
                     </div>
 
                     <div className="space-y-3">
-                      {enrollments.map((enrollment) => (
-                        <div
-                          key={enrollment.student.student_id}
-                          className={`p-4 border rounded-lg ${
-                            attendanceMarked.has(enrollment.student.student_id)
-                              ? 'bg-green-50 border-green-300'
-                              : 'bg-white'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">
-                                {enrollment.student.name}
-                              </h4>
-                              <p className="text-sm text-gray-600">{enrollment.student.email}</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant={attendanceMarked.has(enrollment.student.student_id) ? "default" : "outline"}
-                                onClick={() => handleManualAttendance(enrollment.student.student_id, 'present')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                              >
-                                <CheckCircle className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleManualAttendance(enrollment.student.student_id, 'absent')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
-                              >
-                                <XCircle className="h-4 w-4 text-red-600" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleManualAttendance(enrollment.student.student_id, 'late')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
-                              >
-                                <Clock className="h-4 w-4 text-amber-600" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleManualAttendance(enrollment.student.student_id, 'excused')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
-                              >
-                                <AlertCircle className="h-4 w-4 text-blue-600" />
-                              </Button>
+                      {enrollments.map((enrollment) => {
+                        const isMarked = attendanceMarked.has(enrollment.student.student_id)
+                        
+                        return (
+                          <div
+                            key={enrollment.student.student_id}
+                            className={`p-4 border rounded-lg transition-all ${
+                              isMarked
+                                ? 'bg-green-50 border-green-300'
+                                : 'bg-white border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900">
+                                  {enrollment.student.name}
+                                </h4>
+                                <p className="text-sm text-gray-600">{enrollment.student.email}</p>
+                                {isMarked && (
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                    <span className="text-sm text-green-700 font-medium">Attendance Marked</span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleManualAttendance(enrollment.student.student_id, 'present')}
+                                  disabled={markingAttendance === enrollment.student.student_id}
+                                  className={`${isMarked ? 'bg-green-600 text-white hover:bg-green-700' : 'hover:bg-green-50 hover:border-green-300'}`}
+                                  title="Mark Present"
+                                >
+                                  {markingAttendance === enrollment.student.student_id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                                  ) : (
+                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleManualAttendance(enrollment.student.student_id, 'absent')}
+                                  disabled={markingAttendance === enrollment.student.student_id}
+                                  className="hover:bg-red-50 hover:border-red-300"
+                                  title="Mark Absent"
+                                >
+                                  {markingAttendance === enrollment.student.student_id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                                  ) : (
+                                    <XCircle className="h-4 w-4 text-red-600" />
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleManualAttendance(enrollment.student.student_id, 'late')}
+                                  disabled={markingAttendance === enrollment.student.student_id}
+                                  className="hover:bg-amber-50 hover:border-amber-300"
+                                  title="Mark Late"
+                                >
+                                  {markingAttendance === enrollment.student.student_id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                                  ) : (
+                                    <Clock className="h-4 w-4 text-amber-600" />
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleManualAttendance(enrollment.student.student_id, 'excused')}
+                                  disabled={markingAttendance === enrollment.student.student_id}
+                                  className="hover:bg-blue-50 hover:border-blue-300"
+                                  title="Mark Excused"
+                                >
+                                  {markingAttendance === enrollment.student.student_id ? (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                                  ) : (
+                                    <AlertCircle className="h-4 w-4 text-blue-600" />
+                                  )}
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
 
                     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
