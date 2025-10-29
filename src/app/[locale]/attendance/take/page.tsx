@@ -429,6 +429,7 @@ export default function TakeAttendancePage() {
     if (!selectedCourse) return
 
     try {
+      setLoading(true)
       await apiClient.post('/api/v1/attendance/mark', {
         student_id: studentId,
         course_id: selectedCourse.course_id,
@@ -436,10 +437,23 @@ export default function TakeAttendancePage() {
         status: status
       })
 
-      showMessage('success', t('attendance.success.marked', { status }))
+      showMessage('success', `Student attendance marked as ${status.toUpperCase()}`)
       setAttendanceMarked(prev => new Set(prev).add(studentId))
+      
+      // Play success sound
+      const audio = new Audio('/success-sound.mp3')
+      audio.play().catch(() => {}) // Ignore if sound fails
+      
+      // Vibrate on mobile if supported
+      if (navigator.vibrate) {
+        navigator.vibrate(100)
+      }
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || t('attendance.errors.markFailed'))
+      console.error('Manual attendance error:', error)
+      const errorMsg = error.response?.data?.detail || 'Failed to mark attendance. Please try again.'
+      showMessage('error', errorMsg)
+    } finally {
+      setLoading(false)
     }
   }
 
