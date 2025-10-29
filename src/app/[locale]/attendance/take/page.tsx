@@ -161,19 +161,10 @@ export default function TakeAttendancePage() {
         // Dynamic import to avoid SSR issues
         const { Html5Qrcode } = await import('html5-qrcode')
         
-        // Wait a bit for DOM to be fully rendered and check if element exists
-        await new Promise(resolve => setTimeout(resolve, 100))
-        
-        let qrRegion = document.getElementById(qrCodeRegionId)
-        let retries = 0
-        while (!qrRegion && retries < 10) {
-          await new Promise(resolve => setTimeout(resolve, 200))
-          qrRegion = document.getElementById(qrCodeRegionId)
-          retries++
-        }
-        
+        // The QR region element should always be available now since it's always rendered
+        const qrRegion = document.getElementById(qrCodeRegionId)
         if (!qrRegion) {
-          throw new Error('QR scanner region not found in DOM after waiting. The element may not be rendered yet.')
+          throw new Error('QR scanner region not found in DOM. Please refresh the page and try again.')
         }
 
         // Clear the region before initializing
@@ -254,19 +245,10 @@ export default function TakeAttendancePage() {
       console.log('Starting fallback scanner with qr-scanner')
       const QrScanner = (await import('qr-scanner')).default
       
-      // Wait a bit and ensure the DOM element exists
-      await new Promise(resolve => setTimeout(resolve, 100))
-      
-      let qrRegion = document.getElementById(qrCodeRegionId)
-      let retries = 0
-      while (!qrRegion && retries < 10) {
-        await new Promise(resolve => setTimeout(resolve, 200))
-        qrRegion = document.getElementById(qrCodeRegionId)
-        retries++
-      }
-      
+      // The QR region element should always be available now since it's always rendered
+      const qrRegion = document.getElementById(qrCodeRegionId)
       if (!qrRegion) {
-        throw new Error('QR scanner region not found in DOM after waiting for fallback scanner.')
+        throw new Error('QR scanner region not found in DOM for fallback scanner. Please refresh the page and try again.')
       }
 
       // Create a video element for the fallback scanner
@@ -630,94 +612,99 @@ export default function TakeAttendancePage() {
               <CardContent>
                 {/* Camera Scanner Section */}
                 <div className="mb-6">
-                  {!isScannerActive ? (
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg p-6 sm:p-8">
-                      <div className="text-center">
-                        <Camera className="h-12 w-12 sm:h-16 sm:w-16 text-blue-600 mx-auto mb-4" />
-                        <h4 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Start Camera Scanner</h4>
-                        <p className="text-sm sm:text-base text-gray-600 mb-4 px-2">
-                          Click the button below to start scanning QR codes automatically with your camera
-                        </p>
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6 text-left max-w-md mx-auto">
-                          <div className="flex items-start gap-2">
-                            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <div className="text-sm text-amber-800">
-                              <p className="font-medium mb-1">Camera Permission Required</p>
-                              <p>Your browser will ask for camera access. Please click "Allow" to enable QR code scanning.</p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {scannerError && (
-                          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-left max-w-md mx-auto">
+                  {/* Always render the QR region div, but show different content based on scanner state */}
+                  <div className="relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '350px' }}>
+                    <div id={qrCodeRegionId} className="w-full h-full"></div>
+                    
+                    {!isScannerActive ? (
+                      /* Camera startup UI overlay */
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg p-6 sm:p-8">
+                        <div className="text-center h-full flex flex-col justify-center">
+                          <Camera className="h-12 w-12 sm:h-16 sm:w-16 text-blue-600 mx-auto mb-4" />
+                          <h4 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Start Camera Scanner</h4>
+                          <p className="text-sm sm:text-base text-gray-600 mb-4 px-2">
+                            Click the button below to start scanning QR codes automatically with your camera
+                          </p>
+                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-6 text-left max-w-md mx-auto">
                             <div className="flex items-start gap-2">
-                              <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                              <div className="text-sm text-red-800">
-                                <p className="font-medium">Error</p>
-                                <p>{scannerError}</p>
+                              <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <div className="text-sm text-amber-800">
+                                <p className="font-medium mb-1">Camera Permission Required</p>
+                                <p>Your browser will ask for camera access. Please click "Allow" to enable QR code scanning.</p>
                               </div>
                             </div>
                           </div>
-                        )}
-                        
-                        <Button 
-                          onClick={startScanner}
-                          className="bg-blue-600 hover:bg-blue-700 h-12 px-6"
-                          size="lg"
-                          disabled={loading}
-                        >
-                          {loading ? (
-                            <>
-                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                              Starting Camera...
-                            </>
-                          ) : (
-                            <>
-                              <Video className="h-5 w-5 mr-2" />
-                              Start Camera & Request Permission
-                            </>
+                          
+                          {scannerError && (
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 text-left max-w-md mx-auto">
+                              <div className="flex items-start gap-2">
+                                <XCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+                                <div className="text-sm text-red-800">
+                                  <p className="font-medium">Error</p>
+                                  <p>{scannerError}</p>
+                                </div>
+                              </div>
+                            </div>
                           )}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-green-50 border border-green-200 rounded-lg gap-3">
-                        <div className="flex items-center gap-2">
-                          <Video className="h-5 w-5 text-green-600 animate-pulse" />
-                          <div className="flex flex-col">
-                            <span className="font-medium text-green-900 text-sm sm:text-base">
-                              Camera is active - Point at student QR codes
-                            </span>
-                            {fallbackMode && (
-                              <span className="text-xs text-green-700">
-                                Using fallback scanner
-                              </span>
+                          
+                          <Button 
+                            onClick={startScanner}
+                            className="bg-blue-600 hover:bg-blue-700 h-12 px-6"
+                            size="lg"
+                            disabled={loading}
+                          >
+                            {loading ? (
+                              <>
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                Starting Camera...
+                              </>
+                            ) : (
+                              <>
+                                <Video className="h-5 w-5 mr-2" />
+                                Start Camera & Request Permission
+                              </>
                             )}
-                          </div>
+                          </Button>
                         </div>
-                        <Button 
-                          onClick={stopScanner}
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:w-auto"
-                        >
-                          <VideoOff className="h-4 w-4 mr-2" />
-                          Stop Camera
-                        </Button>
                       </div>
-
-                      {/* QR Scanner Preview */}
-                      <div className="relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '350px' }}>
-                        <div id={qrCodeRegionId} className="w-full h-full"></div>
+                    ) : (
+                      /* Scanner active UI overlay */
+                      <>
                         <div className="absolute top-4 left-4 right-4 z-10">
                           <div className="bg-black bg-opacity-70 text-white p-3 rounded-lg text-center">
                             <p className="text-sm">Position the QR code within the frame</p>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
+                        
+                        <div className="absolute bottom-4 left-4 right-4 z-10">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-green-50 bg-opacity-95 border border-green-200 rounded-lg gap-3">
+                            <div className="flex items-center gap-2">
+                              <Video className="h-5 w-5 text-green-600 animate-pulse" />
+                              <div className="flex flex-col">
+                                <span className="font-medium text-green-900 text-sm sm:text-base">
+                                  Camera is active - Point at student QR codes
+                                </span>
+                                {fallbackMode && (
+                                  <span className="text-xs text-green-700">
+                                    Using fallback scanner
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <Button 
+                              onClick={stopScanner}
+                              variant="outline"
+                              size="sm"
+                              className="w-full sm:w-auto"
+                            >
+                              <VideoOff className="h-4 w-4 mr-2" />
+                              Stop Camera
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
 
                   {scannerError && (
                     <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
