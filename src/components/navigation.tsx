@@ -80,15 +80,28 @@ export function Navigation({ className }: NavigationProps) {
       ]
     }
 
-    return [
+    const baseItems = [
       { 
         href: `/dashboard/${userType}`, 
         label: 'Dashboard', 
         icon: Home 
       },
       { href: '/courses', label: 'Courses', icon: BookOpen },
-      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
     ]
+
+    // Add online courses for students and teachers
+    if (userType === 'student' || userType === 'teacher') {
+      baseItems.push({ href: '/online-courses', label: 'Online Courses', icon: BarChart3 })
+    }
+
+    // Add online course management for teachers
+    if (userType === 'teacher' || userType === 'admin') {
+      baseItems.push({ href: '/online-courses/manage', label: 'Manage Online Courses', icon: Settings })
+    }
+
+    baseItems.push({ href: '/dashboard/settings', label: 'Settings', icon: Settings })
+
+    return baseItems
   }
 
   const menuItems = getMenuItems()
