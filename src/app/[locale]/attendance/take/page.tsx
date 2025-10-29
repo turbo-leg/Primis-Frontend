@@ -62,6 +62,7 @@ export default function TakeAttendancePage() {
   const [scannerError, setScannerError] = useState<string | null>(null)
   const [fallbackMode, setFallbackMode] = useState(false)
   const scannerRef = useRef<any>(null)
+  const fallbackScannerRef = useRef<any>(null)
   const qrCodeRegionId = 'qr-reader'
 
   // Type guard to check if user is a teacher
@@ -160,11 +161,23 @@ export default function TakeAttendancePage() {
         // Dynamic import to avoid SSR issues
         const { Html5Qrcode } = await import('html5-qrcode')
         
-        // Ensure the DOM element exists
-        const qrRegion = document.getElementById(qrCodeRegionId)
-        if (!qrRegion) {
-          throw new Error('QR scanner region not found in DOM')
+        // Wait a bit for DOM to be fully rendered and check if element exists
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        let qrRegion = document.getElementById(qrCodeRegionId)
+        let retries = 0
+        while (!qrRegion && retries < 10) {
+          await new Promise(resolve => setTimeout(resolve, 200))
+          qrRegion = document.getElementById(qrCodeRegionId)
+          retries++
         }
+        
+        if (!qrRegion) {
+          throw new Error('QR scanner region not found in DOM after waiting. The element may not be rendered yet.')
+        }
+
+        // Clear the region before initializing
+        qrRegion.innerHTML = ''
 
         const html5QrCode = new Html5Qrcode(qrCodeRegionId)
         scannerRef.current = html5QrCode
@@ -213,6 +226,7 @@ export default function TakeAttendancePage() {
         try {
           await startFallbackScanner()
         } catch (fallbackError: any) {
+          console.error('Fallback scanner also failed:', fallbackError)
           throw new Error('All QR scanner methods failed. Please try refreshing the page or use manual QR input.')
         }
       }
@@ -236,82 +250,109 @@ export default function TakeAttendancePage() {
   }
 
   const startFallbackScanner = async () => {
-    const QrScanner = (await import('qr-scanner')).default
-    
-    const qrRegion = document.getElementById(qrCodeRegionId)
-    if (!qrRegion) {
-      throw new Error('QR scanner region not found')
-    }
-
-    // Create video element for qr-scanner
-    const video = document.createElement('video')
-    video.style.width = '100%'
-    video.style.height = '100%'
-    video.style.objectFit = 'cover'
-    qrRegion.appendChild(video)
-
-    const qrScanner = new QrScanner(
-      video,
-      async (result: any) => {
-        console.log('QR Code scanned (fallback):', result.data)
-        if (navigator.vibrate) {
-          navigator.vibrate(200)
-        }
-        await handleQRCodeScanned(result.data)
-      },
-      {
-        highlightScanRegion: true,
-        highlightCodeOutline: true,
-        preferredCamera: 'environment',
-        maxScansPerSecond: 10
+    try {
+      console.log('Starting fallback scanner with qr-scanner')
+      const QrScanner = (await import('qr-scanner')).default
+      
+      // Wait a bit and ensure the DOM element exists
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      let qrRegion = document.getElementById(qrCodeRegionId)
+      let retries = 0
+      while (!qrRegion && retries < 10) {
+        await new Promise(resolve => setTimeout(resolve, 200))
+        qrRegion = document.getElementById(qrCodeRegionId)
+        retries++
       }
-    )
+      
+      if (!qrRegion) {
+        throw new Error('QR scanner region not found in DOM after waiting for fallback scanner.')
+      }
 
-    scannerRef.current = qrScanner
-    await qrScanner.start()
-    
-    setIsScannerActive(true)
-    setScannerError(null)
-    setFallbackMode(true)
-    setLoading(false)
-    showMessage('success', 'Fallback camera started! Point at student QR codes.')
+      // Create a video element for the fallback scanner
+      const video = document.createElement('video')
+      video.style.width = '100%'
+      video.style.height = '400px'
+      video.style.objectFit = 'cover'
+      
+      // Clear the region and add the video
+      qrRegion.innerHTML = ''
+      qrRegion.appendChild(video)
+
+      const qrScanner = new QrScanner(
+        video,
+        async (result: any) => {
+          console.log('Fallback QR Code scanned:', result.data)
+          // Vibrate on success if supported
+          if (navigator.vibrate) {
+            navigator.vibrate(200)
+          }
+          await handleQRCodeScanned(result.data)
+        },
+        {
+          highlightScanRegion: true,
+          highlightCodeOutline: true,
+          preferredCamera: 'environment',
+          maxScansPerSecond: 5,
+        }
+      )
+
+      fallbackScannerRef.current = qrScanner
+      await qrScanner.start()
+      
+      setIsScannerActive(true)
+      setFallbackMode(true)
+      setScannerError(null)
+      setLoading(false)
+      showMessage('success', 'Fallback camera scanner started! Point at student QR codes.')
+    } catch (fallbackError: any) {
+      console.error('Fallback scanner failed:', fallbackError)
+      throw fallbackError
+    }
   }
 
   const stopScanner = async () => {
-    if (scannerRef.current && isScannerActive) {
-      try {
-        if (fallbackMode) {
-          // For qr-scanner library
-          await scannerRef.current.stop()
-          await scannerRef.current.destroy()
-          
-          // Clean up video element
-          const qrRegion = document.getElementById(qrCodeRegionId)
-          if (qrRegion) {
-            qrRegion.innerHTML = ''
-          }
-        } else {
-          // For html5-qrcode library
-          await scannerRef.current.stop()
-          await scannerRef.current.clear()
-        }
-        
-        setIsScannerActive(false)
-        setScannerError(null)
-        setFallbackMode(false)
-        showMessage('success', 'Camera stopped successfully.')
-      } catch (err: any) {
-        console.error('Error stopping scanner:', err)
-        // Force cleanup even if stop fails
-        setIsScannerActive(false)
-        setScannerError(null)
-        setFallbackMode(false)
-        
-        // Clean up DOM
-        const qrRegion = document.getElementById(qrCodeRegionId)
-        if (qrRegion) {
-          qrRegion.innerHTML = ''
-        }
+    try {
+      if (fallbackScannerRef.current && fallbackMode) {
+        // For qr-scanner library
+        await fallbackScannerRef.current.stop()
+        fallbackScannerRef.current.destroy()
+        fallbackScannerRef.current = null
+      } else if (scannerRef.current && isScannerActive) {
+        // For html5-qrcode library
+        await scannerRef.current.stop()
+        await scannerRef.current.clear()
+        scannerRef.current = null
+      }
+      
+      // Always clean up the DOM region
+      const qrRegion = document.getElementById(qrCodeRegionId)
+      if (qrRegion) {
+        qrRegion.innerHTML = ''
+      }
+      
+      setIsScannerActive(false)
+      setScannerError(null)
+      setFallbackMode(false)
+      showMessage('success', 'Camera stopped successfully.')
+    } catch (err: any) {
+      console.error('Error stopping scanner:', err)
+      // Force cleanup even if stop fails
+      setIsScannerActive(false)
+      setScannerError(null)
+      setFallbackMode(false)
+      
+      // Clean up DOM and refs
+      const qrRegion = document.getElementById(qrCodeRegionId)
+      if (qrRegion) {
+        qrRegion.innerHTML = ''
+      }
+      
+      if (scannerRef.current) {
+        scannerRef.current = null
+      }
+      if (fallbackScannerRef.current) {
+        fallbackScannerRef.current = null
       }
     }
   }
@@ -644,7 +685,16 @@ export default function TakeAttendancePage() {
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-green-50 border border-green-200 rounded-lg gap-3">
                         <div className="flex items-center gap-2">
                           <Video className="h-5 w-5 text-green-600 animate-pulse" />
-                          <span className="font-medium text-green-900 text-sm sm:text-base">Camera is active - Point at student QR codes</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-green-900 text-sm sm:text-base">
+                              Camera is active - Point at student QR codes
+                            </span>
+                            {fallbackMode && (
+                              <span className="text-xs text-green-700">
+                                Using fallback scanner
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <Button 
                           onClick={stopScanner}
