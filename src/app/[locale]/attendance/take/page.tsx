@@ -89,7 +89,7 @@ export default function TakeAttendancePage() {
     
     try {
       const existingAttendance = await apiClient.getCourseAttendance(selectedCourse.course_id, attendanceDate)
-      const markedStudentIds = new Set(existingAttendance.map((att: any) => Number(att.student_id)))
+      const markedStudentIds = new Set<number>(existingAttendance.map((att: any) => Number(att.student_id)))
       setAttendanceMarked(markedStudentIds)
     } catch (error) {
       console.error('Error fetching existing attendance:', error)
