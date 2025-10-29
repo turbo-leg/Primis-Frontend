@@ -205,6 +205,69 @@ export default function OnlineCoursesPage() {
     }
   }
 
+  const deleteOnlineCourse = async (onlineCourseId: number) => {
+    if (!confirm('Are you sure you want to permanently delete this online course? This action cannot be undone and will remove all lessons and student progress.')) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      await apiClient.delete(`/api/v1/online-courses/${onlineCourseId}`)
+      showMessage('success', 'Online course deleted successfully!')
+      fetchOnlineCourses()
+      fetchCourses()
+      // Reset selected course if it was deleted
+      if (selectedCourse) {
+        const deletedCourse = onlineCourses.find(oc => oc.online_course_id === onlineCourseId)
+        if (deletedCourse && deletedCourse.course_id === selectedCourse.course_id) {
+          setSelectedCourse(null)
+          setLessons([])
+        }
+      }
+    } catch (error: any) {
+      showMessage('error', error.response?.data?.detail || 'Failed to delete online course')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const archiveOnlineCourse = async (onlineCourseId: number) => {
+    if (!confirm('Are you sure you want to archive this online course? Students will no longer be able to access it, but progress data will be preserved.')) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      await apiClient.put(`/api/v1/online-courses/${onlineCourseId}/archive`)
+      showMessage('success', 'Online course archived successfully!')
+      fetchOnlineCourses()
+      fetchCourses()
+    } catch (error: any) {
+      showMessage('error', error.response?.data?.detail || 'Failed to archive online course')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteLesson = async (lessonId: number) => {
+    if (!confirm('Are you sure you want to delete this lesson? This action cannot be undone and will remove all student progress for this lesson.')) {
+      return
+    }
+
+    try {
+      setLoading(true)
+      await apiClient.delete(`/api/v1/online-courses/lesson/${lessonId}`)
+      showMessage('success', 'Lesson deleted successfully!')
+      if (selectedCourse) {
+        fetchLessons(selectedCourse.course_id)
+      }
+    } catch (error: any) {
+      showMessage('error', error.response?.data?.detail || 'Failed to delete lesson')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const getDifficultyBadgeColor = (level: string) => {
     switch (level) {
       case 'beginner': return 'bg-green-100 text-green-800 border-green-200'
@@ -392,6 +455,44 @@ export default function OnlineCoursesPage() {
                   </CardContent>
                 </Card>
 
+                {/* Course Management Actions */}
+                {(() => {
+                  const onlineCourse = onlineCourses.find(oc => oc.course_id === selectedCourse.course_id)
+                  if (onlineCourse) {
+                    return (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Course Management</CardTitle>
+                          <CardDescription>Archive or delete this online course</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex gap-3 justify-center">
+                            <Button
+                              variant="outline"
+                              onClick={() => archiveOnlineCourse(onlineCourse.online_course_id)}
+                              className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                            >
+                              <Settings className="h-4 w-4 mr-2" />
+                              Archive Course
+                            </Button>
+                            {userType === 'admin' && (
+                              <Button
+                                variant="outline"
+                                onClick={() => deleteOnlineCourse(onlineCourse.online_course_id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete Course
+                              </Button>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  }
+                  return null
+                })()}
+
                 {/* Lessons List */}
                 <Card>
                   <CardHeader>
@@ -445,7 +546,12 @@ export default function OnlineCoursesPage() {
                                 <Button size="sm" variant="outline">
                                   <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => deleteLesson(lesson.lesson_id)}
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
