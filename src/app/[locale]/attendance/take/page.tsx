@@ -412,7 +412,9 @@ export default function TakeAttendancePage() {
 
     try {
       setLoading(true)
-      await apiClient.post('/api/v1/attendance/mark', {
+      
+      // Use the specific markAttendance method from apiClient
+      const response = await apiClient.markAttendance({
         student_id: studentId,
         course_id: selectedCourse.course_id,
         attendance_date: attendanceDate,
@@ -432,7 +434,29 @@ export default function TakeAttendancePage() {
       }
     } catch (error: any) {
       console.error('Manual attendance error:', error)
-      const errorMsg = error.response?.data?.detail || 'Failed to mark attendance. Please try again.'
+      
+      // Better error handling
+      let errorMsg = 'Failed to mark attendance. Please try again.'
+      
+      if (error.response?.data?.detail) {
+        errorMsg = error.response.data.detail
+      } else if (error.response?.data?.message) {
+        errorMsg = error.response.data.message
+      } else if (error.message) {
+        errorMsg = error.message
+      }
+      
+      // Handle specific error cases
+      if (error.response?.status === 404) {
+        errorMsg = 'Student or course not found. Please refresh the page and try again.'
+      } else if (error.response?.status === 400) {
+        errorMsg = 'Invalid attendance data. Please check the course and date.'
+      } else if (error.response?.status === 409) {
+        errorMsg = 'Attendance already marked for this student today.'
+      } else if (error.code === 'ECONNREFUSED' || error.message === 'Network Error') {
+        errorMsg = 'Cannot connect to server. Please check your internet connection.'
+      }
+      
       showMessage('error', errorMsg)
     } finally {
       setLoading(false)
@@ -921,7 +945,7 @@ export default function TakeAttendancePage() {
                                 size="sm"
                                 variant={attendanceMarked.has(enrollment.student.student_id) ? "default" : "outline"}
                                 onClick={() => handleManualAttendance(enrollment.student.student_id, 'present')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id)}
+                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
                                 className="bg-green-600 hover:bg-green-700 text-white"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -930,7 +954,7 @@ export default function TakeAttendancePage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleManualAttendance(enrollment.student.student_id, 'absent')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id)}
+                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
                               >
                                 <XCircle className="h-4 w-4 text-red-600" />
                               </Button>
@@ -938,7 +962,7 @@ export default function TakeAttendancePage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleManualAttendance(enrollment.student.student_id, 'late')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id)}
+                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
                               >
                                 <Clock className="h-4 w-4 text-amber-600" />
                               </Button>
@@ -946,7 +970,7 @@ export default function TakeAttendancePage() {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleManualAttendance(enrollment.student.student_id, 'excused')}
-                                disabled={attendanceMarked.has(enrollment.student.student_id)}
+                                disabled={attendanceMarked.has(enrollment.student.student_id) || loading}
                               >
                                 <AlertCircle className="h-4 w-4 text-blue-600" />
                               </Button>
