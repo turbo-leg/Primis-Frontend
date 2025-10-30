@@ -335,9 +335,11 @@ export default function OnlineCoursesPage() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">{course.course.course_name}</CardTitle>
+                    <CardTitle className="text-lg mb-2">
+                      {course.course?.course_name || `Online Course ${course.online_course_id}`}
+                    </CardTitle>
                     <CardDescription className="text-sm line-clamp-2">
-                      {course.course.description}
+                      {course.course?.description || 'No description available'}
                     </CardDescription>
                   </div>
                   {course.progress && (
@@ -366,11 +368,11 @@ export default function OnlineCoursesPage() {
                   <div className="text-sm text-gray-600">
                     <div className="flex items-center justify-between">
                       <span>Instructor:</span>
-                      <span className="font-medium">{course.course.teacher_name}</span>
+                      <span className="font-medium">{course.course?.teacher_name || 'Unknown'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Department:</span>
-                      <span className="font-medium">{course.course.department_name}</span>
+                      <span className="font-medium">{course.course?.department_name || 'Unknown'}</span>
                     </div>
                   </div>
 

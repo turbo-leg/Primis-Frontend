@@ -218,6 +218,25 @@ export default function ProtectedVideoPlayer({
     }
   }
 
+  // Helper function to check if URL is from Google Drive
+  const isGoogleDriveUrl = (url: string) => {
+    return url && url.includes('drive.google.com')
+  }
+
+  // Convert Google Drive URL to embed format for iframe
+  const getGoogleDriveEmbedUrl = (url: string) => {
+    if (!url || !url.includes('drive.google.com')) return url
+    
+    // Extract file ID from various Google Drive URL formats
+    const fileIdMatch = url.match(/(?:\/file\/d\/|id=)([a-zA-Z0-9_-]+)/)
+    if (fileIdMatch) {
+      const fileId = fileIdMatch[1]
+      return `https://drive.google.com/file/d/${fileId}/preview`
+    }
+    
+    return url
+  }
+
   const handlePlayPause = () => {
     if (!videoRef.current) return
     
@@ -327,84 +346,105 @@ export default function ProtectedVideoPlayer({
         </div>
       )}
 
-      {/* Video Element */}
-      <video
-        ref={videoRef}
-        src={videoUrl || ''}
-        className="w-full h-full"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-        onVolumeChange={handleVolumeChange}
-        controlsList="nodownload nofullscreen noremoteplayback"
-        disablePictureInPicture
-        playsInline
-      />
-
-      {/* Custom Controls */}
-      <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-        {/* Progress Bar */}
-        <div className="relative w-full h-1 bg-gray-600 rounded mb-4 cursor-pointer" onClick={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect()
-          const percentage = ((e.clientX - rect.left) / rect.width) * 100
-          seekTo(percentage)
-        }}>
-          <div 
-            className="absolute left-0 top-0 h-full bg-red-600 rounded"
-            style={{ width: `${(currentTime / duration) * 100}%` }}
+      {/* Video Element or Google Drive Iframe */}
+      {videoUrl && (
+        isGoogleDriveUrl(videoUrl) ? (
+          <iframe
+            src={getGoogleDriveEmbedUrl(videoUrl)}
+            className="w-full h-full"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            style={{ border: 'none' }}
           />
-        </div>
+        ) : (
+          <video
+            ref={videoRef}
+            src={videoUrl}
+            className="w-full h-full"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onVolumeChange={handleVolumeChange}
+            controlsList="nodownload nofullscreen noremoteplayback"
+            disablePictureInPicture
+            playsInline
+          />
+        )
+      )}
 
-        <div className="flex items-center justify-between text-white">
-          {/* Left Controls */}
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={handlePlayPause}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded"
-            >
-              {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-            </button>
-            
+      {/* Custom Controls - Only show for non-Google Drive videos */}
+      {videoUrl && !isGoogleDriveUrl(videoUrl) && (
+        <div className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Progress Bar */}
+          <div className="relative w-full h-1 bg-gray-600 rounded mb-4 cursor-pointer" onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect()
+            const percentage = ((e.clientX - rect.left) / rect.width) * 100
+            seekTo(percentage)
+          }}>
+            <div 
+              className="absolute left-0 top-0 h-full bg-red-600 rounded"
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-white">
+            {/* Left Controls */}
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={handlePlayPause}
+                className="p-2 hover:bg-white hover:bg-opacity-20 rounded"
+              >
+                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+              </button>
+              
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={toggleMute}
+                  className="p-1 hover:bg-white hover:bg-opacity-20 rounded"
+                >
+                  {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                </button>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={volume}
+                  onChange={(e) => {
+                    const newVolume = parseFloat(e.target.value)
+                    if (videoRef.current) {
+                      videoRef.current.volume = newVolume
+                    }
+                  }}
+                  className="w-20"
+                />
+              </div>
+              
+              <div className="text-sm">
+                {formatTime(currentTime)} / {formatTime(duration)}
+              </div>
+            </div>
+
+            {/* Right Controls */}
             <div className="flex items-center gap-2">
               <button 
-                onClick={toggleMute}
-                className="p-1 hover:bg-white hover:bg-opacity-20 rounded"
+                onClick={toggleFullscreen}
+                className="p-2 hover:bg-white hover:bg-opacity-20 rounded"
               >
-                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+                <Maximize className="h-5 w-5" />
               </button>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={volume}
-                onChange={(e) => {
-                  const newVolume = parseFloat(e.target.value)
-                  if (videoRef.current) {
-                    videoRef.current.volume = newVolume
-                  }
-                }}
-                className="w-20"
-              />
             </div>
-            
-            <div className="text-sm">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </div>
-          </div>
-
-          {/* Right Controls */}
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={toggleFullscreen}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded"
-            >
-              <Maximize className="h-5 w-5" />
-            </button>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Simple message for Google Drive videos */}
+      {videoUrl && isGoogleDriveUrl(videoUrl) && (
+        <div className="absolute bottom-4 left-4 right-4 bg-black bg-opacity-75 text-white p-3 rounded">
+          <p className="text-sm">Video hosted on Google Drive - Use the video controls within the player</p>
+        </div>
+      )}
 
       {/* Anti-selection overlay */}
       <div className="absolute inset-0 pointer-events-none select-none" style={{
