@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-import { Bell, Check, CheckCheck, Trash2, X } from 'lucide-react'
+import { Bell, Check, CheckCheck, Trash2, X, Wifi, WifiOff } from 'lucide-react'
 import { useNotificationCount, useNotifications, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '@/hooks/useNotifications'
+import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 
@@ -28,6 +29,12 @@ export default function NotificationBell() {
   const panelRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const locale = useLocale()
+
+  // Real-time notifications with WebSocket
+  const { isConnected, connectionError } = useRealtimeNotifications({
+    enabled: true,
+    showToasts: true
+  })
 
   const { data: countData } = useNotificationCount()
   const { data: notifications, isLoading } = useNotifications(showUnreadOnly)
@@ -117,9 +124,19 @@ export default function NotificationBell() {
           {/* Header */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Notifications
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Notifications
+                </h3>
+                {/* Real-time connection status */}
+                <div className="flex items-center gap-1" title={isConnected ? 'Real-time connected' : 'Using polling'}>
+                  {isConnected ? (
+                    <Wifi className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <WifiOff className="w-4 h-4 text-gray-400" />
+                  )}
+                </div>
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
