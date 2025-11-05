@@ -111,9 +111,38 @@ export default function SettingsPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      // TODO: Implement notification preferences endpoint
+      // Send notification preferences to backend
+      const response = await fetch('/api/v1/notifications/preferences', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify({
+          browser_notifications_enabled: formData.notificationsPush,
+          push_notifications_enabled: formData.notificationsPush,
+          assignment_notifications: true,
+          grade_notifications: true,
+          attendance_notifications: true,
+          announcement_notifications: true,
+          general_notifications: formData.notificationsInApp,
+          notification_sound_enabled: true,
+          notification_badge_enabled: true,
+          notification_vibration_enabled: true,
+          quiet_hours_enabled: false,
+          quiet_hours_start: '22:00',
+          quiet_hours_end: '08:00',
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to update notification preferences')
+      }
+
       setMessage({ type: 'success', text: 'Notification preferences updated' })
+      setTimeout(() => setMessage(null), 3000)
     } catch (error) {
+      console.error('Notification save error:', error)
       setMessage({ type: 'error', text: 'Failed to update preferences' })
     } finally {
       setLoading(false)

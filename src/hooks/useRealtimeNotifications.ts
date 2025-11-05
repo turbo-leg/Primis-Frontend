@@ -28,7 +28,7 @@ interface UseRealtimeNotificationsOptions {
 export function useRealtimeNotifications(options: UseRealtimeNotificationsOptions = {}) {
   const { enabled = true, showToasts = true, onNotification } = options
   
-  const { user } = useAuthStore()
+  const { user, userType } = useAuthStore()
   const { toast } = useToast()
   const queryClient = useQueryClient()
   
@@ -37,9 +37,21 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectAttemptsRef = useRef(0)
+  const isConnectingRef = useRef(false)
   
   const MAX_RECONNECT_ATTEMPTS = 5
   const RECONNECT_DELAY = 3000 // 3 seconds
+
+  // Extract user ID from user object based on user type
+  const getUserId = () => {
+    if (!user) return null
+    if (userType === 'student' && 'student_id' in user) return (user as any).student_id
+    if (userType === 'teacher' && 'teacher_id' in user) return (user as any).teacher_id
+    if (userType === 'admin' && 'admin_id' in user) return (user as any).admin_id
+    return null
+  }
+
+  const userId = getUserId()
 
   const handleNotification = useCallback((notification: RealtimeNotification) => {
     console.log('📨 Real-time notification received:', notification)
@@ -48,7 +60,48 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
     queryClient.invalidateQueries({ queryKey: ['notifications'] })
     queryClient.invalidateQueries({ queryKey: ['notificationCount'] })
     
-    // Show toast notification
+    // Show browser notification (Chrome notification)
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        const browserNotificationOptions: NotificationOptions = {
+          body: notification.message,
+          icon: '/logo.png',
+          badge: '/logo.png',
+          tag: `notification-${notification.id || Date.now()}`,
+          requireInteraction: notification.priority === 'urgent' || notification.priority === 'high',
+          data: {
+            url: notification.metadata?.url || '/dashboard',
+            id: notification.id,
+            type: notification.notification_type
+          }
+        }
+        
+        // Add sound for urgent notifications
+        if (notification.priority === 'urgent' || notification.priority === 'high') {
+          // Note: Some browsers support vibration API
+          if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200])
+          }
+        }
+        
+        // Show the browser notification
+        if (navigator.serviceWorker?.controller) {
+          // If service worker is active, use it
+          navigator.serviceWorker.controller.postMessage({
+            type: 'SHOW_NOTIFICATION',
+            title: notification.title,
+            options: browserNotificationOptions
+          })
+        } else {
+          // Fallback to direct notification
+          new Notification(notification.title, browserNotificationOptions)
+        }
+      } catch (err) {
+        console.error('❌ Failed to show browser notification:', err)
+      }
+    }
+    
+    // Show toast notification (in-app)
     if (showToasts) {
       const priorityStyles = {
         urgent: { variant: 'destructive' as const, duration: 10000 },
@@ -86,56 +139,102 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
   }, [queryClient, showToasts, toast, onNotification])
 
   const connect = useCallback(() => {
-    if (!user?.id || !enabled || wsRef.current?.readyState === WebSocket.OPEN) {
+    console.log('🔌 [WebSocket] Connect called - userId:', userId, 'enabled:', enabled, 'current state:', wsRef.current?.readyState)
+    
+    if (!userId || !enabled || wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('🔌 [WebSocket] Skipping connection:', { hasUserId: !!userId, enabled, currentState: wsRef.current?.readyState })
+      isConnectingRef.current = false
       return
     }
 
     try {
-      // Get WebSocket URL from environment or use default
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const wsHost = process.env.NEXT_PUBLIC_WS_URL || 
-                     process.env.NEXT_PUBLIC_API_URL?.replace(/^https?:/, wsProtocol) ||
-                     `${wsProtocol}//${window.location.host}/api`
+      // Get WebSocket URL from environment or construct from API URL
+      let wsUrl: string
       
-      const wsUrl = `${wsHost}/notifications/ws/${user.id}`
+      console.log('🔌 [WebSocket] Environment vars:', {
+        NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL,
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL
+      })
       
-      console.log('🔌 Connecting to WebSocket:', wsUrl)
+      if (process.env.NEXT_PUBLIC_WS_URL) {
+        // Use explicit WebSocket URL if provided
+        // First try without token to test if connection works
+        wsUrl = `${process.env.NEXT_PUBLIC_WS_URL}/v1/notifications/ws/${userId}`
+        
+        // Then add token if available
+        const token = localStorage.getItem('access_token')
+        if (token) {
+          wsUrl += `?token=${encodeURIComponent(token)}`
+        }
+      } else if (process.env.NEXT_PUBLIC_API_URL) {
+        // Construct WebSocket URL from API URL
+        const wsProtocol = process.env.NEXT_PUBLIC_API_URL.startsWith('https') ? 'wss:' : 'ws:'
+        const apiHost = process.env.NEXT_PUBLIC_API_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
+        wsUrl = `${wsProtocol}//${apiHost}/api/v1/notifications/ws/${userId}`
+        
+        const token = localStorage.getItem('access_token')
+        if (token) {
+          wsUrl += `?token=${encodeURIComponent(token)}`
+        }
+      } else {
+        // Fallback to window location
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        wsUrl = `${wsProtocol}//${window.location.host}/api/v1/notifications/ws/${userId}`
+        
+        const token = localStorage.getItem('access_token')
+        if (token) {
+          wsUrl += `?token=${encodeURIComponent(token)}`
+        }
+      }
+      
+      console.log('🔌 [WebSocket] Connecting to:', wsUrl)
       
       const ws = new WebSocket(wsUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
-        console.log('✅ WebSocket connected')
+        console.log('✅ [WebSocket] Connected successfully')
+        isConnectingRef.current = false
         setIsConnected(true)
         setConnectionError(null)
         reconnectAttemptsRef.current = 0
       }
 
       ws.onmessage = (event) => {
+        console.log('📨 [WebSocket] Message received:', event.data)
+        
+        // Skip echo test messages (for debugging)
+        if (event.data.startsWith('Echo:')) {
+          console.log('🔄 [WebSocket] Echo response (test):', event.data)
+          return
+        }
+        
         try {
           const notification: RealtimeNotification = JSON.parse(event.data)
           handleNotification(notification)
         } catch (err) {
-          console.error('❌ Failed to parse notification:', err)
+          console.error('❌ [WebSocket] Failed to parse notification:', err, 'Data:', event.data)
         }
       }
 
       ws.onerror = (error) => {
-        console.error('❌ WebSocket error:', error)
+        console.error('❌ [WebSocket] Error:', error)
         setConnectionError('Connection error')
       }
 
       ws.onclose = () => {
-        console.log('🔌 WebSocket disconnected')
+        console.log('🔌 [WebSocket] Disconnected, readyState:', wsRef.current?.readyState)
+        isConnectingRef.current = false
         setIsConnected(false)
         wsRef.current = null
 
         // Attempt to reconnect
         if (enabled && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttemptsRef.current++
-          console.log(`🔄 Reconnecting... (Attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`)
+          console.log(`🔄 [WebSocket] Reconnecting... (Attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`)
           
           reconnectTimeoutRef.current = setTimeout(() => {
+            isConnectingRef.current = true
             connect()
           }, RECONNECT_DELAY * reconnectAttemptsRef.current)
         } else if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
@@ -144,18 +243,20 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
       }
     } catch (err) {
       console.error('❌ Failed to connect to WebSocket:', err)
+      isConnectingRef.current = false
       setConnectionError('Failed to establish connection')
     }
-  }, [user?.id, enabled, handleNotification])
+  }, [userId, enabled, handleNotification])
 
   const disconnect = useCallback(() => {
+    console.log('🔌 [WebSocket] Disconnect called')
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current)
       reconnectTimeoutRef.current = null
     }
 
     if (wsRef.current) {
-      console.log('🔌 Disconnecting WebSocket')
+      console.log('🔌 Closing WebSocket')
       wsRef.current.close()
       wsRef.current = null
     }
@@ -163,20 +264,26 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
     setIsConnected(false)
     setConnectionError(null)
     reconnectAttemptsRef.current = 0
+    isConnectingRef.current = false
   }, [])
 
   // Connect/disconnect based on user and enabled status
   useEffect(() => {
-    if (enabled && user?.id) {
+    console.log('🔌 [WebSocket] useEffect triggered - userId:', userId, 'enabled:', enabled)
+    
+    if (enabled && userId && !isConnectingRef.current) {
+      isConnectingRef.current = true
       connect()
-    } else {
+    } else if (!enabled || !userId) {
+      console.log('🔌 [WebSocket] Not connecting - enabled:', enabled, 'userId:', userId)
       disconnect()
     }
 
     return () => {
-      disconnect()
+      // Don't disconnect on every effect cleanup - only when component unmounts
+      // Check if we're actually unmounting by looking at the effect cleanup
     }
-  }, [enabled, user?.id, connect, disconnect])
+  }, [enabled, userId])
 
   // Send heartbeat to keep connection alive
   useEffect(() => {

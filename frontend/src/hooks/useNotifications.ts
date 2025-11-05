@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api'
+import { useAuthStore } from '@/store/auth'
 
 export interface Notification {
   notification_id: number
@@ -34,6 +35,8 @@ export interface NotificationPreference {
 
 // Get notifications
 export function useNotifications(unreadOnly: boolean = false) {
+  const { isAuthenticated } = useAuthStore()
+  
   return useQuery<Notification[]>({
     queryKey: ['notifications', unreadOnly],
     queryFn: async () => {
@@ -42,6 +45,7 @@ export function useNotifications(unreadOnly: boolean = false) {
       })
       return response
     },
+    enabled: isAuthenticated, // Only query if authenticated
     refetchInterval: 30000, // Poll every 30 seconds
     staleTime: 10000
   })
@@ -49,12 +53,15 @@ export function useNotifications(unreadOnly: boolean = false) {
 
 // Get notification count
 export function useNotificationCount() {
+  const { isAuthenticated } = useAuthStore()
+  
   return useQuery<NotificationCount>({
     queryKey: ['notificationCount'],
     queryFn: async () => {
       const response = await apiClient.get('/api/v1/notifications/count')
       return response
     },
+    enabled: isAuthenticated, // Only query if authenticated
     refetchInterval: 15000, // Poll every 15 seconds for count
     staleTime: 5000
   })
@@ -107,12 +114,15 @@ export function useDeleteNotification() {
 
 // Get notification preferences
 export function useNotificationPreferences() {
+  const { isAuthenticated } = useAuthStore()
+  
   return useQuery<NotificationPreference[]>({
     queryKey: ['notificationPreferences'],
     queryFn: async () => {
       const response = await apiClient.get('/api/v1/notifications/preferences')
       return response
-    }
+    },
+    enabled: isAuthenticated // Only query if authenticated
   })
 }
 

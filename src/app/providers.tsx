@@ -5,6 +5,12 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from 'react-hot-toast'
+import { useNotificationPermission } from '@/hooks/useNotificationPermission'
+
+function NotificationPermissionManager() {
+  useNotificationPermission()
+  return null
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -26,6 +32,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="primis-ui-theme">
+        <NotificationPermissionManager />
         {children}
         <Toaster 
           position="top-right"
