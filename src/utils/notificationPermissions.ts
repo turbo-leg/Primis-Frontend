@@ -14,10 +14,22 @@ export interface NotificationPermissionState {
 }
 
 /**
- * Check if browser supports notifications
+ * Check if browser supports notifications (with iOS Safari handling)
  */
 export function isNotificationSupported(): boolean {
-  return typeof window !== 'undefined' && 'Notification' in window
+  if (typeof window === 'undefined') return false
+  
+  // iOS Safari doesn't support the Notification API
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  const isIOSSafari = isIOS && isSafari
+  
+  if (isIOSSafari) {
+    console.log('[Notifications] iOS Safari detected - limited notification support')
+    return false // iOS Safari doesn't support browser notifications
+  }
+  
+  return 'Notification' in window
 }
 
 /**
@@ -172,25 +184,26 @@ export async function updateAppBadge(count: number): Promise<boolean> {
 }
 
 /**
- * Detect if device is mobile
+ * Detect if device is iOS Safari (limited notification support)
  */
-export function isMobileDevice(): boolean {
+export function isIOSSafari(): boolean {
   if (typeof window === 'undefined') return false
-
-  const userAgent = navigator.userAgent || navigator.vendor || ''
   
-  // Mobile user agents patterns
-  const mobilePatterns = [
-    /android/i,
-    /webos/i,
-    /iphone/i,
-    /ipad/i,
-    /ipod/i,
-    /blackberry/i,
-    /windows phone/i,
-  ]
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  
+  return isIOS && isSafari
+}
 
-  return mobilePatterns.some(pattern => pattern.test(userAgent))
+/**
+ * Get notification support level for current browser
+ */
+export function getNotificationSupportLevel(): 'full' | 'limited' | 'none' {
+  if (!isNotificationSupported()) {
+    return isIOSSafari() ? 'limited' : 'none'
+  }
+  
+  return 'full'
 }
 
 /**
@@ -237,25 +250,49 @@ export function getNetworkInfo(): {
 }
 
 /**
- * Request vibration feedback (mobile)
+ * Detect if device is mobile
  */
-export function vibrate(pattern: number | number[]): boolean {
-  if (!isVibrationSupported()) {
-    return false
-  }
+export function isMobileDevice(): boolean {
+  if (typeof window === 'undefined') return false
 
-  try {
-    navigator.vibrate(pattern)
-    return true
-  } catch (error) {
-    console.error('[Vibration] Failed to vibrate:', error)
-    return false
-  }
+  const userAgent = navigator.userAgent || navigator.vendor || ''
+  
+  // Mobile user agents patterns
+  const mobilePatterns = [
+    /android/i,
+    /webos/i,
+    /iphone/i,
+    /ipad/i,
+    /ipod/i,
+    /blackberry/i,
+    /windows phone/i,
+  ]
+
+  return mobilePatterns.some(pattern => pattern.test(userAgent))
 }
 
 /**
- * Get browser information for debugging
+ * Detect if device is iOS Safari (limited notification support)
  */
+export function isIOSSafari(): boolean {
+  if (typeof window === 'undefined') return false
+  
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  
+  return isIOS && isSafari
+}
+
+/**
+ * Get notification support level for current browser
+ */
+export function getNotificationSupportLevel(): 'full' | 'limited' | 'none' {
+  if (!isNotificationSupported()) {
+    return isIOSSafari() ? 'limited' : 'none'
+  }
+  
+  return 'full'
+}
 export function getBrowserInfo(): {
   userAgent: string
   deviceType: string

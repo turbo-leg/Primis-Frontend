@@ -79,62 +79,147 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
     queryClient.invalidateQueries({ queryKey: ['notificationCount'] })
     
     // Show browser notification (Chrome notification)
-    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      try {
-        const browserNotificationOptions: NotificationOptions = {
-          body: notification.message,
-          icon: '/logo.png',
-          badge: '/logo.png',
-          tag: `notification-${notification.id || Date.now()}`,
-          requireInteraction: notification.priority === 'urgent' || notification.priority === 'high',
-          data: {
-            url: notification.metadata?.url || '/dashboard',
-            id: notification.id,
-            type: notification.notification_type
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      // Check if iOS Safari (doesn't support notifications)
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      const isIOSSafari = isIOS && isSafari
+      
+      if (Notification.permission === 'granted' && !isIOSSafari) {
+        try {
+          const browserNotificationOptions: NotificationOptions = {
+            body: notification.message,
+            icon: '/logo.png',
+            badge: '/logo.png',
+            tag: `notification-${notification.id || Date.now()}`,
+            requireInteraction: notification.priority === 'urgent' || notification.priority === 'high',
+            data: {
+              url: notification.metadata?.url || '/dashboard',
+              id: notification.id,
+              type: notification.notification_type
+            }
           }
-        }
-        
-        // Add sound for urgent notifications
-        if (notification.priority === 'urgent' || notification.priority === 'high') {
-          // Note: Some browsers support vibration API
-          if (navigator.vibrate) {
-            navigator.vibrate([200, 100, 200])
+          
+          // Add sound for urgent notifications
+          if (notification.priority === 'urgent' || notification.priority === 'high') {
+            // Note: Some browsers support vibration API
+            if (navigator.vibrate) {
+              navigator.vibrate([200, 100, 200])
+            }
           }
+          
+          // Show the browser notification
+          if (navigator.serviceWorker?.controller) {
+            // If service worker is active, use it
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_NOTIFICATION',
+              title: notification.title,
+              options: browserNotificationOptions
+            })
+          } else {
+            // Fallback to direct notification
+            new Notification(notification.title, browserNotificationOptions)
+          }
+        } catch (err) {
+          console.error('❌ Failed to show browser notification:', err)
         }
-        
-        // Show the browser notification
-        if (navigator.serviceWorker?.controller) {
-          // If service worker is active, use it
-          navigator.serviceWorker.controller.postMessage({
-            type: 'SHOW_NOTIFICATION',
-            title: notification.title,
-            options: browserNotificationOptions
-          })
-        } else {
-          // Fallback to direct notification
-          new Notification(notification.title, browserNotificationOptions)
-        }
-      } catch (err) {
-        console.error('❌ Failed to show browser notification:', err)
+      } else if (isIOSSafari) {
+        console.log('📱 iOS Safari detected - using in-app notifications only')
+        // iOS Safari doesn't support browser notifications
+        // The toast notification below will handle this
+      } else if (Notification.permission === 'default') {
+        console.log('🔔 Notification permission not granted - showing toast only')
       }
     }
     
-    // Show toast notification (in-app)
+    // Show toast notification (in-app) - enhanced for mobile
     if (showToasts) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      
       const priorityStyles = {
-        urgent: { variant: 'destructive' as const, duration: 10000 },
-        high: { variant: 'default' as const, duration: 7000 },
-        medium: { variant: 'default' as const, duration: 5000 },
-        low: { variant: 'default' as const, duration: 3000 }
+        urgent: { 
+          variant: 'destructive' as const, 
+          duration: isMobile ? 15000 : 10000
+        },
+        high: { 
+          variant: 'default' as const, 
+          duration: isMobile ? 10000 : 7000
+        },
+        medium: { 
+          variant: 'default' as const, 
+          duration: isMobile ? 7000 : 5000 
+        },
+        low: { 
+          variant: 'default' as const, 
+          duration: isMobile ? 5000 : 3000 
+        }
       }
       
       const style = priorityStyles[notification.priority as keyof typeof priorityStyles] || priorityStyles.medium
       
+      // Enhanced toast for mobile
       toast({
         title: notification.title,
         description: notification.message,
         ...style
       })
+      
+      // Additional mobile feedback
+      if (isMobile && (notification.priority === 'urgent' || notification.priority === 'high')) {
+        // Try to play a sound (works better on mobile after user interaction)
+        try {
+          const audio = new Audio('/notification-sound.mp3')
+          audio.volume = 0.5 // Louder on mobile
+          audio.play().catch(() => {
+            // Ignore errors (user might not have interacted with page yet)
+            console.log('🔊 Audio play failed (expected on mobile without user interaction)')
+          })
+        } catch (err) {
+          // Ignore audio errors
+          console.log('🔊 Audio not available')
+        }
+        
+        // Visual feedback for iOS (since vibration doesn't work)
+        if (isIOS) {
+          // Add a temporary visual indicator
+          const indicator = document.createElement('div')
+          indicator.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #f97316, #eab308);
+            z-index: 9999;
+            animation: slideDown 0.3s ease-out, fadeOut 3s ease-in 2s;
+          `
+          document.body.appendChild(indicator)
+          
+          setTimeout(() => {
+            if (indicator.parentNode) {
+              indicator.parentNode.removeChild(indicator)
+            }
+          }, 3000)
+          
+          // Add CSS animation if not already present
+          if (!document.getElementById('ios-notification-style')) {
+            const style = document.createElement('style')
+            style.id = 'ios-notification-style'
+            style.textContent = `
+              @keyframes slideDown {
+                from { transform: translateY(-4px); }
+                to { transform: translateY(0); }
+              }
+              @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+              }
+            `
+            document.head.appendChild(style)
+          }
+        }
+      }
     }
     
     // Custom handler
