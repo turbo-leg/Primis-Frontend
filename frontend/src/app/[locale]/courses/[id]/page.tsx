@@ -306,8 +306,8 @@ export default function CoursePage() {
           
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{course.title}</h1>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">{course.title}</h1>
+              <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <span className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {formatDate(course.start_time)}
@@ -331,8 +331,8 @@ export default function CoursePage() {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-blue-600">${course.price}</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">${course.price}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               <Users className="inline h-4 w-4 mr-1" />
               {t('courseDetails.maxStudents', { max: course.max_students })}
             </p>
@@ -460,30 +460,30 @@ export default function CoursePage() {
                 ) : (
                   <form onSubmit={handleUploadMaterial} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">{t('courseDetails.materials.form.title')} *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('courseDetails.materials.form.title')} *</label>
                       <input
                         type="text"
                         value={uploadTitle}
                         onChange={(e) => setUploadTitle(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">{t('courseDetails.materials.form.description')}</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('courseDetails.materials.form.description')}</label>
                       <textarea
                         value={uploadDescription}
                         onChange={(e) => setUploadDescription(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                         rows={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">{t('courseDetails.materials.form.file')} *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('courseDetails.materials.form.file')} *</label>
                       <input
                         type="file"
                         onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                         required
                       />
                     </div>
@@ -507,8 +507,8 @@ export default function CoursePage() {
 
           {materials.length === 0 ? (
             <Card>
-              <CardContent className="py-8 text-center text-gray-500">
-                <FileText className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+              <CardContent className="py-8 text-center text-gray-500 dark:text-gray-400">
+                <FileText className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 {t('courseDetails.materials.noMaterials')}
               </CardContent>
             </Card>
@@ -519,11 +519,11 @@ export default function CoursePage() {
                   <CardContent className="py-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <h3 className="font-medium">{material.title}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">{material.title}</h3>
                         {material.description && (
-                          <p className="text-sm text-gray-600 mt-1">{material.description}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{material.description}</p>
                         )}
-                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
                           <span className="capitalize">{material.type}</span>
                           <span>{formatFileSize(material.file_size)}</span>
                           <span>{formatDate(material.upload_date)}</span>
@@ -620,21 +620,21 @@ export default function CoursePage() {
                 ) : (
                   <form onSubmit={handlePostAnnouncement} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">{t('courseDetails.announcements.form.title')} *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('courseDetails.announcements.form.title')} *</label>
                       <input
                         type="text"
                         value={announcementTitle}
                         onChange={(e) => setAnnouncementTitle(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">{t('courseDetails.announcements.form.content')} *</label>
+                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('courseDetails.announcements.form.content')} *</label>
                       <textarea
                         value={announcementContent}
                         onChange={(e) => setAnnouncementContent(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-md"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                         rows={5}
                         required
                       />
@@ -647,7 +647,7 @@ export default function CoursePage() {
                         onChange={(e) => setIsImportant(e.target.checked)}
                         className="rounded"
                       />
-                      <label htmlFor="important" className="text-sm font-medium">
+                      <label htmlFor="important" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         {t('courseDetails.announcements.form.markImportant')}
                       </label>
                     </div>
@@ -671,26 +671,26 @@ export default function CoursePage() {
 
           {announcements.length === 0 ? (
             <Card>
-              <CardContent className="py-8 text-center text-gray-500">
-                <Bell className="h-12 w-12 mx-auto mb-2 text-gray-400" />
+              <CardContent className="py-8 text-center text-gray-500 dark:text-gray-400">
+                <Bell className="h-12 w-12 mx-auto mb-2 text-gray-400 dark:text-gray-600" />
                 {t('courseDetails.announcements.noAnnouncements')}
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-3">
               {announcements.map((announcement) => (
-                <Card key={announcement.announcement_id} className={announcement.is_important ? 'border-red-300 bg-red-50' : ''}>
+                <Card key={announcement.announcement_id} className={announcement.is_important ? 'border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-800' : ''}>
                   <CardContent className="py-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           {announcement.is_important && (
-                            <AlertCircle className="h-5 w-5 text-red-600" />
+                            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                           )}
-                          <h3 className="font-medium text-lg">{announcement.title}</h3>
+                          <h3 className="font-medium text-lg text-gray-900 dark:text-gray-100">{announcement.title}</h3>
                         </div>
-                        <p className="text-gray-700 whitespace-pre-wrap mb-2">{announcement.content}</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap mb-2">{announcement.content}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
                           {t('courseDetails.announcements.postedBy', { 
                             type: announcement.posted_by_type,
                             date: formatDate(announcement.posted_on)
@@ -721,7 +721,7 @@ export default function CoursePage() {
           {/* Teachers Section */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <GraduationCap className="h-5 w-5" />
                 {t('courseDetails.people.teachers', { count: people?.total_teachers || 0 })}
               </CardTitle>
@@ -729,22 +729,22 @@ export default function CoursePage() {
             </CardHeader>
             <CardContent>
               {!people || people.teachers.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">{t('courseDetails.people.noTeachers')}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t('courseDetails.people.noTeachers')}</p>
               ) : (
                 <div className="space-y-3">
                   {people.teachers.map((teacher) => (
-                    <div key={teacher.teacher_id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                    <div key={teacher.teacher_id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                          <span className="text-blue-600 font-semibold text-lg">
+                        <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                          <span className="text-blue-600 dark:text-blue-300 font-semibold text-lg">
                             {teacher.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">{teacher.name}</h4>
-                          <p className="text-sm text-gray-600">{teacher.email}</p>
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100">{teacher.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{teacher.email}</p>
                           {teacher.specialization && (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                               {t('courseDetails.people.specialization')}: {teacher.specialization}
                             </p>
                           )}
@@ -763,7 +763,7 @@ export default function CoursePage() {
           {/* Students Section */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Users className="h-5 w-5" />
                 {t('courseDetails.people.students', { count: people?.total_students || 0 })}
               </CardTitle>
@@ -771,42 +771,42 @@ export default function CoursePage() {
             </CardHeader>
             <CardContent>
               {!people || people.students.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">{t('courseDetails.people.noStudents')}</p>
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t('courseDetails.people.noStudents')}</p>
               ) : (
                 <div className="space-y-3">
                   {people.students.map((student) => (
-                    <div key={student.student_id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                    <div key={student.student_id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                          <span className="text-green-600 font-semibold text-lg">
+                        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                          <span className="text-green-600 dark:text-green-300 font-semibold text-lg">
                             {student.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <h4 className="font-medium text-gray-900">{student.name}</h4>
-                          <p className="text-sm text-gray-600">{student.email}</p>
+                          <h4 className="font-medium text-gray-900 dark:text-gray-100">{student.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{student.email}</p>
                           {student.phone && (
-                            <p className="text-xs text-gray-500 mt-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                               {t('courseDetails.people.phone')}: {student.phone}
                             </p>
                           )}
                           {student.enrollment_date && (
-                            <p className="text-xs text-gray-400 mt-1">
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
                               {t('courseDetails.people.enrolled')}: {formatDate(student.enrollment_date)}
                             </p>
                           )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
                           {student.role}
                         </Badge>
                         {student.paid ? (
-                          <Badge variant="secondary" className="bg-emerald-100 text-emerald-800">
+                          <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300">
                             {t('courseDetails.people.paid')}
                           </Badge>
                         ) : (
-                          <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                          <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
                             {t('courseDetails.people.paymentPending')}
                           </Badge>
                         )}

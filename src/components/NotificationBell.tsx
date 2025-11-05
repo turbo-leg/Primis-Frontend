@@ -233,7 +233,19 @@ export default function NotificationBell() {
 
                         {/* Action button */}
                         {notification.action_text && (
-                          <button className="text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline">
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (notification.action_url) {
+                                if (!notification.is_read) {
+                                  markAsRead.mutate(notification.notification_id)
+                                }
+                                router.push(notification.action_url)
+                                setIsOpen(false)
+                              }
+                            }}
+                            className="text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                          >
                             {notification.action_text} →
                           </button>
                         )}

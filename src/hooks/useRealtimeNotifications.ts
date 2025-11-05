@@ -38,6 +38,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectAttemptsRef = useRef(0)
   const isConnectingRef = useRef(false)
+  const shownNotificationsRef = useRef<Set<string>>(new Set()) // Track shown notifications
   
   const MAX_RECONNECT_ATTEMPTS = 5
   const RECONNECT_DELAY = 3000 // 3 seconds
@@ -55,6 +56,23 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 
   const handleNotification = useCallback((notification: RealtimeNotification) => {
     console.log('📨 Real-time notification received:', notification)
+    
+    // Create a unique key for this notification
+    const notificationKey = `${notification.id || notification.title}-${notification.timestamp}`
+    
+    // Skip if we've already shown this notification
+    if (shownNotificationsRef.current.has(notificationKey)) {
+      console.log('📨 Skipping duplicate notification:', notificationKey)
+      return
+    }
+    
+    // Mark as shown
+    shownNotificationsRef.current.add(notificationKey)
+    
+    // Clear old entries after 1 hour to prevent memory leak
+    if (shownNotificationsRef.current.size > 1000) {
+      shownNotificationsRef.current.clear()
+    }
     
     // Invalidate queries to refresh notification list
     queryClient.invalidateQueries({ queryKey: ['notifications'] })
