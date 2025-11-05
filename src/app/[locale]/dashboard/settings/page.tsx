@@ -54,12 +54,12 @@ export default function SettingsPage() {
 
         if (response.ok) {
           const preferences = await response.json()
-          
+
           // Determine overall settings from preferences
           // If any preference has email enabled, set email to true, etc.
-          const emailEnabled = preferences.some((pref: any) => pref.email_enabled)
-          const inAppEnabled = preferences.some((pref: any) => pref.in_app_enabled)
-          const pushEnabled = preferences.some((pref: any) => pref.push_enabled)
+          const emailEnabled = preferences.length > 0 && preferences.some((pref: any) => pref.email_enabled)
+          const inAppEnabled = preferences.length > 0 && preferences.some((pref: any) => pref.in_app_enabled)
+          const pushEnabled = preferences.length > 0 && preferences.some((pref: any) => pref.push_enabled)
 
           setFormData(prev => ({
             ...prev,
@@ -67,6 +67,9 @@ export default function SettingsPage() {
             notificationsInApp: inAppEnabled,
             notificationsPush: pushEnabled,
           }))
+        } else {
+          console.log('No notification preferences found or API error, using defaults')
+          // Keep default values if API fails or returns empty
         }
       } catch (error) {
         console.error('Failed to load notification preferences:', error)
@@ -74,8 +77,11 @@ export default function SettingsPage() {
       }
     }
 
-    loadNotificationPreferences()
-  }, [])
+    // Only load preferences if user is logged in
+    if (user) {
+      loadNotificationPreferences()
+    }
+  }, [user])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
