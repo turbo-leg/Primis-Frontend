@@ -113,7 +113,12 @@ export default function OnlineCourseViewerPage() {
       }
       
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to load course')
+      const statusCode = err.response?.status
+      if (statusCode === 404) {
+        setError('Online course not found. This course may not be available as an online course yet.')
+      } else {
+        setError(err.response?.data?.detail || 'Failed to load course')
+      }
     } finally {
       setLoading(false)
     }

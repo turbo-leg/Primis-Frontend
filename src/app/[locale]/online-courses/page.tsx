@@ -93,7 +93,7 @@ export default function OnlineCoursesPage() {
           data.map(async (course: OnlineCourse) => {
             try {
               const progressData = await apiClient.get(
-                `/api/v1/online-courses/student/${user.student_id}/progress/${course.course_id}`
+                `/api/v1/online-courses/student/${user.student_id}/progress/${course.online_course_id}`
               )
               return {
                 ...course,
@@ -407,7 +407,7 @@ export default function OnlineCoursesPage() {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-2">
                     {course.is_enrolled ? (
-                      <Link href={`/online-courses/${course.course_id}`} className="flex-1">
+                      <Link href={`/online-courses/${course.online_course_id}`} className="flex-1">
                         <Button className="w-full">
                           {course.progress?.status === 'completed' ? 'Review Course' : 'Continue Learning'}
                         </Button>
@@ -415,7 +415,7 @@ export default function OnlineCoursesPage() {
                     ) : (
                       <div className="flex gap-2 w-full">
                         {course.is_preview_available && (
-                          <Link href={`/online-courses/${course.course_id}`} className="flex-1">
+                          <Link href={`/online-courses/${course.online_course_id}`} className="flex-1">
                             <Button variant="outline" className="w-full">
                               <Eye className="h-4 w-4 mr-2" />
                               Preview
@@ -438,8 +438,16 @@ export default function OnlineCoursesPage() {
         {filteredCourses.length === 0 && !loading && (
           <div className="text-center py-12">
             <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No courses found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or filters.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchTerm || difficultyFilter !== 'all' || statusFilter !== 'all' 
+                ? 'No courses match your filters' 
+                : 'No online courses available'}
+            </h3>
+            <p className="text-gray-600">
+              {searchTerm || difficultyFilter !== 'all' || statusFilter !== 'all' 
+                ? 'Try adjusting your search criteria or filters.' 
+                : 'Online courses will be available once they are created by instructors.'}
+            </p>
           </div>
         )}
       </div>
