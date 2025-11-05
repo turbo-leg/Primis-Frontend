@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
@@ -40,6 +40,42 @@ export default function SettingsPage() {
     notificationsInApp: true,
     notificationsPush: false,
   })
+
+  // Load notification preferences on component mount
+  useEffect(() => {
+    const loadNotificationPreferences = async () => {
+      try {
+        const response = await fetch('/api/v1/notifications/preferences', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+        })
+
+        if (response.ok) {
+          const preferences = await response.json()
+          
+          // Determine overall settings from preferences
+          // If any preference has email enabled, set email to true, etc.
+          const emailEnabled = preferences.some((pref: any) => pref.email_enabled)
+          const inAppEnabled = preferences.some((pref: any) => pref.in_app_enabled)
+          const pushEnabled = preferences.some((pref: any) => pref.push_enabled)
+
+          setFormData(prev => ({
+            ...prev,
+            notificationsEmail: emailEnabled,
+            notificationsInApp: inAppEnabled,
+            notificationsPush: pushEnabled,
+          }))
+        }
+      } catch (error) {
+        console.error('Failed to load notification preferences:', error)
+        // Keep default values if loading fails
+      }
+    }
+
+    loadNotificationPreferences()
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -111,39 +147,49 @@ export default function SettingsPage() {
     e.preventDefault()
     setLoading(true)
     try {
-      // Send notification preferences to backend
-      const response = await fetch('/api/v1/notifications/preferences', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify({
-          browser_notifications_enabled: formData.notificationsPush,
-          push_notifications_enabled: formData.notificationsPush,
-          assignment_notifications: true,
-          grade_notifications: true,
-          attendance_notifications: true,
-          announcement_notifications: true,
-          general_notifications: formData.notificationsInApp,
-          notification_sound_enabled: true,
-          notification_badge_enabled: true,
-          notification_vibration_enabled: true,
-          quiet_hours_enabled: false,
-          quiet_hours_start: '22:00',
-          quiet_hours_end: '08:00',
-        }),
+      // Define notification types to update
+      const notificationTypes = [
+        'assignment_created',
+        'assignment_graded',
+        'grade_posted',
+        'attendance_marked',
+        'announcement',
+        'course_update',
+        'payment_due',
+        'enrollment_approved'
+      ]
+
+      // Update preferences for each notification type
+      const updatePromises = notificationTypes.map(notificationType => {
+        return fetch('/api/v1/notifications/preferences', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
+          body: JSON.stringify({
+            notification_type: notificationType,
+            in_app_enabled: formData.notificationsInApp,
+            email_enabled: formData.notificationsEmail,
+            push_enabled: formData.notificationsPush,
+          }),
+        })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to update notification preferences')
+      // Wait for all updates to complete
+      const responses = await Promise.all(updatePromises)
+      
+      // Check if all requests were successful
+      const failedRequests = responses.filter(response => !response.ok)
+      if (failedRequests.length > 0) {
+        throw new Error(`${failedRequests.length} preference updates failed`)
       }
 
-      setMessage({ type: 'success', text: 'Notification preferences updated' })
+      setMessage({ type: 'success', text: 'Notification preferences updated successfully' })
       setTimeout(() => setMessage(null), 3000)
     } catch (error) {
       console.error('Notification save error:', error)
-      setMessage({ type: 'error', text: 'Failed to update preferences' })
+      setMessage({ type: 'error', text: 'Failed to update notification preferences' })
     } finally {
       setLoading(false)
     }
