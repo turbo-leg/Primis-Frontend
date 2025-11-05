@@ -270,29 +270,6 @@ export function isMobileDevice(): boolean {
 
   return mobilePatterns.some(pattern => pattern.test(userAgent))
 }
-
-/**
- * Detect if device is iOS Safari (limited notification support)
- */
-export function isIOSSafari(): boolean {
-  if (typeof window === 'undefined') return false
-  
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-  
-  return isIOS && isSafari
-}
-
-/**
- * Get notification support level for current browser
- */
-export function getNotificationSupportLevel(): 'full' | 'limited' | 'none' {
-  if (!isNotificationSupported()) {
-    return isIOSSafari() ? 'limited' : 'none'
-  }
-  
-  return 'full'
-}
 export function getBrowserInfo(): {
   userAgent: string
   deviceType: string
@@ -333,4 +310,22 @@ export function logNotificationCapabilities(): void {
   console.log('Network:', getNetworkInfo())
   console.log('Browser:', getBrowserInfo())
   console.groupEnd()
+}
+
+/**
+ * Vibrate device (for mobile notifications)
+ * Returns true if vibration was successful
+ */
+export function vibrate(pattern: number | number[]): boolean {
+  if (!isVibrationSupported()) {
+    return false
+  }
+
+  try {
+    navigator.vibrate(pattern)
+    return true
+  } catch (error) {
+    console.error('[Vibration] Failed to vibrate:', error)
+    return false
+  }
 }
