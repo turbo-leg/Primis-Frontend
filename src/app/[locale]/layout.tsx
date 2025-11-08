@@ -27,8 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       template: isMonMongolian ? '%s | Primis EduCare' : '%s | Primis EduCare',
     },
     description: isMonMongolian
-      ? 'Оюутны удирдлага, хичээл заах, ирцийн бүртгэл, захиргааны хэрэгслүүдтэй иж бүрэн коллеж бэлтгэл систем. Бодит цагийн мэдэгдлүүд, QR кодоор ирц бүртгэх, гүйцэтгэлийн хяналт.'
-      : 'A comprehensive college preparation platform with student management, course delivery, attendance tracking, and administrative tools. Real-time notifications, QR code attendance, and performance monitoring.',
+      ? 'Оюутнуудад хувь хүний сургалт, мэргэжлийн удирдамж, иж бүрэн коллеж бэлтгэл хангаж, академик амжилтад хүрэхэд туслана. Багш нартай холбогдож, ахиц дэвшлээ хянаж, бүх чадавхиа нээцгээе.'
+      : 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
     keywords: isMonMongolian
       ? [
           'коллеж бэлтгэл',
@@ -59,8 +59,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale: isMonMongolian ? 'mn_MN' : 'en_US',
       title: isMonMongolian ? 'Primis EduCare - Коллеж Бэлтгэл Систем' : 'Primis EduCare - College Prep Platform',
       description: isMonMongolian
-        ? 'Оюутны удирдлага, хичээл заах, захиргааны хэрэгслүүдтэй иж бүрэн коллеж бэлтгэл систем.'
-        : 'A comprehensive college preparation platform with student management, course delivery, and administrative tools.',
+        ? 'Оюутнуудад хувь хүний сургалт, мэргэжлийн удирдамж, иж бүрэн коллеж бэлтгэл хангаж, академик амжилтад хүрэхэд туслана.'
+        : 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation.',
       images: [
         {
           url: '/og-image.png',

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: 'Primis EduCare - College Prep Platform',
     template: '%s | Primis EduCare'
   },
-  description: 'A comprehensive college preparation platform with student management, course delivery, attendance tracking, and administrative tools. Real-time notifications, QR code attendance, and performance monitoring.',
+  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
   keywords: [
     'college prep',
     'education platform',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'Primis EduCare',
     title: 'Primis EduCare - College Prep Platform',
-    description: 'A comprehensive college preparation platform with student management, course delivery, attendance tracking, and administrative tools.',
+    description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
     images: [
       {
         url: '/og-image.png',
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Primis EduCare - College Prep Platform',
-    description: 'A comprehensive college preparation platform with student management, course delivery, and administrative tools.',
+    description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation.',
     images: ['/og-image.png'],
     creator: '@primiseducare',
   },

@@ -6,7 +6,7 @@ export const organizationSchema = {
   alternateName: 'Primis College Prep Platform',
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://primis-educare.com',
   logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://primis-educare.com'}/logo-512.png`,
-  description: 'A comprehensive college preparation platform with student management, course delivery, attendance tracking, and administrative tools.',
+  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
   sameAs: [
     // Add your social media profiles here
     // 'https://facebook.com/primiseducare',
@@ -51,7 +51,7 @@ export const softwareApplicationSchema = {
     price: '0',
     priceCurrency: 'USD',
   },
-  description: 'A comprehensive college preparation platform with student management, course delivery, attendance tracking, and administrative tools. Features include real-time notifications, QR code attendance, performance monitoring, and multilingual support.',
+  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential with our intuitive platform designed for student success.',
   featureList: [
     'Student Management',
     'Course Delivery',
