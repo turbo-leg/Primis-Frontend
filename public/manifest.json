@@ -1,7 +1,7 @@
 {
   "name": "Primis EduCare - College Prep Platform",
   "short_name": "Primis",
-  "description": "Real-time notification system for college prep platform with desktop and mobile support",
+  "description": "Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. | Оюутнуудад хувь хүний сургалт, мэргэжлийн удирдамж, иж бүрэн коллеж бэлтгэл хангаж, академик амжилтад хүрэхэд туслана.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",

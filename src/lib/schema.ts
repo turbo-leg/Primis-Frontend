@@ -6,7 +6,7 @@ export const organizationSchema = {
   alternateName: 'Primis College Prep Platform',
   url: process.env.NEXT_PUBLIC_APP_URL || 'https://primis-educare.com',
   logo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://primis-educare.com'}/logo-512.png`,
-  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
+  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential. | Оюутнуудад хувь хүний сургалт, мэргэжлийн удирдамж, иж бүрэн коллеж бэлтгэл хангаж, академик амжилтад хүрэхэд туслана.',
   sameAs: [
     // Add your social media profiles here
     // 'https://facebook.com/primiseducare',
@@ -51,18 +51,18 @@ export const softwareApplicationSchema = {
     price: '0',
     priceCurrency: 'USD',
   },
-  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential with our intuitive platform designed for student success.',
+  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential with our intuitive platform designed for student success. | Оюутнуудад хувь хүний сургалт, мэргэжлийн удирдамж, иж бүрэн коллеж бэлтгэл хангаж, академик амжилтад хүрэхэд туслана.',
   featureList: [
-    'Student Management',
-    'Course Delivery',
-    'QR Code Attendance',
-    'Real-time Notifications',
-    'Performance Monitoring',
-    'Assignment Management',
-    'Payment Tracking',
+    'Personalized Learning Paths',
+    'Expert Teacher Guidance',
+    'Progress Tracking & Analytics',
+    'Interactive Course Materials',
+    'Real-time Communication',
+    'Academic Performance Insights',
+    'Flexible Study Schedules',
     'Multilingual Support (English & Mongolian)',
-    'Progressive Web App',
-    'Offline Support',
+    'Mobile & Desktop Access',
+    'Secure Student Portal',
   ],
 };
 

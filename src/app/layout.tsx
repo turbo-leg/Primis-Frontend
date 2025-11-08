@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { combinedDescription, combinedKeywords } from '@/lib/metadata'
 import './globals.css'
 
 const inter = Inter({ 
@@ -14,22 +15,10 @@ export const metadata: Metadata = {
     default: 'Primis EduCare - College Prep Platform',
     template: '%s | Primis EduCare'
   },
-  description: 'Empowering students to achieve academic excellence through personalized learning, expert guidance, and comprehensive college preparation. Connect with teachers, track progress, and unlock your full potential.',
-  keywords: [
-    'college prep',
-    'education platform',
-    'student management',
-    'course delivery',
-    'attendance tracking',
-    'QR code attendance',
-    'education technology',
-    'learning management system',
-    'LMS',
-    'educare',
-    'primis'
-  ],
-  authors: [{ name: 'Primis EduCare Team' }],
-  creator: 'Primis EduCare',
+  description: combinedDescription,
+  keywords: combinedKeywords,
+  authors: [{ name: 'Turbileg Uurtsaikh' }],
+  creator: 'Turbileg Uurtsaikh',
   publisher: 'Primis EduCare',
   applicationName: 'Primis EduCare',
   generator: 'Next.js',
