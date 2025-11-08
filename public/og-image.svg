@@ -1,0 +1,59 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#grad1)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="80" fill="white" opacity="0.05"/>
+  <circle cx="1100" cy="530" r="120" fill="white" opacity="0.05"/>
+  <circle cx="200" cy="500" r="60" fill="white" opacity="0.08"/>
+  <circle cx="1000" cy="150" r="90" fill="white" opacity="0.06"/>
+  
+  <!-- Logo - Letter P -->
+  <g transform="translate(100, 200)">
+    <rect x="0" y="0" width="30" height="200" fill="white" filter="url(#glow)"/>
+    <rect x="-10" y="0" width="50" height="10" fill="white" opacity="0.8"/>
+    <rect x="-10" y="190" width="50" height="10" fill="white" opacity="0.8"/>
+    <path d="M 30 0 L 110 0 C 150 0, 165 20, 165 60 C 165 100, 150 120, 110 120 L 30 120 Z" fill="white" filter="url(#glow)"/>
+    <path d="M 50 20 L 105 20 C 130 20, 140 35, 140 60 C 140 85, 130 100, 105 100 L 50 100 Z" fill="#60A5FA"/>
+  </g>
+  
+  <!-- Main text -->
+  <text x="400" y="280" font-family="Georgia, serif" font-size="80" fill="white" font-weight="300" letter-spacing="20" filter="url(#glow)">PRIMIS</text>
+  <text x="400" y="340" font-family="Georgia, serif" font-size="42" fill="white" opacity="0.95" letter-spacing="8">EDUCARE</text>
+  
+  <!-- Tagline -->
+  <text x="400" y="410" font-family="sans-serif" font-size="28" fill="white" opacity="0.85">College Preparation Platform</text>
+  
+  <!-- Feature badges -->
+  <g transform="translate(400, 450)">
+    <rect x="0" y="0" width="180" height="45" rx="22.5" fill="white" opacity="0.15"/>
+    <text x="90" y="30" font-family="sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="500">Student Portal</text>
+    
+    <rect x="200" y="0" width="180" height="45" rx="22.5" fill="white" opacity="0.15"/>
+    <text x="290" y="30" font-family="sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="500">QR Attendance</text>
+    
+    <rect x="400" y="0" width="200" height="45" rx="22.5" fill="white" opacity="0.15"/>
+    <text x="500" y="30" font-family="sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="500">Real-time Tracking</text>
+  </g>
+  
+  <!-- Subtle pattern overlay -->
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1" fill="white" opacity="0.05"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+</svg>
