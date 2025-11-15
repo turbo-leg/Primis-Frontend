@@ -16,6 +16,7 @@ import { useAuthStore } from '@/store/auth'
 import { getDashboardPath } from '@/utils/auth'
 import { usePermissions } from '@/hooks/usePermissions'
 import { PermissionsModal, type PermissionsPreferences } from '@/components/PermissionsModal'
+import { UserType } from '@/types'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 
@@ -55,7 +56,7 @@ export default function LoginPage() {
       await new Promise(resolve => setTimeout(resolve, 500))
       
       // Get the dashboard path and redirect
-      const dashboardType = userType || user?.user_type || 'student'
+      const dashboardType = (userType || 'student') as UserType
       const redirectPath = getDashboardPath(dashboardType)
       
       setShowPermissionsModal(false)
