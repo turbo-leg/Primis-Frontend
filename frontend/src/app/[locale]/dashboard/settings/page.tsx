@@ -145,7 +145,7 @@ export default function SettingsPage() {
       const formDataToSend = new FormData()
       formDataToSend.append('file', file)
       formDataToSend.append('user_id', user?.id?.toString() || '')
-      formDataToSend.append('user_type', userType)
+      formDataToSend.append('user_type', userType || 'student')
 
       const response = await fetch('/api/v1/users/profile-picture', {
         method: 'POST',

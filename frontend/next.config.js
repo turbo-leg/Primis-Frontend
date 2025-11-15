@@ -4,9 +4,7 @@ const withNextIntl = require('next-intl/plugin')(
 );
 
 const nextConfig = {
-  // Remove 'output: standalone' for Vercel - not needed as Vercel handles this
   reactStrictMode: true,
-  swcMinify: true,
   
   // Performance optimizations
   compiler: {
@@ -30,18 +28,16 @@ const nextConfig = {
     ],
   },
   
-  // Optimize fonts
-  optimizeFonts: true,
-  
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
   },
   
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
+        destination: `${apiUrl}/api/:path*`,
       },
     ];
   },
