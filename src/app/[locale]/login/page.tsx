@@ -31,8 +31,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPermissionsModal, setShowPermissionsModal] = useState(false)
   const [isModalSubmitting, setIsModalSubmitting] = useState(false)
+  const [userType, setUserType] = useState<string | null>(null)
   const router = useRouter()
-  const { login } = useAuthStore()
+  const { login, user } = useAuthStore()
   const { isFirstLogin, savePermissions } = usePermissions()
   const t = useTranslations()
 
@@ -54,8 +55,8 @@ export default function LoginPage() {
       await new Promise(resolve => setTimeout(resolve, 500))
       
       // Get the dashboard path and redirect
-      const userType = await (useAuthStore().user?.user_type || 'student')
-      const redirectPath = getDashboardPath(userType)
+      const dashboardType = userType || user?.user_type || 'student'
+      const redirectPath = getDashboardPath(dashboardType)
       
       setShowPermissionsModal(false)
       toast.success('Preferences saved successfully!')
@@ -71,7 +72,8 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
-      const userType = await login(data.email, data.password)
+      const newUserType = await login(data.email, data.password)
+      setUserType(newUserType)
       toast.success('Login successful!')
       
       // Show permissions modal if first login
@@ -79,7 +81,7 @@ export default function LoginPage() {
         setShowPermissionsModal(true)
       } else {
         // Otherwise, redirect immediately
-        const redirectPath = getDashboardPath(userType)
+        const redirectPath = getDashboardPath(newUserType)
         router.push(redirectPath)
       }
     } catch (error: any) {

@@ -3,6 +3,7 @@
     "appName": "Primis College Prep",
     "welcome": "Welcome",
     "loading": "Loading...",
+    "saving": "Saving...",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -162,6 +163,29 @@
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
     "signInInstead": "Sign in instead"
+  },
+  "permissions": {
+    "title": "Permissions & Preferences",
+    "subtitle": "Customize how we communicate with you and use your data",
+    "info": "We respect your privacy. All preferences can be changed anytime in your settings.",
+    "notifications": {
+      "title": "Push Notifications",
+      "description": "Receive real-time alerts about course updates, assignments, and messages"
+    },
+    "cookies": {
+      "title": "Functional Cookies",
+      "description": "Remember your preferences, language settings, and keep you logged in securely"
+    },
+    "analytics": {
+      "title": "Analytics & Improvements",
+      "description": "Help us improve by sharing anonymous usage data. Helps us identify bugs and optimize performance"
+    },
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookiePolicy": "Cookie Policy",
+    "acceptAll": "Accept All",
+    "declineAll": "Decline All",
+    "savePreferences": "Save Preferences"
   },
   "dashboard": {
     "title": "Dashboard",

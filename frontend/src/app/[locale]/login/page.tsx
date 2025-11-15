@@ -12,6 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { getDashboardPath } from '@/utils/auth'
+import { usePermissions } from '@/hooks/usePermissions'
+import { PermissionsModal, type PermissionsPreferences } from '@/components/PermissionsModal'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 
@@ -25,8 +27,12 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false)
+  const [isModalSubmitting, setIsModalSubmitting] = useState(false)
+  const [userType, setUserType] = useState<string | null>(null)
   const router = useRouter()
-  const { login } = useAuthStore()
+  const { login, user } = useAuthStore()
+  const { isFirstLogin, savePermissions } = usePermissions()
   const t = useTranslations()
 
   const {
@@ -37,15 +43,45 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   })
 
+  const handlePermissionsClose = async (preferences: PermissionsPreferences) => {
+    setIsModalSubmitting(true)
+    try {
+      // Save permissions
+      savePermissions(preferences)
+      
+      // Small delay for UX
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Get the dashboard path and redirect
+      const dashboardType = userType || user?.user_type || 'student'
+      const redirectPath = getDashboardPath(dashboardType)
+      
+      setShowPermissionsModal(false)
+      toast.success('Preferences saved successfully!')
+      router.push(redirectPath)
+    } catch (error) {
+      console.error('Error saving preferences:', error)
+      toast.error('Error saving preferences. Please try again.')
+    } finally {
+      setIsModalSubmitting(false)
+    }
+  }
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
-      const userType = await login(data.email, data.password)
+      const newUserType = await login(data.email, data.password)
+      setUserType(newUserType)
       toast.success('Login successful!')
       
-      // Redirect based on user type using helper function
-      const redirectPath = getDashboardPath(userType)
-      router.push(redirectPath)
+      // Show permissions modal if first login
+      if (isFirstLogin) {
+        setShowPermissionsModal(true)
+      } else {
+        // Otherwise, redirect immediately
+        const redirectPath = getDashboardPath(newUserType)
+        router.push(redirectPath)
+      }
     } catch (error: any) {
       console.error('Login error:', error)
       const errorMessage = error?.response?.data?.detail || error?.message || 'Login failed. Please check your email and password.'
@@ -57,6 +93,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-primis-navy-dark dark:via-primis-navy dark:to-primis-navy-light flex items-center justify-center p-4">
+      {/* Permissions Modal */}
+      <PermissionsModal 
+        isOpen={showPermissionsModal} 
+        onClose={handlePermissionsClose}
+      />
+      
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-6 sm:mb-8">
