@@ -3,16 +3,25 @@ import { persist } from 'zustand/middleware'
 import { AuthToken, UserType, Student, Teacher, Admin } from '@/types'
 import { apiClient } from '@/lib/api'
 
+interface UserPermissions {
+  notificationsEnabled: boolean
+  cookiesEnabled: boolean
+  analyticsEnabled: boolean
+  timestamp: number
+}
+
 interface AuthState {
   user: Student | Teacher | Admin | null
   userType: UserType | null
   token: string | null
   isAuthenticated: boolean
   isLoading: boolean
+  permissions: UserPermissions | null
   login: (email: string, password: string) => Promise<UserType>
   logout: () => void
   register: (data: any) => Promise<void>
   setUser: (user: any, userType: UserType, token: string) => void
+  setPermissions: (permissions: UserPermissions) => void
   clearAuth: () => void
 }
 
@@ -24,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       isAuthenticated: false,
       isLoading: false,
+      permissions: null,
 
       login: async (email: string, password: string) => {
         set({ isLoading: true })
@@ -75,25 +85,33 @@ export const useAuthStore = create<AuthState>()(
         })
       },
 
+      setPermissions: (permissions: UserPermissions) => {
+        set({ permissions })
+      },
+
       logout: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
+        localStorage.removeItem('user_permissions')
         set({
           user: null,
           userType: null,
           token: null,
-          isAuthenticated: false
+          isAuthenticated: false,
+          permissions: null
         })
       },
 
       clearAuth: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
+        localStorage.removeItem('user_permissions')
         set({
           user: null,
           userType: null,
           token: null,
-          isAuthenticated: false
+          isAuthenticated: false,
+          permissions: null
         })
       }
     }),
@@ -103,7 +121,8 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         userType: state.userType,
         token: state.token,
-        isAuthenticated: state.isAuthenticated
+        isAuthenticated: state.isAuthenticated,
+        permissions: state.permissions
       })
     }
   )

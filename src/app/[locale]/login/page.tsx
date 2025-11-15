@@ -14,6 +14,8 @@ import PrimisLogo from '@/components/PrimisLogo'
 import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { getDashboardPath } from '@/utils/auth'
+import { usePermissions } from '@/hooks/usePermissions'
+import { PermissionsModal, type PermissionsPreferences } from '@/components/PermissionsModal'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 
@@ -27,8 +29,11 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false)
+  const [isModalSubmitting, setIsModalSubmitting] = useState(false)
   const router = useRouter()
   const { login } = useAuthStore()
+  const { isFirstLogin, savePermissions } = usePermissions()
   const t = useTranslations()
 
   const {
@@ -39,16 +44,46 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   })
 
+  const handlePermissionsClose = async (preferences: PermissionsPreferences) => {
+    setIsModalSubmitting(true)
+    try {
+      // Save permissions
+      savePermissions(preferences)
+      
+      // Small delay for UX
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Get the dashboard path and redirect
+      const userType = await (useAuthStore().user?.user_type || 'student')
+      const redirectPath = getDashboardPath(userType)
+      
+      setShowPermissionsModal(false)
+      toast.success('Preferences saved successfully!')
+      router.push(redirectPath)
+    } catch (error) {
+      console.error('Error saving preferences:', error)
+      toast.error('Error saving preferences. Please try again.')
+    } finally {
+      setIsModalSubmitting(false)
+    }
+  }
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
       const userType = await login(data.email, data.password)
       toast.success('Login successful!')
       
-      // Redirect based on user type using helper function
-      const redirectPath = getDashboardPath(userType)
-      router.push(redirectPath)
+      // Show permissions modal if first login
+      if (isFirstLogin) {
+        setShowPermissionsModal(true)
+      } else {
+        // Otherwise, redirect immediately
+        const redirectPath = getDashboardPath(userType)
+        router.push(redirectPath)
+      }
     } catch (error: any) {
+      console.error('Login error:', error)
       toast.error(error.message || 'Login failed. Please try again.')
     } finally {
       setIsLoading(false)
@@ -58,6 +93,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-primis-navy">
       <Navigation />
+      
+      {/* Permissions Modal */}
+      <PermissionsModal 
+        isOpen={showPermissionsModal} 
+        onClose={handlePermissionsClose}
+      />
       
       {/* Hero Section */}
       <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-12 sm:py-16 md:py-20">
