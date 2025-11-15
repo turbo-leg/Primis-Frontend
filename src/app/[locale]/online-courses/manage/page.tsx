@@ -301,19 +301,21 @@ export default function OnlineCoursesPage() {
 
   return (
     <AuthenticatedLayout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Online Course Management</h1>
-          <p className="text-gray-600 mt-2">Create and manage your online courses with copy protection</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Online Course Management</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">Create and manage your online courses with copy protection</p>
         </div>
 
         {/* Message Alert */}
         {message && (
           <div className={`mb-6 p-4 rounded-lg ${
-            message.type === 'success' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+            message.type === 'success' 
+              ? 'bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800' 
+              : 'bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800'
           }`}>
-            <p className={message.type === 'success' ? 'text-green-800' : 'text-red-800'}>
+            <p className={message.type === 'success' ? 'text-green-800 dark:text-green-300' : 'text-red-800 dark:text-red-300'}>
               {message.text}
             </p>
           </div>
@@ -322,16 +324,16 @@ export default function OnlineCoursesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Courses List */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Your Courses</CardTitle>
-                  <CardDescription>Select a course to manage</CardDescription>
+                  <CardTitle className="text-gray-900 dark:text-white">Your Courses</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-300">Select a course to manage</CardDescription>
                 </div>
                 <Button 
                   onClick={() => setShowCreateModal(true)}
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Create Online Course
@@ -349,27 +351,27 @@ export default function OnlineCoursesPage() {
                         onClick={() => setSelectedCourse(course)}
                         className={`p-4 border rounded-lg cursor-pointer transition-all ${
                           selectedCourse?.course_id === course.course_id
-                            ? 'border-blue-300 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                            ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-600'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-500 dark:hover:bg-primis-navy'
                         }`}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900">{course.title}</h3>
-                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{course.description}</p>
+                            <h3 className="font-semibold text-gray-900 dark:text-white">{course.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{course.description}</p>
                             <div className="flex items-center gap-2 mt-2">
                               {isOnline ? (
-                                <Badge className="bg-green-100 text-green-800 border-green-200">
+                                <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700">
                                   <Video className="h-3 w-3 mr-1" />
                                   Online Course
                                 </Badge>
                               ) : (
-                                <Badge variant="outline">
+                                <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">
                                   Regular Course
                                 </Badge>
                               )}
                               {onlineCourse && (
-                                <Badge className={getDifficultyBadgeColor(onlineCourse.difficulty_level)}>
+                                <Badge className={`${getDifficultyBadgeColor(onlineCourse.difficulty_level)} dark:bg-gray-800/40 dark:text-gray-200 dark:border-gray-600`}>
                                   {onlineCourse.difficulty_level}
                                 </Badge>
                               )}
@@ -389,16 +391,16 @@ export default function OnlineCoursesPage() {
             {selectedCourse ? (
               <div className="space-y-6">
                 {/* Course Info */}
-                <Card>
+                <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
-                      <CardTitle>{selectedCourse.title}</CardTitle>
-                      <CardDescription>Online Course Management</CardDescription>
+                      <CardTitle className="text-gray-900 dark:text-white">{selectedCourse.title}</CardTitle>
+                      <CardDescription className="text-gray-600 dark:text-gray-300">Online Course Management</CardDescription>
                     </div>
                     <Button 
                       onClick={() => setShowLessonModal(true)}
                       size="sm"
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Lesson
@@ -411,13 +413,13 @@ export default function OnlineCoursesPage() {
                         return (
                           <div className="text-center py-8">
                             <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600">This course is not set up for online delivery yet.</p>
+                            <p className="text-gray-600 dark:text-gray-300">This course is not set up for online delivery yet.</p>
                             <Button 
                               onClick={() => {
                                 setNewOnlineCourse(prev => ({ ...prev, course_id: selectedCourse.course_id }))
                                 setShowCreateModal(true)
                               }}
-                              className="mt-4 bg-blue-600 hover:bg-blue-700"
+                              className="mt-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                             >
                               Convert to Online Course
                             </Button>
@@ -427,27 +429,27 @@ export default function OnlineCoursesPage() {
 
                       return (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          <div className="text-center p-4 bg-blue-50 rounded-lg">
+                          <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
                             <BookOpen className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-blue-900">{onlineCourse.total_lessons}</div>
-                            <div className="text-sm text-blue-700">Lessons</div>
+                            <div className="text-2xl font-bold text-blue-900 dark:text-blue-200">{onlineCourse.total_lessons}</div>
+                            <div className="text-sm text-blue-700 dark:text-blue-200">Lessons</div>
                           </div>
-                          <div className="text-center p-4 bg-green-50 rounded-lg">
+                          <div className="text-center p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
                             <Clock className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-green-900">{onlineCourse.estimated_duration_hours}h</div>
-                            <div className="text-sm text-green-700">Duration</div>
+                            <div className="text-2xl font-bold text-green-900 dark:text-green-200">{onlineCourse.estimated_duration_hours}h</div>
+                            <div className="text-sm text-green-700 dark:text-green-200">Duration</div>
                           </div>
-                          <div className="text-center p-4 bg-purple-50 rounded-lg">
+                          <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
                             <Users className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-purple-900">{onlineCourse.max_concurrent_sessions}</div>
-                            <div className="text-sm text-purple-700">Max Sessions</div>
+                            <div className="text-2xl font-bold text-purple-900 dark:text-purple-200">{onlineCourse.max_concurrent_sessions}</div>
+                            <div className="text-sm text-purple-700 dark:text-purple-200">Max Sessions</div>
                           </div>
-                          <div className="text-center p-4 bg-red-50 rounded-lg">
+                          <div className="text-center p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
                             <Shield className="h-8 w-8 text-red-600 mx-auto mb-2" />
-                            <div className="text-2xl font-bold text-red-900">
+                            <div className="text-2xl font-bold text-red-900 dark:text-red-200">
                               {onlineCourse.copy_protection_enabled ? 'ON' : 'OFF'}
                             </div>
-                            <div className="text-sm text-red-700">Protection</div>
+                            <div className="text-sm text-red-700 dark:text-red-200">Protection</div>
                           </div>
                         </div>
                       )
@@ -460,17 +462,17 @@ export default function OnlineCoursesPage() {
                   const onlineCourse = onlineCourses.find(oc => oc.course_id === selectedCourse.course_id)
                   if (onlineCourse) {
                     return (
-                      <Card>
+                      <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
                         <CardHeader>
-                          <CardTitle>Course Management</CardTitle>
-                          <CardDescription>Archive or delete this online course</CardDescription>
+                          <CardTitle className="text-gray-900 dark:text-white">Course Management</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-300">Archive or delete this online course</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex gap-3 justify-center">
                             <Button
                               variant="outline"
                               onClick={() => archiveOnlineCourse(onlineCourse.online_course_id)}
-                              className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                              className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:text-yellow-300 dark:hover:text-yellow-200 dark:hover:bg-yellow-900/20"
                             >
                               <Settings className="h-4 w-4 mr-2" />
                               Archive Course
@@ -479,7 +481,7 @@ export default function OnlineCoursesPage() {
                               <Button
                                 variant="outline"
                                 onClick={() => deleteOnlineCourse(onlineCourse.online_course_id)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/20"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
                                 Delete Course
@@ -494,16 +496,16 @@ export default function OnlineCoursesPage() {
                 })()}
 
                 {/* Lessons List */}
-                <Card>
+                <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
                   <CardHeader>
-                    <CardTitle>Course Lessons</CardTitle>
-                    <CardDescription>Manage your course content</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">Course Lessons</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-300">Manage your course content</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {lessons.length === 0 ? (
                       <div className="text-center py-8">
                         <PlayCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600">No lessons created yet.</p>
+                        <p className="text-gray-600 dark:text-gray-300">No lessons created yet.</p>
                         <Button 
                           onClick={() => setShowLessonModal(true)}
                           className="mt-4"
@@ -516,7 +518,7 @@ export default function OnlineCoursesPage() {
                         {lessons.map((lesson) => (
                           <div
                             key={lesson.lesson_id}
-                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-primis-navy"
                           >
                             <div className="flex items-center gap-4">
                               <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
@@ -525,32 +527,32 @@ export default function OnlineCoursesPage() {
                               <div className="flex items-center gap-2">
                                 {getContentTypeIcon(lesson.content_type)}
                                 <div>
-                                  <h3 className="font-medium text-gray-900">{lesson.title}</h3>
-                                  <p className="text-sm text-gray-600">{lesson.description}</p>
+                                  <h3 className="font-medium text-gray-900 dark:text-white">{lesson.title}</h3>
+                                  <p className="text-sm text-gray-600 dark:text-gray-300">{lesson.description}</p>
                                 </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
                               {lesson.is_preview && (
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-xs dark:border-gray-600 dark:text-gray-300">
                                   <Eye className="h-3 w-3 mr-1" />
                                   Preview
                                 </Badge>
                               )}
                               {lesson.video_duration_minutes && (
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-gray-500 dark:text-gray-300">
                                   {lesson.video_duration_minutes}min
                                 </span>
                               )}
                               <div className="flex gap-1">
-                                <Button size="sm" variant="outline">
+                                <Button size="sm" variant="outline" className="dark:border-gray-600 dark:text-gray-200">
                                   <Edit className="h-4 w-4" />
                                 </Button>
                                 <Button 
                                   size="sm" 
                                   variant="outline"
                                   onClick={() => deleteLesson(lesson.lesson_id)}
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/20"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -564,11 +566,11 @@ export default function OnlineCoursesPage() {
                 </Card>
               </div>
             ) : (
-              <Card>
+              <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="text-center">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">Select a course to manage its online content</p>
+                    <p className="text-gray-600 dark:text-gray-300">Select a course to manage its online content</p>
                   </div>
                 </CardContent>
               </Card>
@@ -580,18 +582,18 @@ export default function OnlineCoursesPage() {
       {/* Create Online Course Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+          <div className="bg-white dark:bg-primis-navy-dark rounded-lg p-6 w-full max-w-md mx-4 text-gray-900 dark:text-white">
             <h2 className="text-xl font-bold mb-4">Create Online Course</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Base Course
                 </label>
                 <select
                   value={newOnlineCourse.course_id}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, course_id: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 >
                   <option value={0}>Select a course</option>
                   {courses.filter(c => !onlineCourses.find(oc => oc.course_id === c.course_id)).map(course => (
@@ -603,25 +605,25 @@ export default function OnlineCoursesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Estimated Duration (hours)
                 </label>
                 <input
                   type="number"
                   value={newOnlineCourse.estimated_duration_hours}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, estimated_duration_hours: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Difficulty Level
                 </label>
                 <select
                   value={newOnlineCourse.difficulty_level}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, difficulty_level: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 >
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
@@ -630,7 +632,7 @@ export default function OnlineCoursesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Watermark Text (Optional)
                 </label>
                 <input
@@ -638,7 +640,7 @@ export default function OnlineCoursesPage() {
                   value={newOnlineCourse.watermark_text}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, watermark_text: e.target.value }))}
                   placeholder="Custom watermark text"
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 />
               </div>
 
@@ -649,7 +651,7 @@ export default function OnlineCoursesPage() {
                   checked={newOnlineCourse.copy_protection_enabled}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, copy_protection_enabled: e.target.checked }))}
                 />
-                <label htmlFor="copy_protection" className="text-sm text-gray-700">
+                <label htmlFor="copy_protection" className="text-sm text-gray-700 dark:text-gray-300">
                   Enable copy protection (recommended)
                 </label>
               </div>
@@ -661,7 +663,7 @@ export default function OnlineCoursesPage() {
                   checked={newOnlineCourse.completion_certificate}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, completion_certificate: e.target.checked }))}
                 />
-                <label htmlFor="completion_certificate" className="text-sm text-gray-700">
+                <label htmlFor="completion_certificate" className="text-sm text-gray-700 dark:text-gray-300">
                   Issue completion certificate
                 </label>
               </div>
@@ -671,7 +673,7 @@ export default function OnlineCoursesPage() {
               <Button
                 onClick={() => setShowCreateModal(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 dark:border-gray-600 dark:text-gray-100"
               >
                 Cancel
               </Button>
@@ -690,55 +692,55 @@ export default function OnlineCoursesPage() {
       {/* Create Lesson Modal */}
       {showLessonModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-primis-navy-dark rounded-lg p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto text-gray-900 dark:text-white">
             <h2 className="text-xl font-bold mb-4">Create New Lesson</h2>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Lesson Title
                 </label>
                 <input
                   type="text"
                   value={newLesson.title}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Description
                 </label>
                 <textarea
                   value={newLesson.description}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, description: e.target.value }))}
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-md"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Lesson Order
                   </label>
                   <input
                     type="number"
                     value={newLesson.lesson_order}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, lesson_order: parseInt(e.target.value) }))}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Content Type
                   </label>
                   <select
                     value={newLesson.content_type}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, content_type: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                   >
                     <option value="video">Video</option>
                     <option value="text">Text Content</option>
@@ -751,7 +753,7 @@ export default function OnlineCoursesPage() {
               {newLesson.content_type === 'video' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Video URL (Google Drive Share Link)
                     </label>
                     <input
@@ -759,22 +761,22 @@ export default function OnlineCoursesPage() {
                       value={newLesson.video_url}
                       onChange={(e) => setNewLesson(prev => ({ ...prev, video_url: e.target.value }))}
                       placeholder="https://drive.google.com/file/d/..."
-                      className="w-full px-3 py-2 border rounded-md"
+                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Share your video on Google Drive and paste the share link here
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Video Duration (minutes)
                     </label>
                     <input
                       type="number"
                       value={newLesson.video_duration_minutes}
                       onChange={(e) => setNewLesson(prev => ({ ...prev, video_duration_minutes: parseInt(e.target.value) }))}
-                      className="w-full px-3 py-2 border rounded-md"
+                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                     />
                   </div>
                 </>
@@ -782,14 +784,14 @@ export default function OnlineCoursesPage() {
 
               {newLesson.content_type === 'text' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Text Content
                   </label>
                   <textarea
                     value={newLesson.text_content}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, text_content: e.target.value }))}
                     rows={6}
-                    className="w-full px-3 py-2 border rounded-md"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
                   />
                 </div>
               )}
@@ -801,7 +803,7 @@ export default function OnlineCoursesPage() {
                   checked={newLesson.is_preview}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, is_preview: e.target.checked }))}
                 />
-                <label htmlFor="is_preview" className="text-sm text-gray-700">
+                <label htmlFor="is_preview" className="text-sm text-gray-700 dark:text-gray-300">
                   Allow preview without enrollment
                 </label>
               </div>
@@ -811,7 +813,7 @@ export default function OnlineCoursesPage() {
               <Button
                 onClick={() => setShowLessonModal(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 dark:border-gray-600 dark:text-gray-100"
               >
                 Cancel
               </Button>

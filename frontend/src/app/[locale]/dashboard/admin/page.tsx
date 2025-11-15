@@ -65,6 +65,16 @@ interface Course {
   created_at: string
 }
 
+interface OnlineCourse {
+  online_course_id: number
+  course_id: number
+  title?: string
+  total_lessons: number
+  estimated_duration_hours: number
+  difficulty_level: string
+  created_at: string
+}
+
 interface Enrollment {
   enrollment_id: number
   student_name: string
@@ -91,6 +101,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentUsers, setRecentUsers] = useState<User[]>([])
   const [courses, setCourses] = useState<Course[]>([])
+  const [onlineCourses, setOnlineCourses] = useState<OnlineCourse[]>([])
   const [teachers, setTeachers] = useState<any[]>([])
   const [pendingPayments, setPendingPayments] = useState<Enrollment[]>([])
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
@@ -146,6 +157,17 @@ export default function AdminDashboard() {
           return
         }
         setCourses([])
+      }
+
+      // Fetch all online courses
+      try {
+        const onlineCoursesData = await apiClient.get('/api/v1/online-courses')
+        setOnlineCourses(onlineCoursesData)
+        console.log('Online courses loaded successfully:', onlineCoursesData.length, 'online courses')
+      } catch (error: any) {
+        console.error('Failed to fetch online courses:', error)
+        // Don't return on error - online courses are optional
+        setOnlineCourses([])
       }
 
       // Fetch all teachers
@@ -429,7 +451,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Course Management */}
+        {/* Course Management - Regular & Online */}
         <Card className="dark:bg-primis-navy-light dark:border-white/10">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -438,7 +460,7 @@ export default function AdminDashboard() {
                   <BookOpen className="h-5 w-5" />
                   {t('dashboard.admin.courseManagement')}
                 </CardTitle>
-                <CardDescription className="dark:text-gray-300">{t('dashboard.admin.manageAllPlatformCourses')}</CardDescription>
+                <CardDescription className="dark:text-gray-300">All courses and online content</CardDescription>
               </div>
               <Button size="sm" onClick={() => setShowCreateCourse(true)} className="dark:bg-blue-600 dark:hover:bg-blue-700">
                 <Plus className="h-4 w-4 mr-2" />
@@ -448,46 +470,95 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {courses.length > 0 ? (
-                courses.slice(0, 5).map((course, index) => (
-                  <div key={`course-${course.course_id || 'no-id'}-${index}-${course.title || 'no-title'}`} className="flex items-center justify-between p-3 border dark:border-white/10 rounded-lg dark:bg-primis-navy/30">
-                    <div className="flex-1">
-                      <h4 className="font-medium dark:text-white">{course.title}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{course.teacher_name || t('dashboard.admin.noTeacherAssigned')}</p>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        <span>{course.enrolled_count || 0}/{course.max_students} {t('dashboard.admin.students')}</span>
-                        <span>{formatCurrency(course.price)}</span>
-                        {course.is_online ? (
-                          <Badge variant="secondary" className="dark:bg-blue-900/50 dark:text-blue-200">{t('dashboard.admin.online')}</Badge>
-                        ) : (
-                          <span>{course.location}</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(course.status)}>
-                        {course.status}
-                      </Badge>
-                      <div className="flex gap-1">
-                        <Button size="sm" variant="outline" title="View Course" className="dark:border-white/20 dark:hover:bg-white/10">
-                          <Eye className="h-3 w-3 dark:text-white" />
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => setEditingCourse(course)} title="Edit Course" className="dark:border-white/20 dark:hover:bg-white/10">
-                          <Edit className="h-3 w-3 dark:text-white" />
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleDeleteCourse(course.course_id)} title="Delete Course" className="dark:border-white/20 dark:hover:bg-white/10">
-                          <Trash2 className="h-3 w-3 dark:text-white" />
-                        </Button>
-                      </div>
-                    </div>
+              {/* Regular Courses */}
+              {courses.length > 0 && (
+                <>
+                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                    Regular Courses ({courses.length})
                   </div>
-                ))
-              ) : (
+                  {courses.slice(0, 3).map((course, index) => (
+                    <div key={`course-${course.course_id || 'no-id'}-${index}-${course.title || 'no-title'}`} className="flex items-center justify-between p-3 border dark:border-white/10 rounded-lg dark:bg-primis-navy/30">
+                      <div className="flex-1">
+                        <h4 className="font-medium dark:text-white">{course.title}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{course.teacher_name || t('dashboard.admin.noTeacherAssigned')}</p>
+                        <div className="flex items-center gap-4 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          <span>{course.enrolled_count || 0}/{course.max_students} {t('dashboard.admin.students')}</span>
+                          <span>{formatCurrency(course.price)}</span>
+                          {course.is_online ? (
+                            <Badge variant="secondary" className="dark:bg-blue-900/50 dark:text-blue-200">{t('dashboard.admin.online')}</Badge>
+                          ) : (
+                            <span>{course.location}</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge className={getStatusColor(course.status)}>
+                          {course.status}
+                        </Badge>
+                        <div className="flex gap-1">
+                          <Button size="sm" variant="outline" title="View Course" className="dark:border-white/20 dark:hover:bg-white/10">
+                            <Eye className="h-3 w-3 dark:text-white" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setEditingCourse(course)} title="Edit Course" className="dark:border-white/20 dark:hover:bg-white/10">
+                            <Edit className="h-3 w-3 dark:text-white" />
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => handleDeleteCourse(course.course_id)} title="Delete Course" className="dark:border-white/20 dark:hover:bg-white/10">
+                            <Trash2 className="h-3 w-3 dark:text-white" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {/* Online Courses */}
+              {onlineCourses.length > 0 && (
+                <>
+                  <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 mt-4">
+                    Online Courses ({onlineCourses.length})
+                  </div>
+                  {onlineCourses.slice(0, 3).map((onlineCourse, index) => {
+                    const relatedCourse = courses.find(c => c.course_id === onlineCourse.course_id)
+                    return (
+                      <div key={`online-${onlineCourse.online_course_id || 'no-id'}-${index}`} className="flex items-center justify-between p-3 border border-blue-200 dark:border-blue-600/30 rounded-lg bg-blue-50 dark:bg-blue-900/10">
+                        <div className="flex-1">
+                          <h4 className="font-medium dark:text-white text-blue-900 dark:text-blue-200">{relatedCourse?.title || 'Online Course'}</h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300">{relatedCourse?.teacher_name || 'Unknown teacher'}</p>
+                          <div className="flex items-center gap-4 mt-1 text-xs text-blue-600 dark:text-blue-400">
+                            <span>{onlineCourse.total_lessons} lessons</span>
+                            <span>{onlineCourse.estimated_duration_hours}h estimated</span>
+                            <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-200">
+                              Online
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200">
+                            {onlineCourse.difficulty_level}
+                          </Badge>
+                          <div className="flex gap-1">
+                            <Button size="sm" variant="outline" title="View Online Course" className="dark:border-white/20 dark:hover:bg-white/10">
+                              <Eye className="h-3 w-3 dark:text-white" />
+                            </Button>
+                            <Button size="sm" variant="outline" title="Edit Online Course" className="dark:border-white/20 dark:hover:bg-white/10">
+                              <Edit className="h-3 w-3 dark:text-white" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
+
+              {courses.length === 0 && onlineCourses.length === 0 && (
                 <p className="text-gray-500 dark:text-gray-400 text-center py-8">{t('dashboard.admin.noCoursesCreatedYet')}</p>
               )}
-              {courses.length > 5 && (
+
+              {(courses.length > 3 || onlineCourses.length > 3) && (
                 <Button variant="outline" className="w-full dark:border-white/20 dark:text-white dark:hover:bg-white/10">
-                  {t('dashboard.admin.viewAllCourses', { count: courses.length })}
+                  View All Courses ({courses.length + onlineCourses.length})
                 </Button>
               )}
             </div>

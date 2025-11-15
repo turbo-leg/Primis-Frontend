@@ -188,6 +188,13 @@ export default function SettingsPage() {
       // Check if all requests were successful
       const failedRequests = responses.filter(response => !response.ok)
       if (failedRequests.length > 0) {
+        // Log response details for debugging
+        const errorDetails = await Promise.all(
+          failedRequests.map(r => r.json().catch(() => ({ status: r.status, statusText: r.statusText })))
+        )
+        console.error('Failed request details:', errorDetails)
+        console.error('Failed request count:', failedRequests.length)
+        console.error('First failed status:', failedRequests[0]?.status)
         throw new Error(`${failedRequests.length} preference updates failed`)
       }
 

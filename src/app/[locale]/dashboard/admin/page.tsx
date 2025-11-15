@@ -291,8 +291,9 @@ export default function AdminDashboard() {
       try {
         await apiClient.delete(`/api/v1/courses/${courseId}`)
         await fetchDashboardData() // Refresh data
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to delete course:', error)
+        alert(error.response?.data?.detail || 'Failed to delete course. Please try again.')
       }
     }
   }

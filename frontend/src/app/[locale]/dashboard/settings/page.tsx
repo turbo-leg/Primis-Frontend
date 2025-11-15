@@ -22,7 +22,9 @@ import {
   Mail,
   Phone,
   MapPin,
-  Calendar
+  Calendar,
+  Upload,
+  Trash2
 } from 'lucide-react'
 
 export default function SettingsPage() {
@@ -32,6 +34,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(user?.profile_picture || null)
+  const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false)
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -120,6 +124,92 @@ export default function SettingsPage() {
     }
   }
 
+  const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setMessage({ type: 'error', text: 'Please select a valid image file' })
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: 'Image size must be less than 5MB' })
+      return
+    }
+
+    setUploadingProfilePicture(true)
+    try {
+      const formDataToSend = new FormData()
+      formDataToSend.append('file', file)
+      formDataToSend.append('user_id', user?.id?.toString() || '')
+      formDataToSend.append('user_type', userType)
+
+      const response = await fetch('/api/v1/users/profile-picture', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: formDataToSend,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Failed to upload profile picture')
+      }
+
+      const data = await response.json()
+      setProfilePictureUrl(data.profile_picture_url)
+      setMessage({ type: 'success', text: 'Profile picture updated successfully' })
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setMessage(null), 3000)
+    } catch (error: any) {
+      console.error('Profile picture upload error:', error)
+      setMessage({ 
+        type: 'error', 
+        text: error?.message || 'Failed to upload profile picture' 
+      })
+    } finally {
+      setUploadingProfilePicture(false)
+    }
+  }
+
+  const handleDeleteProfilePicture = async () => {
+    if (!profilePictureUrl) return
+
+    setUploadingProfilePicture(true)
+    try {
+      const response = await fetch('/api/v1/users/profile-picture', {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Failed to delete profile picture')
+      }
+
+      setProfilePictureUrl(null)
+      setMessage({ type: 'success', text: 'Profile picture deleted successfully' })
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setMessage(null), 3000)
+    } catch (error: any) {
+      console.error('Profile picture delete error:', error)
+      setMessage({ 
+        type: 'error', 
+        text: error?.message || 'Failed to delete profile picture' 
+      })
+    } finally {
+      setUploadingProfilePicture(false)
+    }
+  }
+
   return (
     <AuthenticatedLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-primis-navy pt-8 pb-12">
@@ -200,6 +290,55 @@ export default function SettingsPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Profile Picture Section */}
+                  <div className="flex flex-col items-center space-y-4 pb-6 border-b border-gray-200 dark:border-gray-700">
+                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-primis-navy flex items-center justify-center">
+                      {profilePictureUrl ? (
+                        <img 
+                          src={profilePictureUrl} 
+                          alt="Profile picture" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-16 w-16 text-gray-400 dark:text-gray-600" />
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        id="profilePictureInput"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePictureUpload}
+                        disabled={uploadingProfilePicture}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const input = document.getElementById('profilePictureInput') as HTMLInputElement
+                          input?.click()
+                        }}
+                        disabled={uploadingProfilePicture}
+                        className="bg-primis-navy hover:bg-primis-navy/90 dark:bg-white dark:text-primis-navy dark:hover:bg-gray-100 text-white font-light"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        {uploadingProfilePicture ? 'Uploading...' : 'Upload Picture'}
+                      </Button>
+                      {profilePictureUrl && (
+                        <Button
+                          type="button"
+                          onClick={handleDeleteProfilePicture}
+                          disabled={uploadingProfilePicture}
+                          variant="outline"
+                          className="dark:border-red-500 dark:text-red-400 dark:hover:bg-red-900/20"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
                   {/* User Info Display */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
