@@ -88,6 +88,168 @@
         "description": "Monitor attendance, complete assignments, and measure academic advancement through sophisticated analytics."
       }
     },
+    "videoShowcase": {
+      "title": "Life at Primis",
+      "subtitle": "Experience our vibrant community and student success stories",
+      "videos": {
+        "riverTower": "New Branch at River Tower",
+        "winterPrep": "Winter College Prep",
+        "careerGuidance": "Career Guidance & Enrollment",
+        "studentTestimonial": "Student Testimonial: Erdene"
+      }
+    },
+    "about": {
+      "title": "INTRODUCTION",
+      "description": "Since 2021, our organization has been supporting and fully preparing students who wish to study at top foreign universities with scholarships. We offer comprehensive training and recommendations tailored to the student's chosen field, providing the most suitable solutions for young people wishing to study abroad."
+    },
+    "services": {
+      "title": "OPERATIONS AND SERVICE FEATURES",
+      "scholarship": {
+        "title": "Opportunity to study at top foreign universities with scholarships",
+        "description": "Our organization provides advice to students on choosing the right school and how to apply. We professionally guide and advise on the entire process of scholarship registration, requirements, exams, and obtaining admission from the school."
+      },
+      "curriculum": {
+        "title": "Comprehensive training program",
+        "description": "Our training center not only improves language skills but also provides advice on all skills needed to study abroad and career choices. We have programs to develop all types of writing and interview skills, such as preparing for SAT, IELTS, and scholarship application materials."
+      },
+      "teachers": {
+        "title": "Professional Teachers",
+        "description": "The program teachers are professionals with many years of experience and detailed knowledge of exam preparation who have studied at top foreign universities. They will advise students throughout the training and guide them to successfully obtain scholarships."
+      }
+    },
+    "programs": {
+      "collegePrep": {
+        "title": "COLLEGE PREP",
+        "stats": "Prepared about 2,300 students, each receiving $150,000-$460,000 in scholarships.",
+        "universitiesTitle": "Universities with high acceptance rates",
+        "universities": {
+          "u1": "University of Toronto",
+          "u2": "The University of British Columbia",
+          "u3": "NYU",
+          "u4": "Tsinghua University",
+          "u5": "Waseda University",
+          "u6": "Stanford University",
+          "u7": "NYU Shanghai",
+          "u8": "McGill University",
+          "u9": "Duke Kunshan University"
+        }
+      },
+      "corporate": {
+        "title": "ENGLISH / CHINESE",
+        "subtitle": "Language training for specific industries and workplaces",
+        "clientsTitle": "Organizations trained",
+        "clients": {
+          "c1": "Call pro",
+          "c2": "Bogd Group"
+        },
+        "benefitsTitle": "Advantages",
+        "benefits": {
+          "b1": "Drafting official documents",
+          "b2": "Writing official emails",
+          "b3": "Reading research papers and drawing conclusions",
+          "b4": "Presentation skills",
+          "b5": "Improving pronunciation"
+        }
+      }
+    },
+    "team": {
+      "title": "TEACHERS",
+      "members": {
+        "m1": { "name": "P.NYAMGEREL", "role": "IELTS" },
+        "m2": { "name": "V.OLGA", "role": "SAT" },
+        "m3": { "name": "B.ARIUNGEREL", "role": "IELTS" },
+        "m4": { "name": "O.NANDINBAYAR", "role": "IELTS, SAT" },
+        "m5": { "name": "U.ANUJIN", "role": "SAT" },
+        "m6": { "name": "E.TEMUUGEE", "role": "IELTS" },
+        "m7": { "name": "G.GUNBISHRELT", "role": "IELTS" },
+        "m8": { "name": "A.KHAIDAR", "role": "Counselor" },
+        "m9": { "name": "G.TSELMEG", "role": "IELTS" },
+        "m10": { "name": "D.ANKHBAYAR", "role": "IELTS, SAT" },
+        "m11": { "name": "J.AMINA", "role": "IELTS" },
+        "m12": { "name": "J.AMINA", "role": "HSK" }
+      }
+    },
+    "process": {
+      "title": "STAGES",
+      "steps": {
+        "s1": {
+          "title": "LEVEL ASSESSMENT",
+          "description": "The language proficiency assessment consists of 4 parts: reading, writing, listening, and speaking, to precisely determine the student's level."
+        },
+        "s2": {
+          "title": "CLASS ASSIGNMENT",
+          "description": "Students are assigned to the most suitable classes according to their level, and training is organized according to the teacher's experience, student's request, and ability."
+        },
+        "s3": {
+          "title": "GRAMMAR MONTH",
+          "description": "The first month focuses on reviewing basic grammar and fundamental knowledge. This training strengthens the student's foundation and creates opportunities for successful learning at the next level."
+        },
+        "s4": {
+          "title": "PROFESSIONAL TRAINING",
+          "description": "Professional level training focuses on developing skills in writing official documents, emails, reading research, drawing conclusions, giving presentations, and speaking. Students will master these skills and be able to communicate successfully in a professional environment."
+        },
+        "s5": {
+          "title": "PROGRESS CHECK",
+          "description": "During the training, students' knowledge and skills are checked, and progress is evaluated."
+        },
+        "s6": {
+          "title": "FINAL EXAM",
+          "description": "An exam to deeply evaluate everything learned at the end of the training and measure success. These exams aim to monitor student progress and training results."
+        }
+      }
+    },
+    "hsk": {
+      "title": "HSK TRAINING",
+      "description": "HSK or Chinese Proficiency Test has levels 1-6, with level 6 being the highest. Classes are held in person 4 times a week, 1 hour 30 minutes each.",
+      "levels": {
+        "l1": {
+          "level": "HSK-1 LEVEL",
+          "duration": "DURATION 1 MONTH",
+          "hours": "LESSONS 32 HOURS",
+          "description": "Passing HSK-1 means learning to use some simple Chinese words and sentences, providing a foundation for further in-depth study. You will have a vocabulary of about 150 Chinese words."
+        },
+        "l2": {
+          "level": "HSK-2 LEVEL",
+          "duration": "DURATION 1 MONTH",
+          "hours": "LESSONS 32 HOURS",
+          "description": "Passing HSK-2 means acquiring the ability to hold simple conversations on some simple topics. You will master 300 Chinese words and phrases."
+        },
+        "l3": {
+          "level": "HSK-3 LEVEL",
+          "duration": "DURATION 2 MONTHS",
+          "hours": "LESSONS 64 HOURS",
+          "description": "Passing HSK-3 means being able to communicate basically in Chinese about daily life, work, and studies. You will master 600 Chinese words and phrases."
+        },
+        "l4": {
+          "level": "HSK-4 LEVEL",
+          "duration": "DURATION 3 MONTHS",
+          "hours": "LESSONS 96 HOURS",
+          "description": "Passing HSK-4 means learning to speak clearly and correctly on relatively deep topics in Chinese. You will master 1200 Chinese words and phrases. During HSK-4 study, you will learn technical and equipment terminology."
+        }
+      }
+    },
+    "pricing": {
+      "businessChinese": {
+        "title": "BUSINESS CHINESE",
+        "note": "All textbooks included",
+        "prices": {
+          "p1": { "students": "1-60", "price": "450,000₮" },
+          "p2": { "students": "60+", "price": "370,000₮" }
+        }
+      },
+      "businessEnglish": {
+        "title": "BUSINESS ENGLISH",
+        "prices": {
+          "p1": { "students": "1-60", "price": "450,000₮" },
+          "p2": { "students": "60+", "price": "370,000₮" }
+        }
+      }
+    },
+    "location": {
+      "title": "LOCATION",
+      "address": "SBD, 1st khoroo, Soyombo Tower 202",
+      "rooms": "Total 3 classrooms"
+    },
     "roles": {
       "title": "Tailored Access for Every Role",
       "subtitle": "Specialized experiences designed for each stakeholder",

@@ -75,7 +75,14 @@ export function Navigation({ className }: NavigationProps) {
     if (!user) {
       return [
         { href: '/', label: 'Home', icon: Home },
-        { href: '/about', label: 'About', icon: BookOpen },
+        // { href: '/about', label: 'About', icon: BookOpen },
+        { 
+          href: '/certificates', 
+          label: 'Digital Certificates', 
+          icon: GraduationCap,
+          badge: 'Soon',
+          disabled: true
+        },
         { href: '/contact', label: 'Contact', icon: Users },
       ]
     }
@@ -123,6 +130,28 @@ export function Navigation({ className }: NavigationProps) {
             <div className="flex items-center space-x-2">
               {menuItems.map((item) => {
                 const Icon = item.icon
+                const isDisabled = (item as any).disabled
+
+                if (isDisabled) {
+                  return (
+                    <div
+                      key={item.href}
+                      className="flex items-center space-x-2 text-white/40 px-4 py-2 rounded-md cursor-not-allowed"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="text-sm font-medium">{item.label}</span>
+                      {(item as any).badge && (
+                        <Badge 
+                          variant="outline" 
+                          className="ml-2 text-[10px] h-5 px-2 border-white/10 text-white/40 bg-white/5 font-normal tracking-wide"
+                        >
+                          {(item as any).badge}
+                        </Badge>
+                      )}
+                    </div>
+                  )
+                }
+
                 return (
                   <Link
                     key={item.href}
@@ -131,6 +160,14 @@ export function Navigation({ className }: NavigationProps) {
                   >
                     <Icon className="h-4 w-4" />
                     <span className="text-sm font-medium">{item.label}</span>
+                    {(item as any).badge && (
+                      <Badge 
+                        variant="outline" 
+                        className="ml-2 text-[10px] h-5 px-2 border-white/20 text-white/70 bg-white/5 hover:bg-white/10 font-normal tracking-wide"
+                      >
+                        {(item as any).badge}
+                      </Badge>
+                    )}
                   </Link>
                 )
               })}
@@ -286,6 +323,27 @@ export function Navigation({ className }: NavigationProps) {
               <div className="space-y-1">
                 {menuItems.map((item) => {
                   const Icon = item.icon
+                  const isDisabled = (item as any).disabled
+
+                  if (isDisabled) {
+                    return (
+                      <div
+                        key={item.href}
+                        className="flex items-center space-x-3 text-white/40 px-4 py-3 rounded-lg cursor-not-allowed"
+                      >
+                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <span className="text-sm font-medium">{item.label}</span>
+                        {(item as any).badge && (
+                          <Badge 
+                            className="ml-2 text-[10px] h-5 px-2 bg-white/5 text-white/40 border-0 font-normal"
+                          >
+                            {(item as any).badge}
+                          </Badge>
+                        )}
+                      </div>
+                    )
+                  }
+
                   return (
                     <Link
                       key={item.href}
@@ -295,6 +353,13 @@ export function Navigation({ className }: NavigationProps) {
                     >
                       <Icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
                       <span className="text-sm font-medium">{item.label}</span>
+                      {(item as any).badge && (
+                        <Badge 
+                          className="ml-2 text-[10px] h-5 px-2 bg-white/10 text-white/90 hover:bg-white/20 border-0 font-normal"
+                        >
+                          {(item as any).badge}
+                        </Badge>
+                      )}
                     </Link>
                   )
                 })}

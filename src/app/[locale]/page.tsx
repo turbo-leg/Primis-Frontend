@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,12 +9,39 @@ import { Navigation } from '@/components/navigation'
 import AuthRedirect from '@/components/AuthRedirect'
 import PrimisLogo from '@/components/PrimisLogo'
 import NewsCarousel from '@/components/NewsCarousel'
+import ScrollAnimation from '@/components/ScrollAnimation'
+import VideoShowcase from '@/components/VideoShowcase'
 import { BookOpen, Users, Calendar, BarChart, GraduationCap, Clock, Award, TrendingUp } from 'lucide-react'
+
+
 
 export default function HomePage() {
   const t = useTranslations();
   const locale = useLocale();
   
+  const promoVideos = [
+    {
+      id: '1',
+      src: '/videos/river-tower.mp4',
+      title: t('home.videoShowcase.videos.riverTower')
+    },
+    {
+      id: '2',
+      src: '/videos/winter-prep.mp4',
+      title: t('home.videoShowcase.videos.winterPrep')
+    },
+    {
+      id: '3',
+      src: '/videos/career-guidance.mp4',
+      title: t('home.videoShowcase.videos.careerGuidance')
+    },
+    {
+      id: '4',
+      src: '/videos/student-testimonial-erdene.mp4',
+      title: t('home.videoShowcase.videos.studentTestimonial')
+    }
+  ];
+
   // Debug: Check what's being loaded
   console.log('Current locale:', locale);
   console.log('Hero title translation:', t('home.hero.title'));
@@ -30,293 +58,526 @@ export default function HomePage() {
       <div className="bg-primis-navy dark:bg-primis-navy-dark text-white py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mb-6 sm:mb-8 md:mb-12">
-              <PrimisLogo variant="light" size="lg" showTagline={true} />
-            </div>
-            <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-white/90 mb-4 sm:mb-6 md:mb-8 max-w-3xl mx-auto tracking-wide px-2 sm:px-4">
-              {t('home.hero.title')}
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-white/80 mb-6 sm:mb-8 md:mb-12 max-w-2xl mx-auto font-light leading-relaxed px-2 sm:px-4">
-              {t('home.hero.subtitle')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-4">
-              <Link href="/register" className="w-full sm:w-auto">
-                <Button 
-                  size="lg" 
-                  className="w-full sm:min-w-[200px] h-12 sm:h-11 text-base sm:text-sm bg-white text-primis-navy dark:text-primis-navy-dark hover:bg-gray-100 font-medium transition-colors"
-                >
-                  {t('home.hero.beginJourney')}
-                </Button>
-              </Link>
-              <Link href="/login" className="w-full sm:w-auto">
-                <Button 
-                  variant="ghost" 
-                  size="lg" 
-                  className="w-full sm:min-w-[200px] h-12 sm:h-11 text-base sm:text-sm border-2 border-white text-white hover:bg-white hover:text-primis-navy dark:hover:text-primis-navy-dark transition-colors"
-                >
-                  {t('home.hero.signIn')}
-                </Button>
-              </Link>
-            </div>
+            <ScrollAnimation animation="fade-up" delay={0.1}>
+              <div className="mb-6 sm:mb-8 md:mb-12">
+                <PrimisLogo variant="light" size="lg" showTagline={true} />
+              </div>
+            </ScrollAnimation>
+            
+            <ScrollAnimation animation="fade-up" delay={0.3}>
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-white/90 mb-4 sm:mb-6 md:mb-8 max-w-3xl mx-auto tracking-wide px-2 sm:px-4">
+                {t('home.hero.title')}
+              </h2>
+            </ScrollAnimation>
+
+            <ScrollAnimation animation="fade-up" delay={0.5}>
+              <p className="text-sm sm:text-base md:text-lg text-white/80 mb-6 sm:mb-8 md:mb-12 max-w-2xl mx-auto font-light leading-relaxed px-2 sm:px-4">
+                {t('home.hero.subtitle')}
+              </p>
+            </ScrollAnimation>
+
+            <ScrollAnimation animation="fade-up" delay={0.7}>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-4">
+                <Link href="/register" className="w-full sm:w-auto">
+                  <Button 
+                    size="lg" 
+                    className="w-full sm:min-w-[200px] h-12 sm:h-11 text-base sm:text-sm bg-white text-primis-navy dark:text-primis-navy-dark hover:bg-gray-100 font-medium transition-colors"
+                  >
+                    {t('home.hero.beginJourney')}
+                  </Button>
+                </Link>
+                <Link href="/login" className="w-full sm:w-auto">
+                  <Button 
+                    variant="ghost" 
+                    size="lg" 
+                    className="w-full sm:min-w-[200px] h-12 sm:h-11 text-base sm:text-sm border-2 border-white text-white hover:bg-white hover:text-primis-navy dark:hover:text-primis-navy-dark transition-colors"
+                  >
+                    {t('home.hero.signIn')}
+                  </Button>
+                </Link>
+              </div>
+            </ScrollAnimation>
           </div>
         </div>
       </div>
 
-      {/* News Carousel Section */}
-      <NewsCarousel autoPlayInterval={6000} />
-
-      {/* Features Section */}
-      <div className="bg-gray-50 dark:bg-primis-navy-light py-12 sm:py-16 md:py-20 lg:py-24">
+      {/* About Section */}
+      <section className="py-16 sm:py-24 bg-white dark:bg-primis-navy overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-primis-navy dark:text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-4">
-              {t('home.features.title')}
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70 font-light px-2 sm:px-4">
-              {t('home.features.subtitle')}
-            </p>
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <ScrollAnimation animation="slide-right">
+              <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-2xl">
+                {/* Placeholder for user to replace */}
+                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400">
+                  <span className="text-lg">Add image: /public/images/about-us.jpg</span>
+                </div>
+                {/* Uncomment when image is added:
+                <Image 
+                  src="/images/about-us.jpg" 
+                  alt="About Primis" 
+                  fill 
+                  className="object-cover"
+                />
+                */}
+              </div>
+            </ScrollAnimation>
+            
+            <ScrollAnimation animation="slide-left">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-serif text-primis-navy dark:text-white mb-6">
+                  {t('home.about.title')}
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-white/80 leading-relaxed">
+                  {t('home.about.description')}
+                </p>
+                <div className="mt-8">
+                  <Link href="/about">
+                    <Button variant="outline" className="border-primis-navy text-primis-navy hover:bg-primis-navy hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-primis-navy">
+                      Learn More
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </ScrollAnimation>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <div className="bg-gray-50 dark:bg-primis-navy-light py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <ScrollAnimation animation="fade-up">
+              <h2 className="text-3xl md:text-4xl font-serif text-primis-navy dark:text-white mb-4">
+                {t('home.services.title')}
+              </h2>
+            </ScrollAnimation>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            <Card className="text-center p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-                <CardTitle className="text-lg sm:text-xl font-serif text-primis-navy dark:text-white">
-                  {t('home.features.courseManagement.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light">
-                  {t('home.features.courseManagement.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-                <CardTitle className="text-lg sm:text-xl font-serif text-primis-navy dark:text-white">
-                  {t('home.features.studentDashboard.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light">
-                  {t('home.features.studentDashboard.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-                <CardTitle className="text-lg sm:text-xl font-serif text-primis-navy dark:text-white">
-                  {t('home.features.smartCalendar.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light">
-                  {t('home.features.smartCalendar.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
-            
-            <Card className="text-center p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
-              <CardHeader className="pb-4 sm:pb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <BarChart className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-                <CardTitle className="text-lg sm:text-xl font-serif text-primis-navy dark:text-white">
-                  {t('home.features.analytics.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light">
-                  {t('home.features.analytics.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ScrollAnimation animation="fade-up" delay={0.1}>
+              <Card className="h-full hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy">
+                <CardHeader>
+                  <div className="bg-primis-navy/5 dark:bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <GraduationCap className="h-8 w-8 text-primis-navy dark:text-white" />
+                  </div>
+                  <CardTitle className="text-xl text-center font-serif text-primis-navy dark:text-white">
+                    {t('home.services.scholarship.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-center text-gray-600 dark:text-white/60">
+                    {t('home.services.scholarship.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
+
+            <ScrollAnimation animation="fade-up" delay={0.2}>
+              <Card className="h-full hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy">
+                <CardHeader>
+                  <div className="bg-primis-navy/5 dark:bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <BookOpen className="h-8 w-8 text-primis-navy dark:text-white" />
+                  </div>
+                  <CardTitle className="text-xl text-center font-serif text-primis-navy dark:text-white">
+                    {t('home.services.curriculum.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-center text-gray-600 dark:text-white/60">
+                    {t('home.services.curriculum.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
+
+            <ScrollAnimation animation="fade-up" delay={0.3}>
+              <Card className="h-full hover:shadow-xl transition-all border-0 bg-white dark:bg-primis-navy">
+                <CardHeader>
+                  <div className="bg-primis-navy/5 dark:bg-white/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Users className="h-8 w-8 text-primis-navy dark:text-white" />
+                  </div>
+                  <CardTitle className="text-xl text-center font-serif text-primis-navy dark:text-white">
+                    {t('home.services.teachers.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-center text-gray-600 dark:text-white/60">
+                    {t('home.services.teachers.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
           </div>
         </div>
-
-        {/* Stats Section */}
-        <section className="py-16 sm:py-20 md:py-24 bg-white dark:bg-primis-navy my-8 sm:my-12 md:my-16">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-primis-navy dark:text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-4">
-              {t('home.stats.title')}
-            </h3>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70 font-light px-2 sm:px-4">
-              {t('home.stats.subtitle')}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 md:gap-12">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 p-3 sm:p-4 rounded-full">
-                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl md:text-5xl font-serif text-primis-navy dark:text-white mb-2 sm:mb-3">10,000+</div>
-              <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-white/60 font-light">{t('home.stats.activeStudents')}</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 p-3 sm:p-4 rounded-full">
-                  <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl md:text-5xl font-serif text-primis-navy dark:text-white mb-2 sm:mb-3">500+</div>
-              <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-white/60 font-light">{t('home.stats.expertTeachers')}</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 p-3 sm:p-4 rounded-full">
-                  <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl md:text-5xl font-serif text-primis-navy dark:text-white mb-2 sm:mb-3">200+</div>
-              <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-white/60 font-light">{t('home.stats.availableCourses')}</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-3 sm:mb-4 md:mb-6">
-                <div className="bg-primis-navy/5 dark:bg-white/10 p-3 sm:p-4 rounded-full">
-                  <Award className="h-6 w-6 sm:h-8 sm:w-8 text-primis-navy dark:text-white" />
-                </div>
-              </div>
-              <div className="text-3xl sm:text-4xl md:text-5xl font-serif text-primis-navy dark:text-white mb-2 sm:mb-3">95%</div>
-              <div className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-white/60 font-light">{t('home.stats.successRate')}</div>
-            </div>
-          </div>
-        </section>
-
-        {/* How It Works Section */}
-        <section className="py-16 sm:py-20 md:py-24">
-          <div className="text-center mb-12 sm:mb-16 md:mb-20">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-primis-navy dark:text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-4">
-              {t('home.howItWorks.title')}
-            </h3>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70 font-light max-w-3xl mx-auto px-2 sm:px-4">
-              {t('home.howItWorks.subtitle')}
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
-            <div className="text-center">
-              <div className="bg-primis-navy dark:bg-white/20 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 text-white text-2xl sm:text-3xl font-serif shadow-lg">
-                1
-              </div>
-              <h4 className="text-xl sm:text-2xl font-serif text-primis-navy dark:text-white mb-4 sm:mb-6 px-2">
-                {t('home.howItWorks.step1.title')}
-              </h4>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-white/60 leading-relaxed font-light px-2">
-                {t('home.howItWorks.step1.description')}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primis-navy dark:bg-white/20 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 text-white text-2xl sm:text-3xl font-serif shadow-lg">
-                2
-              </div>
-              <h4 className="text-xl sm:text-2xl font-serif text-primis-navy dark:text-white mb-4 sm:mb-6 px-2">
-                {t('home.howItWorks.step2.title')}
-              </h4>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-white/60 leading-relaxed font-light px-2">
-                {t('home.howItWorks.step2.description')}
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="bg-primis-navy dark:bg-white/20 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 text-white text-2xl sm:text-3xl font-serif shadow-lg">
-                3
-              </div>
-              <h4 className="text-xl sm:text-2xl font-serif text-primis-navy dark:text-white mb-4 sm:mb-6 px-2">
-                {t('home.howItWorks.step3.title')}
-              </h4>
-              <p className="text-sm sm:text-base text-gray-600 dark:text-white/60 leading-relaxed font-light px-2">
-                {t('home.howItWorks.step3.description')}
-              </p>
-            </div>
-          </div>
-        </section>
       </div>
+
+        {/* College Prep Section */}
+        <section className="relative py-16 sm:py-20 md:py-24 bg-primis-navy overflow-hidden">
+          {/* Background Image Placeholder */}
+          <div className="absolute inset-0 opacity-10">
+             {/* Placeholder for user to replace */}
+             <div className="w-full h-full bg-gray-500 flex items-center justify-center">
+                <span className="text-white text-xl">Add background: /public/images/college-prep-bg.jpg</span>
+             </div>
+             {/* Uncomment when image is added:
+            <Image
+              src="/images/college-prep-bg.jpg"
+              alt="College Prep Background"
+              fill
+              className="object-cover"
+            />
+            */}
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <ScrollAnimation animation="fade-up">
+                <h3 className="text-3xl md:text-4xl font-serif text-white mb-6">
+                  {t('home.programs.collegePrep.title')}
+                </h3>
+                <p className="text-xl text-primis-gold font-medium max-w-3xl mx-auto">
+                  {t('home.programs.collegePrep.stats')}
+                </p>
+              </ScrollAnimation>
+            </div>
+
+            <div className="text-center">
+              <h4 className="text-xl font-serif text-white mb-8">
+                {t('home.programs.collegePrep.universitiesTitle')}
+              </h4>
+              <div className="flex flex-wrap justify-center gap-4">
+                {Object.values(t.raw('home.programs.collegePrep.universities')).map((uni: any, index) => (
+                  <span key={index} className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full text-white border border-white/20 hover:bg-white/20 transition-colors">
+                    {uni}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+      {/* Corporate Training Section */}
+      <section className="py-16 bg-gray-50 dark:bg-primis-navy-light">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <ScrollAnimation animation="fade-up">
+              <h3 className="text-3xl font-serif text-primis-navy dark:text-white mb-4">
+                {t('home.programs.corporate.title')}
+              </h3>
+              <p className="text-lg text-gray-600 dark:text-white/70">
+                {t('home.programs.corporate.subtitle')}
+              </p>
+            </ScrollAnimation>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Image Side */}
+            <ScrollAnimation animation="slide-right">
+               <div className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-xl">
+                {/* Placeholder for user to replace */}
+                <div className="absolute inset-0 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500">
+                  <span className="text-lg">Add image: /public/images/corporate-training.jpg</span>
+                </div>
+                {/* Uncomment when image is added:
+                <Image 
+                  src="/images/corporate-training.jpg" 
+                  alt="Corporate Training" 
+                  fill 
+                  className="object-cover"
+                />
+                */}
+              </div>
+            </ScrollAnimation>
+
+            {/* Content Side */}
+            <div className="space-y-8">
+              <ScrollAnimation animation="slide-left" delay={0.1}>
+                <Card className="h-full border-l-4 border-l-primis-gold">
+                  <CardHeader>
+                    <CardTitle>{t('home.programs.corporate.clientsTitle')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="grid grid-cols-2 gap-2">
+                      {Object.values(t.raw('home.programs.corporate.clients')).map((client: any, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm">
+                          <div className="w-1.5 h-1.5 bg-primis-gold rounded-full" />
+                          {client}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
+
+              <ScrollAnimation animation="slide-left" delay={0.2}>
+                <Card className="h-full border-l-4 border-l-primis-navy">
+                  <CardHeader>
+                    <CardTitle>{t('home.programs.corporate.benefitsTitle')}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {Object.values(t.raw('home.programs.corporate.benefits')).map((benefit: any, i) => (
+                        <li key={i} className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-primis-navy rounded-full" />
+                          {benefit}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-16 bg-white dark:bg-primis-navy">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <ScrollAnimation animation="fade-up">
+              <h3 className="text-3xl font-serif text-primis-navy dark:text-white">
+                {t('home.team.title')}
+              </h3>
+            </ScrollAnimation>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Object.values(t.raw('home.team.members')).map((member: any, i) => (
+              <ScrollAnimation key={i} animation="fade-up" delay={i * 0.1}>
+                <Card className="text-center hover:shadow-lg transition-all overflow-hidden group">
+                  <div className="relative w-full aspect-square bg-gray-100 dark:bg-white/5">
+                    {/* Placeholder for user to replace */}
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-xs p-2 text-center">
+                      Add image: /public/images/team-{i + 1}.jpg
+                    </div>
+                    {/* Uncomment when image is added:
+                    <Image 
+                      src={`/images/team-${i + 1}.jpg`}
+                      alt={member.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    */}
+                  </div>
+                  <CardHeader className="pt-6">
+                    <CardTitle className="text-lg">{member.name}</CardTitle>
+                    <CardDescription>{member.role}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </ScrollAnimation>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section className="py-16 bg-gray-50 dark:bg-primis-navy-light">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <ScrollAnimation animation="fade-up">
+              <h3 className="text-3xl font-serif text-primis-navy dark:text-white">
+                {t('home.process.title')}
+              </h3>
+            </ScrollAnimation>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Object.values(t.raw('home.process.steps')).map((step: any, i) => (
+              <ScrollAnimation key={i} animation="fade-up" delay={i * 0.1}>
+                <Card className="h-full relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-primis-gold" />
+                  <CardHeader>
+                    <div className="text-4xl font-serif text-primis-navy/10 dark:text-white/10 absolute top-4 right-4">
+                      {i + 1}
+                    </div>
+                    <CardTitle className="text-xl mb-2">{step.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 dark:text-white/70">{step.description}</p>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HSK Section */}
+      <section className="py-16 bg-white dark:bg-primis-navy">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <ScrollAnimation animation="fade-up">
+              <h3 className="text-3xl font-serif text-primis-navy dark:text-white mb-4">
+                {t('home.hsk.title')}
+              </h3>
+              <p className="max-w-3xl mx-auto text-gray-600 dark:text-white/70">
+                {t('home.hsk.description')}
+              </p>
+            </ScrollAnimation>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.values(t.raw('home.hsk.levels')).map((level: any, i) => (
+              <ScrollAnimation key={i} animation="fade-up" delay={i * 0.1}>
+                <Card className="h-full border-t-4 border-t-primis-navy">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{level.level}</CardTitle>
+                    <CardDescription>
+                      {level.duration} • {level.hours}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 dark:text-white/70">{level.description}</p>
+                  </CardContent>
+                </Card>
+              </ScrollAnimation>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-16 bg-gray-50 dark:bg-primis-navy-light">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <ScrollAnimation animation="slide-right">
+              <Card className="h-full border-2 border-primis-navy">
+                <CardHeader className="text-center bg-primis-navy text-white py-8">
+                  <CardTitle className="text-2xl">{t('home.pricing.businessChinese.title')}</CardTitle>
+                  <CardDescription className="text-white/80 mt-2">{t('home.pricing.businessChinese.note')}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-8">
+                  <div className="space-y-4">
+                    {Object.values(t.raw('home.pricing.businessChinese.prices')).map((price: any, i) => (
+                      <div key={i} className="flex justify-between items-center border-b pb-2">
+                        <span className="font-medium">{price.students} students</span>
+                        <span className="text-xl font-bold text-primis-navy dark:text-white">{price.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
+
+            <ScrollAnimation animation="slide-left">
+              <Card className="h-full border-2 border-primis-navy">
+                <CardHeader className="text-center bg-primis-navy text-white py-8">
+                  <CardTitle className="text-2xl">{t('home.pricing.businessEnglish.title')}</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-8">
+                  <div className="space-y-4">
+                    {Object.values(t.raw('home.pricing.businessEnglish.prices')).map((price: any, i) => (
+                      <div key={i} className="flex justify-between items-center border-b pb-2">
+                        <span className="font-medium">{price.students} students</span>
+                        <span className="text-xl font-bold text-primis-navy dark:text-white">{price.price}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Showcase Section */}
+      <ScrollAnimation animation="fade-up">
+        <VideoShowcase 
+          videos={promoVideos}
+          title={t('home.videoShowcase.title')}
+          subtitle={t('home.videoShowcase.subtitle')}
+        />
+      </ScrollAnimation>
 
       {/* User Roles Section */}
       <div className="bg-primis-navy/5 dark:bg-primis-navy-dark py-16 sm:py-20 md:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-primis-navy dark:text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-4">
-              {t('home.roles.title')}
-            </h3>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70 font-light px-2 sm:px-4">
-              {t('home.roles.subtitle')}
-            </p>
+            <ScrollAnimation animation="fade-up">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-primis-navy dark:text-white mb-2 sm:mb-3 md:mb-4 px-2 sm:px-4">
+                {t('home.roles.title')}
+              </h3>
+            </ScrollAnimation>
+            <ScrollAnimation animation="fade-up" delay={0.2}>
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70 font-light px-2 sm:px-4">
+                {t('home.roles.subtitle')}
+              </p>
+            </ScrollAnimation>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
-            <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6">
-              <CardHeader className="text-center pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <Users className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-                </div>
-                <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
-                  {t('home.roles.students.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
-                  {t('home.roles.students.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <ScrollAnimation animation="fade-up" delay={0.1}>
+              <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6 h-full">
+                <CardHeader className="text-center pb-4 sm:pb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                    <Users className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+                  </div>
+                  <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
+                    {t('home.roles.students.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
+                    {t('home.roles.students.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
 
-            <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6">
-              <CardHeader className="text-center pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <GraduationCap className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-                </div>
-                <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
-                  {t('home.roles.teachers.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
-                  {t('home.roles.teachers.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <ScrollAnimation animation="fade-up" delay={0.2}>
+              <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6 h-full">
+                <CardHeader className="text-center pb-4 sm:pb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                    <GraduationCap className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+                  </div>
+                  <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
+                    {t('home.roles.teachers.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
+                    {t('home.roles.teachers.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
 
-            <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6">
-              <CardHeader className="text-center pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <BarChart className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-                </div>
-                <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
-                  {t('home.roles.admins.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
-                  {t('home.roles.admins.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <ScrollAnimation animation="fade-up" delay={0.3}>
+              <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6 h-full">
+                <CardHeader className="text-center pb-4 sm:pb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                    <BarChart className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+                  </div>
+                  <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
+                    {t('home.roles.admins.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
+                    {t('home.roles.admins.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
 
-            <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6">
-              <CardHeader className="text-center pb-4 sm:pb-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
-                  <Clock className="text-white h-6 w-6 sm:h-8 sm:w-8" />
-                </div>
-                <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
-                  {t('home.roles.parents.title')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
-                  {t('home.roles.parents.description')}
-                </CardDescription>
-              </CardContent>
-            </Card>
+            <ScrollAnimation animation="fade-up" delay={0.4}>
+              <Card className="bg-white dark:bg-primis-navy-light border-0 dark:border dark:border-white/10 hover:shadow-xl transition-all p-4 sm:p-6 h-full">
+                <CardHeader className="text-center pb-4 sm:pb-6">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primis-navy dark:bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                    <Clock className="text-white h-6 w-6 sm:h-8 sm:w-8" />
+                  </div>
+                  <CardTitle className="font-serif text-primis-navy dark:text-white text-lg sm:text-xl">
+                    {t('home.roles.parents.title')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <CardDescription className="text-sm sm:text-base text-gray-600 dark:text-white/60 font-light leading-relaxed">
+                    {t('home.roles.parents.description')}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </ScrollAnimation>
           </div>
         </div>
       </div>
@@ -328,6 +589,14 @@ export default function HomePage() {
             <div className="mb-4 sm:mb-6">
               <PrimisLogo variant="light" size="sm" showTagline={true} />
             </div>
+
+            {/* Location Info */}
+            <div className="mb-8 text-white/80">
+              <h4 className="font-serif text-lg mb-2">{t('home.location.title')}</h4>
+              <p>{t('home.location.address')}</p>
+              <p className="text-sm text-white/60">{t('home.location.rooms')}</p>
+            </div>
+
             <p className="text-white/70 mb-3 sm:mb-4 font-light text-sm sm:text-base px-2">
               {t('home.footer.tagline')}
             </p>
