@@ -60,7 +60,8 @@ interface OnlineLesson {
 }
 
 export default function OnlineCoursesPage() {
-  const t = useTranslations()
+  const t = useTranslations('onlineCourses.manage')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const { user, userType } = useAuthStore()
   const [courses, setCourses] = useState<Course[]>([])
@@ -117,7 +118,7 @@ export default function OnlineCoursesPage() {
       setCourses(coursesData)
     } catch (error) {
       console.error('Error fetching courses:', error)
-      showMessage('error', 'Failed to load courses')
+      showMessage('error', t('errorOccurred'))
     }
   }
 
@@ -151,7 +152,7 @@ export default function OnlineCoursesPage() {
     try {
       setLoading(true)
       await apiClient.post('/api/v1/online-courses/create', newOnlineCourse)
-      showMessage('success', 'Online course created successfully!')
+      showMessage('success', t('successCreated'))
       setShowCreateModal(false)
       fetchOnlineCourses()
       setNewOnlineCourse({
@@ -167,7 +168,7 @@ export default function OnlineCoursesPage() {
         passing_score_percentage: 70
       })
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || 'Failed to create online course')
+      showMessage('error', error.response?.data?.detail || t('errorOccurred'))
     } finally {
       setLoading(false)
     }
@@ -181,7 +182,7 @@ export default function OnlineCoursesPage() {
       const onlineCourse = onlineCourses.find(oc => oc.course_id === selectedCourse.course_id)
       if (onlineCourse) {
         await apiClient.post(`/api/v1/online-courses/${onlineCourse.online_course_id}/lessons`, newLesson)
-        showMessage('success', 'Lesson created successfully!')
+        showMessage('success', t('lessonCreated'))
         setShowLessonModal(false)
         fetchLessons(selectedCourse.course_id)
         setNewLesson({
@@ -199,21 +200,21 @@ export default function OnlineCoursesPage() {
         })
       }
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || 'Failed to create lesson')
+      showMessage('error', error.response?.data?.detail || t('errorOccurred'))
     } finally {
       setLoading(false)
     }
   }
 
   const deleteOnlineCourse = async (onlineCourseId: number) => {
-    if (!confirm('Are you sure you want to permanently delete this online course? This action cannot be undone and will remove all lessons and student progress.')) {
+    if (!confirm(t('deleteConfirm'))) {
       return
     }
 
     try {
       setLoading(true)
       await apiClient.delete(`/api/v1/online-courses/${onlineCourseId}`)
-      showMessage('success', 'Online course deleted successfully!')
+      showMessage('success', t('successDeleted'))
       fetchOnlineCourses()
       fetchCourses()
       // Reset selected course if it was deleted
@@ -225,44 +226,44 @@ export default function OnlineCoursesPage() {
         }
       }
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || 'Failed to delete online course')
+      showMessage('error', error.response?.data?.detail || t('errorOccurred'))
     } finally {
       setLoading(false)
     }
   }
 
   const archiveOnlineCourse = async (onlineCourseId: number) => {
-    if (!confirm('Are you sure you want to archive this online course? Students will no longer be able to access it, but progress data will be preserved.')) {
+    if (!confirm(t('deleteConfirm'))) {
       return
     }
 
     try {
       setLoading(true)
       await apiClient.put(`/api/v1/online-courses/${onlineCourseId}/archive`)
-      showMessage('success', 'Online course archived successfully!')
+      showMessage('success', t('successUpdated'))
       fetchOnlineCourses()
       fetchCourses()
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || 'Failed to archive online course')
+      showMessage('error', error.response?.data?.detail || t('errorOccurred'))
     } finally {
       setLoading(false)
     }
   }
 
   const deleteLesson = async (lessonId: number) => {
-    if (!confirm('Are you sure you want to delete this lesson? This action cannot be undone and will remove all student progress for this lesson.')) {
+    if (!confirm(t('deleteConfirm'))) {
       return
     }
 
     try {
       setLoading(true)
       await apiClient.delete(`/api/v1/online-courses/lesson/${lessonId}`)
-      showMessage('success', 'Lesson deleted successfully!')
+      showMessage('success', t('lessonDeleted'))
       if (selectedCourse) {
         fetchLessons(selectedCourse.course_id)
       }
     } catch (error: any) {
-      showMessage('error', error.response?.data?.detail || 'Failed to delete lesson')
+      showMessage('error', error.response?.data?.detail || t('errorOccurred'))
     } finally {
       setLoading(false)
     }
@@ -270,10 +271,10 @@ export default function OnlineCoursesPage() {
 
   const getDifficultyBadgeColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200'
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'advanced': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'beginner': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700'
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-200 dark:border-yellow-700'
+      case 'advanced': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-700'
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-700'
     }
   }
 
@@ -291,8 +292,8 @@ export default function OnlineCoursesPage() {
       <AuthenticatedLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-            <p className="text-gray-600 mt-2">Only teachers and administrators can manage online courses.</p>
+            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">{tCommon('accessDenied')}</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">{tCommon('accessDenied')}</p>
           </div>
         </div>
       </AuthenticatedLayout>
@@ -304,8 +305,8 @@ export default function OnlineCoursesPage() {
       <div className="container mx-auto px-4 py-8 text-gray-900 dark:text-gray-100">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Online Course Management</h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">Create and manage your online courses with copy protection</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('title')}</h1>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">{t('subtitle')}</p>
         </div>
 
         {/* Message Alert */}
@@ -324,11 +325,11 @@ export default function OnlineCoursesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Courses List */}
           <div className="lg:col-span-1">
-            <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
+            <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-gray-900 dark:text-white">Your Courses</CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-300">Select a course to manage</CardDescription>
+                  <CardTitle className="text-gray-900 dark:text-white">{t('lessons')}</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-300">{t('manageContent')}</CardDescription>
                 </div>
                 <Button 
                   onClick={() => setShowCreateModal(true)}
@@ -336,7 +337,7 @@ export default function OnlineCoursesPage() {
                   className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Create Online Course
+                  {t('createCourse')}
                 </Button>
               </CardHeader>
               <CardContent>
@@ -352,7 +353,7 @@ export default function OnlineCoursesPage() {
                         className={`p-4 border rounded-lg cursor-pointer transition-all ${
                           selectedCourse?.course_id === course.course_id
                             ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/30 dark:border-blue-600'
-                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-500 dark:hover:bg-primis-navy'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-700'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -363,16 +364,16 @@ export default function OnlineCoursesPage() {
                               {isOnline ? (
                                 <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-200 dark:border-green-700">
                                   <Video className="h-3 w-3 mr-1" />
-                                  Online Course
+                                  {tCommon('online')}
                                 </Badge>
                               ) : (
                                 <Badge variant="outline" className="dark:border-gray-600 dark:text-gray-300">
-                                  Regular Course
+                                  {t('draft')}
                                 </Badge>
                               )}
                               {onlineCourse && (
-                                <Badge className={`${getDifficultyBadgeColor(onlineCourse.difficulty_level)} dark:bg-gray-800/40 dark:text-gray-200 dark:border-gray-600`}>
-                                  {onlineCourse.difficulty_level}
+                                <Badge className={`${getDifficultyBadgeColor(onlineCourse.difficulty_level)}`}>
+                                  {t(onlineCourse.difficulty_level)}
                                 </Badge>
                               )}
                             </div>
@@ -391,11 +392,11 @@ export default function OnlineCoursesPage() {
             {selectedCourse ? (
               <div className="space-y-6">
                 {/* Course Info */}
-                <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
+                <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <CardHeader className="flex flex-row items-center justify-between">
                     <div>
                       <CardTitle className="text-gray-900 dark:text-white">{selectedCourse.title}</CardTitle>
-                      <CardDescription className="text-gray-600 dark:text-gray-300">Online Course Management</CardDescription>
+                      <CardDescription className="text-gray-600 dark:text-gray-300">{t('title')}</CardDescription>
                     </div>
                     <Button 
                       onClick={() => setShowLessonModal(true)}
@@ -403,7 +404,7 @@ export default function OnlineCoursesPage() {
                       className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      Add Lesson
+                      {t('addLesson')}
                     </Button>
                   </CardHeader>
                   <CardContent>
@@ -413,7 +414,7 @@ export default function OnlineCoursesPage() {
                         return (
                           <div className="text-center py-8">
                             <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-600 dark:text-gray-300">This course is not set up for online delivery yet.</p>
+                            <p className="text-gray-600 dark:text-gray-300">{t('draft')}</p>
                             <Button 
                               onClick={() => {
                                 setNewOnlineCourse(prev => ({ ...prev, course_id: selectedCourse.course_id }))
@@ -421,7 +422,7 @@ export default function OnlineCoursesPage() {
                               }}
                               className="mt-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                             >
-                              Convert to Online Course
+                              {t('createCourse')}
                             </Button>
                           </div>
                         )
@@ -430,26 +431,26 @@ export default function OnlineCoursesPage() {
                       return (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                            <BookOpen className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                            <BookOpen className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
                             <div className="text-2xl font-bold text-blue-900 dark:text-blue-200">{onlineCourse.total_lessons}</div>
-                            <div className="text-sm text-blue-700 dark:text-blue-200">Lessons</div>
+                            <div className="text-sm text-blue-700 dark:text-blue-300">{t('lessons')}</div>
                           </div>
                           <div className="text-center p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                            <Clock className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                            <Clock className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
                             <div className="text-2xl font-bold text-green-900 dark:text-green-200">{onlineCourse.estimated_duration_hours}h</div>
-                            <div className="text-sm text-green-700 dark:text-green-200">Duration</div>
+                            <div className="text-sm text-green-700 dark:text-green-300">{t('duration')}</div>
                           </div>
                           <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
-                            <Users className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                            <Users className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
                             <div className="text-2xl font-bold text-purple-900 dark:text-purple-200">{onlineCourse.max_concurrent_sessions}</div>
-                            <div className="text-sm text-purple-700 dark:text-purple-200">Max Sessions</div>
+                            <div className="text-sm text-purple-700 dark:text-purple-300">{t('maxSessions')}</div>
                           </div>
                           <div className="text-center p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                            <Shield className="h-8 w-8 text-red-600 mx-auto mb-2" />
+                            <Shield className="h-8 w-8 text-red-600 dark:text-red-400 mx-auto mb-2" />
                             <div className="text-2xl font-bold text-red-900 dark:text-red-200">
-                              {onlineCourse.copy_protection_enabled ? 'ON' : 'OFF'}
+                              {onlineCourse.copy_protection_enabled ? t('on') : t('off')}
                             </div>
-                            <div className="text-sm text-red-700 dark:text-red-200">Protection</div>
+                            <div className="text-sm text-red-700 dark:text-red-300">{t('protection')}</div>
                           </div>
                         </div>
                       )
@@ -462,29 +463,29 @@ export default function OnlineCoursesPage() {
                   const onlineCourse = onlineCourses.find(oc => oc.course_id === selectedCourse.course_id)
                   if (onlineCourse) {
                     return (
-                      <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
+                      <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                         <CardHeader>
-                          <CardTitle className="text-gray-900 dark:text-white">Course Management</CardTitle>
-                          <CardDescription className="text-gray-600 dark:text-gray-300">Archive or delete this online course</CardDescription>
+                          <CardTitle className="text-gray-900 dark:text-white">{t('manageContent')}</CardTitle>
+                          <CardDescription className="text-gray-600 dark:text-gray-300">{t('subtitle')}</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="flex gap-3 justify-center">
                             <Button
                               variant="outline"
                               onClick={() => archiveOnlineCourse(onlineCourse.online_course_id)}
-                              className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:text-yellow-300 dark:hover:text-yellow-200 dark:hover:bg-yellow-900/20"
+                              className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 dark:text-yellow-400 dark:hover:text-yellow-300 dark:hover:bg-yellow-900/20 dark:border-yellow-700"
                             >
                               <Settings className="h-4 w-4 mr-2" />
-                              Archive Course
+                              {t('archived')}
                             </Button>
                             {userType === 'admin' && (
                               <Button
                                 variant="outline"
                                 onClick={() => deleteOnlineCourse(onlineCourse.online_course_id)}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/20"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 dark:border-red-700"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Delete Course
+                                {t('deleteCourse')}
                               </Button>
                             )}
                           </div>
@@ -496,21 +497,21 @@ export default function OnlineCoursesPage() {
                 })()}
 
                 {/* Lessons List */}
-                <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
+                <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="text-gray-900 dark:text-white">Course Lessons</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-300">Manage your course content</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">{t('lessons')}</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-300">{t('manageContent')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {lessons.length === 0 ? (
                       <div className="text-center py-8">
                         <PlayCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 dark:text-gray-300">No lessons created yet.</p>
+                        <p className="text-gray-600 dark:text-gray-300">{t('draft')}</p>
                         <Button 
                           onClick={() => setShowLessonModal(true)}
                           className="mt-4"
                         >
-                          Create First Lesson
+                          {t('addLesson')}
                         </Button>
                       </div>
                     ) : (
@@ -518,10 +519,10 @@ export default function OnlineCoursesPage() {
                         {lessons.map((lesson) => (
                           <div
                             key={lesson.lesson_id}
-                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-primis-navy"
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700"
                           >
                             <div className="flex items-center gap-4">
-                              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold">
+                              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 rounded-full text-sm font-semibold">
                                 {lesson.lesson_order}
                               </div>
                               <div className="flex items-center gap-2">
@@ -536,23 +537,23 @@ export default function OnlineCoursesPage() {
                               {lesson.is_preview && (
                                 <Badge variant="outline" className="text-xs dark:border-gray-600 dark:text-gray-300">
                                   <Eye className="h-3 w-3 mr-1" />
-                                  Preview
+                                  {t('preview')}
                                 </Badge>
                               )}
                               {lesson.video_duration_minutes && (
-                                <span className="text-sm text-gray-500 dark:text-gray-300">
+                                <span className="text-sm text-gray-500 dark:text-gray-400">
                                   {lesson.video_duration_minutes}min
                                 </span>
                               )}
                               <div className="flex gap-1">
-                                <Button size="sm" variant="outline" className="dark:border-gray-600 dark:text-gray-200">
+                                <Button size="sm" variant="outline" className="dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
                                   <Edit className="h-4 w-4" />
                                 </Button>
                                 <Button 
                                   size="sm" 
                                   variant="outline"
                                   onClick={() => deleteLesson(lesson.lesson_id)}
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:text-red-200 dark:hover:bg-red-900/20"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-900/20 dark:border-red-700"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -566,11 +567,11 @@ export default function OnlineCoursesPage() {
                 </Card>
               </div>
             ) : (
-              <Card className="bg-white dark:bg-primis-navy-dark border border-gray-200 dark:border-gray-800">
+              <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="text-center">
                     <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 dark:text-gray-300">Select a course to manage its online content</p>
+                    <p className="text-gray-600 dark:text-gray-300">{t('manageContent')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -582,20 +583,20 @@ export default function OnlineCoursesPage() {
       {/* Create Online Course Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-primis-navy-dark rounded-lg p-6 w-full max-w-md mx-4 text-gray-900 dark:text-white">
-            <h2 className="text-xl font-bold mb-4">Create Online Course</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 text-gray-900 dark:text-white border dark:border-gray-700">
+            <h2 className="text-xl font-bold mb-4">{t('createCourse')}</h2>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Base Course
+                  {t('courseTitle')}
                 </label>
                 <select
                   value={newOnlineCourse.course_id}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, course_id: parseInt(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value={0}>Select a course</option>
+                  <option value={0}>{t('courseTitle')}</option>
                   {courses.filter(c => !onlineCourses.find(oc => oc.course_id === c.course_id)).map(course => (
                     <option key={course.course_id} value={course.course_id}>
                       {course.title}
@@ -606,41 +607,41 @@ export default function OnlineCoursesPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Estimated Duration (hours)
+                  {t('duration')} (hours)
                 </label>
                 <input
                   type="number"
                   value={newOnlineCourse.estimated_duration_hours}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, estimated_duration_hours: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Difficulty Level
+                  {t('level')}
                 </label>
                 <select
                   value={newOnlineCourse.difficulty_level}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, difficulty_level: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
+                  <option value="beginner">{t('beginner')}</option>
+                  <option value="intermediate">{t('intermediate')}</option>
+                  <option value="advanced">{t('advanced')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Watermark Text (Optional)
+                  {t('watermarkText')}
                 </label>
                 <input
                   type="text"
                   value={newOnlineCourse.watermark_text}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, watermark_text: e.target.value }))}
-                  placeholder="Custom watermark text"
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  placeholder={t('watermarkPlaceholder')}
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -650,9 +651,10 @@ export default function OnlineCoursesPage() {
                   id="copy_protection"
                   checked={newOnlineCourse.copy_protection_enabled}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, copy_protection_enabled: e.target.checked }))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                 />
                 <label htmlFor="copy_protection" className="text-sm text-gray-700 dark:text-gray-300">
-                  Enable copy protection (recommended)
+                  {t('enableProtection')}
                 </label>
               </div>
 
@@ -662,9 +664,10 @@ export default function OnlineCoursesPage() {
                   id="completion_certificate"
                   checked={newOnlineCourse.completion_certificate}
                   onChange={(e) => setNewOnlineCourse(prev => ({ ...prev, completion_certificate: e.target.checked }))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                 />
                 <label htmlFor="completion_certificate" className="text-sm text-gray-700 dark:text-gray-300">
-                  Issue completion certificate
+                  {t('issueCertificate')}
                 </label>
               </div>
             </div>
@@ -673,16 +676,16 @@ export default function OnlineCoursesPage() {
               <Button
                 onClick={() => setShowCreateModal(false)}
                 variant="outline"
-                className="flex-1 dark:border-gray-600 dark:text-gray-100"
+                className="flex-1 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 onClick={createOnlineCourse}
                 disabled={loading || newOnlineCourse.course_id === 0}
-                className="flex-1"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
-                {loading ? 'Creating...' : 'Create Course'}
+                {loading ? tCommon('loading') : t('createCourse')}
               </Button>
             </div>
           </div>
@@ -692,60 +695,60 @@ export default function OnlineCoursesPage() {
       {/* Create Lesson Modal */}
       {showLessonModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-primis-navy-dark rounded-lg p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto text-gray-900 dark:text-white">
-            <h2 className="text-xl font-bold mb-4">Create New Lesson</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto text-gray-900 dark:text-white border dark:border-gray-700">
+            <h2 className="text-xl font-bold mb-4">{t('addLesson')}</h2>
             
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Lesson Title
+                  {t('courseTitle')}
                 </label>
                 <input
                   type="text"
                   value={newLesson.title}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description
+                  {t('description')}
                 </label>
                 <textarea
                   value={newLesson.description}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, description: e.target.value }))}
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                  className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Lesson Order
+                    {t('lessonOrder')}
                   </label>
                   <input
                     type="number"
                     value={newLesson.lesson_order}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, lesson_order: parseInt(e.target.value) }))}
-                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Content Type
+                    {t('contentType')}
                   </label>
                   <select
                     value={newLesson.content_type}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, content_type: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="video">Video</option>
-                    <option value="text">Text Content</option>
-                    <option value="quiz">Quiz</option>
-                    <option value="assignment">Assignment</option>
+                    <option value="video">{t('video')}</option>
+                    <option value="text">{t('textContent')}</option>
+                    <option value="quiz">{t('quiz')}</option>
+                    <option value="assignment">{t('assignment')}</option>
                   </select>
                 </div>
               </div>
@@ -754,29 +757,29 @@ export default function OnlineCoursesPage() {
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Video URL (Google Drive Share Link)
+                      {t('videoUrl')}
                     </label>
                     <input
                       type="text"
                       value={newLesson.video_url}
                       onChange={(e) => setNewLesson(prev => ({ ...prev, video_url: e.target.value }))}
-                      placeholder="https://drive.google.com/file/d/..."
-                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                      placeholder={t('videoUrlPlaceholder')}
+                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                     />
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Share your video on Google Drive and paste the share link here
+                      {t('videoUrlHelp')}
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Video Duration (minutes)
+                      {t('duration')} (minutes)
                     </label>
                     <input
                       type="number"
                       value={newLesson.video_duration_minutes}
                       onChange={(e) => setNewLesson(prev => ({ ...prev, video_duration_minutes: parseInt(e.target.value) }))}
-                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                      className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </>
@@ -785,13 +788,13 @@ export default function OnlineCoursesPage() {
               {newLesson.content_type === 'text' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Text Content
+                    {t('textContent')}
                   </label>
                   <textarea
                     value={newLesson.text_content}
                     onChange={(e) => setNewLesson(prev => ({ ...prev, text_content: e.target.value }))}
                     rows={6}
-                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-primis-navy text-gray-900 dark:text-white border-gray-300 dark:border-gray-700"
+                    className="w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               )}
@@ -802,9 +805,10 @@ export default function OnlineCoursesPage() {
                   id="is_preview"
                   checked={newLesson.is_preview}
                   onChange={(e) => setNewLesson(prev => ({ ...prev, is_preview: e.target.checked }))}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                 />
                 <label htmlFor="is_preview" className="text-sm text-gray-700 dark:text-gray-300">
-                  Allow preview without enrollment
+                  {t('allowPreview')}
                 </label>
               </div>
             </div>
@@ -813,16 +817,16 @@ export default function OnlineCoursesPage() {
               <Button
                 onClick={() => setShowLessonModal(false)}
                 variant="outline"
-                className="flex-1 dark:border-gray-600 dark:text-gray-100"
+                className="flex-1 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-700"
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button
                 onClick={createLesson}
                 disabled={loading || !newLesson.title}
-                className="flex-1"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
-                {loading ? 'Creating...' : 'Create Lesson'}
+                {loading ? tCommon('loading') : t('addLesson')}
               </Button>
             </div>
           </div>

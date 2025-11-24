@@ -140,6 +140,53 @@ class ApiClient {
     return response.data
   }
 
+  // News endpoints
+  async getAllNews(params?: { skip?: number; limit?: number; category?: string; featured_only?: boolean; published_only?: boolean }): Promise<any> {
+    const response = await this.client.get('/api/v1/news/', { params })
+    return response.data
+  }
+
+  async getFeaturedNews(limit: number = 5): Promise<any> {
+    const response = await this.client.get('/api/v1/news/featured', { params: { limit } })
+    return response.data
+  }
+
+  async getNewsByCategory(category: string, skip: number = 0, limit: number = 20): Promise<any> {
+    const response = await this.client.get(`/api/v1/news/category/${category}`, { params: { skip, limit } })
+    return response.data
+  }
+
+  async getNewsBySlug(slug: string): Promise<any> {
+    const response = await this.client.get(`/api/v1/news/slug/${slug}`)
+    return response.data
+  }
+
+  async getNewsById(newsId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/news/${newsId}`)
+    return response.data
+  }
+
+  async searchNews(query: string, skip: number = 0, limit: number = 20): Promise<any> {
+    const response = await this.client.get('/api/v1/news/search/query', { 
+      params: { q: query, skip, limit } 
+    })
+    return response.data
+  }
+
+  async createNews(data: any): Promise<any> {
+    const response = await this.client.post('/api/v1/news/', data)
+    return response.data
+  }
+
+  async updateNews(newsId: number, data: any): Promise<any> {
+    const response = await this.client.put(`/api/v1/news/${newsId}`, data)
+    return response.data
+  }
+
+  async deleteNews(newsId: number): Promise<void> {
+    await this.client.delete(`/api/v1/news/${newsId}`)
+  }
+
   // Generic methods
   async get(url: string, params?: any): Promise<any> {
     try {

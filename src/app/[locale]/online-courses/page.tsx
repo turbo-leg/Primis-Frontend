@@ -164,18 +164,18 @@ export default function OnlineCoursesPage() {
 
   const getDifficultyBadgeColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200'
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'advanced': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'beginner': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800'
+      case 'advanced': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
     }
   }
 
   const getStatusBadge = (course: OnlineCourseWithProgress) => {
     if (!course.progress) {
       return (
-        <Badge variant="outline" className="text-gray-600">
-          Not Started
+        <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+          {t('onlineCourses.filters.notStarted')}
         </Badge>
       )
     }
@@ -183,22 +183,22 @@ export default function OnlineCoursesPage() {
     switch (course.progress.status) {
       case 'completed':
         return (
-          <Badge className="bg-green-100 text-green-800 border-green-200">
+          <Badge className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800">
             <CheckCircle className="h-3 w-3 mr-1" />
-            Completed
+            {t('onlineCourses.filters.completed')}
           </Badge>
         )
       case 'in_progress':
         return (
-          <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+          <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
             <BarChart3 className="h-3 w-3 mr-1" />
-            In Progress
+            {t('onlineCourses.filters.inProgress')}
           </Badge>
         )
       default:
         return (
-          <Badge variant="outline" className="text-gray-600">
-            Not Started
+          <Badge variant="outline" className="text-gray-600 dark:text-gray-400">
+            {t('onlineCourses.filters.notStarted')}
           </Badge>
         )
     }
@@ -221,8 +221,8 @@ export default function OnlineCoursesPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Online Courses</h1>
-          <p className="text-gray-600">Discover and learn with our interactive online courses</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('onlineCourses.pageTitle')}</h1>
+          <p className="text-gray-600 dark:text-gray-400">{t('onlineCourses.pageSubtitle')}</p>
         </div>
 
         {/* Filters */}
@@ -231,37 +231,37 @@ export default function OnlineCoursesPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search courses..."
+                placeholder={t('onlineCourses.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white dark:bg-gray-800 dark:border-gray-700"
               />
             </div>
           </div>
           
           <div className="flex gap-4">
             <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Difficulty" />
+              <SelectTrigger className="w-40 bg-white dark:bg-gray-800 dark:border-gray-700">
+                <SelectValue placeholder={t('onlineCourses.filters.difficulty')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Levels</SelectItem>
-                <SelectItem value="beginner">Beginner</SelectItem>
-                <SelectItem value="intermediate">Intermediate</SelectItem>
-                <SelectItem value="advanced">Advanced</SelectItem>
+                <SelectItem value="all">{t('onlineCourses.filters.allLevels')}</SelectItem>
+                <SelectItem value="beginner">{t('onlineCourses.filters.beginner')}</SelectItem>
+                <SelectItem value="intermediate">{t('onlineCourses.filters.intermediate')}</SelectItem>
+                <SelectItem value="advanced">{t('onlineCourses.filters.advanced')}</SelectItem>
               </SelectContent>
             </Select>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Status" />
+              <SelectTrigger className="w-40 bg-white dark:bg-gray-800 dark:border-gray-700">
+                <SelectValue placeholder={t('onlineCourses.filters.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Courses</SelectItem>
-                <SelectItem value="enrolled">Enrolled</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="not_started">Not Started</SelectItem>
+                <SelectItem value="all">{t('onlineCourses.filters.allCourses')}</SelectItem>
+                <SelectItem value="enrolled">{t('onlineCourses.filters.enrolled')}</SelectItem>
+                <SelectItem value="in_progress">{t('onlineCourses.filters.inProgress')}</SelectItem>
+                <SelectItem value="completed">{t('onlineCourses.filters.completed')}</SelectItem>
+                <SelectItem value="not_started">{t('onlineCourses.filters.notStarted')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -270,13 +270,13 @@ export default function OnlineCoursesPage() {
         {/* Stats */}
         {user && 'student_id' in user && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-4">
                 <div className="flex items-center">
-                  <BookOpen className="h-8 w-8 text-blue-600" />
+                  <BookOpen className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-600">Total Courses</div>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('onlineCourses.stats.totalCourses')}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {onlineCourses.filter(c => c.is_enrolled).length}
                     </div>
                   </div>
@@ -284,13 +284,13 @@ export default function OnlineCoursesPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-4">
                 <div className="flex items-center">
-                  <BarChart3 className="h-8 w-8 text-yellow-600" />
+                  <BarChart3 className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-600">In Progress</div>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('onlineCourses.stats.inProgress')}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {onlineCourses.filter(c => c.progress?.status === 'in_progress').length}
                     </div>
                   </div>
@@ -298,13 +298,13 @@ export default function OnlineCoursesPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-4">
                 <div className="flex items-center">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-600">Completed</div>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('onlineCourses.stats.completed')}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {onlineCourses.filter(c => c.progress?.status === 'completed').length}
                     </div>
                   </div>
@@ -312,13 +312,13 @@ export default function OnlineCoursesPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="dark:bg-gray-800 dark:border-gray-700">
               <CardContent className="p-4">
                 <div className="flex items-center">
-                  <Award className="h-8 w-8 text-purple-600" />
+                  <Award className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   <div className="ml-4">
-                    <div className="text-sm font-medium text-gray-600">Certificates</div>
-                    <div className="text-2xl font-bold text-gray-900">
+                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('onlineCourses.stats.certificates')}</div>
+                    <div className="text-2xl font-bold text-gray-900 dark:text-white">
                       {onlineCourses.filter(c => c.progress?.certificate_issued).length}
                     </div>
                   </div>
@@ -331,15 +331,15 @@ export default function OnlineCoursesPage() {
         {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => (
-            <Card key={course.online_course_id} className="hover:shadow-lg transition-shadow">
+            <Card key={course.online_course_id} className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">
+                    <CardTitle className="text-lg mb-2 dark:text-white">
                       {course.course?.course_name || `Online Course ${course.online_course_id}`}
                     </CardTitle>
-                    <CardDescription className="text-sm line-clamp-2">
-                      {course.course?.description || 'No description available'}
+                    <CardDescription className="text-sm line-clamp-2 dark:text-gray-400">
+                      {course.course?.description || t('onlineCourses.card.noDescription')}
                     </CardDescription>
                   </div>
                   {course.progress && (
@@ -351,12 +351,12 @@ export default function OnlineCoursesPage() {
 
                 <div className="flex items-center gap-2 mt-2">
                   <Badge className={getDifficultyBadgeColor(course.difficulty_level)}>
-                    {course.difficulty_level}
+                    {t(`onlineCourses.filters.${course.difficulty_level}`)}
                   </Badge>
                   {course.completion_certificate && (
-                    <Badge variant="outline" className="text-purple-600">
+                    <Badge variant="outline" className="text-purple-600 dark:text-purple-400 dark:border-purple-800">
                       <Award className="h-3 w-3 mr-1" />
-                      Certificate
+                      {t('onlineCourses.card.certificate')}
                     </Badge>
                   )}
                 </div>
@@ -365,26 +365,26 @@ export default function OnlineCoursesPage() {
               <CardContent>
                 <div className="space-y-3">
                   {/* Course Info */}
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center justify-between">
-                      <span>Instructor:</span>
-                      <span className="font-medium">{course.course?.teacher_name || 'Unknown'}</span>
+                      <span>{t('onlineCourses.card.instructor')}:</span>
+                      <span className="font-medium dark:text-gray-300">{course.course?.teacher_name || t('onlineCourses.card.unknown')}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>Department:</span>
-                      <span className="font-medium">{course.course?.department_name || 'Unknown'}</span>
+                      <span>{t('onlineCourses.card.department')}:</span>
+                      <span className="font-medium dark:text-gray-300">{course.course?.department_name || t('onlineCourses.card.unknown')}</span>
                     </div>
                   </div>
 
                   {/* Course Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-600">
+                  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-1">
                       <PlayCircle className="h-4 w-4" />
-                      <span>{course.total_lessons} lessons</span>
+                      <span>{course.total_lessons} {t('onlineCourses.card.lessons')}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      <span>{course.estimated_duration_hours}h total</span>
+                      <span>{course.estimated_duration_hours}{t('onlineCourses.card.hours')} {t('onlineCourses.card.totalDuration')}</span>
                     </div>
                   </div>
 
@@ -392,12 +392,12 @@ export default function OnlineCoursesPage() {
                   {course.progress && (
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Progress</span>
-                        <span className="font-medium">{Math.round(course.progress.completion_percentage)}%</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t('onlineCourses.card.progress')}</span>
+                        <span className="font-medium dark:text-gray-300">{Math.round(course.progress.completion_percentage)}%</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${course.progress.completion_percentage}%` }}
                         />
                       </div>
@@ -409,21 +409,21 @@ export default function OnlineCoursesPage() {
                     {course.is_enrolled ? (
                       <Link href={`/online-courses/${course.online_course_id}`} className="flex-1">
                         <Button className="w-full">
-                          {course.progress?.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+                          {course.progress?.status === 'completed' ? t('onlineCourses.card.reviewCourse') : t('onlineCourses.card.continueLearning')}
                         </Button>
                       </Link>
                     ) : (
                       <div className="flex gap-2 w-full">
                         {course.is_preview_available && (
                           <Link href={`/online-courses/${course.online_course_id}`} className="flex-1">
-                            <Button variant="outline" className="w-full">
+                            <Button variant="outline" className="w-full dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
                               <Eye className="h-4 w-4 mr-2" />
-                              Preview
+                              {t('onlineCourses.card.preview')}
                             </Button>
                           </Link>
                         )}
                         <Button variant="default" className="flex-1">
-                          Enroll Now
+                          {t('onlineCourses.card.enrollNow')}
                         </Button>
                       </div>
                     )}
@@ -437,16 +437,16 @@ export default function OnlineCoursesPage() {
         {/* Empty State */}
         {filteredCourses.length === 0 && !loading && (
           <div className="text-center py-12">
-            <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <BookOpen className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               {searchTerm || difficultyFilter !== 'all' || statusFilter !== 'all' 
-                ? 'No courses match your filters' 
-                : 'No online courses available'}
+                ? t('onlineCourses.empty.noMatchesTitle')
+                : t('onlineCourses.empty.noCoursesTitle')}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               {searchTerm || difficultyFilter !== 'all' || statusFilter !== 'all' 
-                ? 'Try adjusting your search criteria or filters.' 
-                : 'Online courses will be available once they are created by instructors.'}
+                ? t('onlineCourses.empty.noMatchesDescription')
+                : t('onlineCourses.empty.noCoursesDescription')}
             </p>
           </div>
         )}

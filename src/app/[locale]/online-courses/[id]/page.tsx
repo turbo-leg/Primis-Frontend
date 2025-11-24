@@ -115,9 +115,9 @@ export default function OnlineCourseViewerPage() {
     } catch (err: any) {
       const statusCode = err.response?.status
       if (statusCode === 404) {
-        setError('Online course not found. This course may not be available as an online course yet.')
+        setError(t('onlineCourses.viewer.notFound'))
       } else {
-        setError(err.response?.data?.detail || 'Failed to load course')
+        setError(err.response?.data?.detail || t('onlineCourses.viewer.failedToLoad'))
       }
     } finally {
       setLoading(false)
@@ -141,7 +141,7 @@ export default function OnlineCourseViewerPage() {
 
   const startLesson = (lesson: OnlineLesson) => {
     if (!isLessonAccessible(lesson)) {
-      setError('You need to enroll and pay for this course to access this lesson')
+      setError(t('onlineCourses.viewer.enrollmentRequired'))
       return
     }
     
@@ -180,18 +180,18 @@ export default function OnlineCourseViewerPage() {
 
   const getDifficultyBadgeColor = (level: string) => {
     switch (level) {
-      case 'beginner': return 'bg-green-100 text-green-800 border-green-200'
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'advanced': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200'
+      case 'beginner': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800'
+      case 'advanced': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
     }
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-600" />
-      case 'in_progress': return <Play className="h-4 w-4 text-blue-600" />
-      default: return <Clock className="h-4 w-4 text-gray-400" />
+      case 'completed': return <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+      case 'in_progress': return <Play className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+      default: return <Clock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
     }
   }
 
@@ -212,10 +212,10 @@ export default function OnlineCourseViewerPage() {
       <AuthenticatedLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Error</h1>
-            <p className="text-gray-600 mt-2">{error}</p>
+            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400">{t('onlineCourses.viewer.error')}</h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">{error}</p>
             <Button onClick={() => router.back()} className="mt-4">
-              Go Back
+              {t('onlineCourses.viewer.goBack')}
             </Button>
           </div>
         </div>
@@ -231,19 +231,20 @@ export default function OnlineCourseViewerPage() {
           <Button 
             variant="outline" 
             onClick={() => router.back()}
+            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Courses
+            {t('onlineCourses.viewer.backToCourses')}
           </Button>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-900">Online Course</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('onlineCourses.viewer.pageTitle')}</h1>
             {onlineCourse && (
               <div className="flex items-center gap-2 mt-2">
                 <Badge className={getDifficultyBadgeColor(onlineCourse.difficulty_level)}>
-                  {onlineCourse.difficulty_level}
+                  {t(`onlineCourses.filters.${onlineCourse.difficulty_level}`)}
                 </Badge>
-                <span className="text-gray-600">
-                  {onlineCourse.total_lessons} lessons • {onlineCourse.estimated_duration_hours}h total
+                <span className="text-gray-600 dark:text-gray-400">
+                  {onlineCourse.total_lessons} {t('onlineCourses.viewer.lessons')} • {onlineCourse.estimated_duration_hours}{t('onlineCourses.card.hours')} {t('onlineCourses.viewer.total')}
                 </span>
               </div>
             )}
@@ -253,9 +254,9 @@ export default function OnlineCourseViewerPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Course Progress Sidebar */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-4">
+            <Card className="sticky top-4 dark:bg-gray-800 dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="text-lg">Your Progress</CardTitle>
+                <CardTitle className="text-lg dark:text-white">{t('onlineCourses.viewer.yourProgress')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {studentProgress ? (
@@ -271,7 +272,7 @@ export default function OnlineCourseViewerPage() {
                             stroke="currentColor"
                             strokeWidth="8"
                             fill="transparent"
-                            className="text-gray-200"
+                            className="text-gray-200 dark:text-gray-700"
                           />
                           <circle
                             cx="50"
@@ -281,11 +282,11 @@ export default function OnlineCourseViewerPage() {
                             strokeWidth="8"
                             fill="transparent"
                             strokeDasharray={`${2.51 * studentProgress.completion_percentage} 251`}
-                            className="text-blue-600"
+                            className="text-blue-600 dark:text-blue-500"
                           />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-xl font-bold text-gray-900">
+                          <span className="text-xl font-bold text-gray-900 dark:text-white">
                             {Math.round(studentProgress.completion_percentage)}%
                           </span>
                         </div>
@@ -295,35 +296,35 @@ export default function OnlineCourseViewerPage() {
                     {/* Stats */}
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Lessons Completed:</span>
-                        <span className="font-medium">{studentProgress.lessons_completed}/{onlineCourse?.total_lessons}</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t('onlineCourses.viewer.lessonsCompleted')}:</span>
+                        <span className="font-medium dark:text-gray-300">{studentProgress.lessons_completed}/{onlineCourse?.total_lessons}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Time Spent:</span>
-                        <span className="font-medium">{Math.floor(studentProgress.total_time_spent_minutes / 60)}h {studentProgress.total_time_spent_minutes % 60}m</span>
+                        <span className="text-gray-600 dark:text-gray-400">{t('onlineCourses.viewer.timeSpent')}:</span>
+                        <span className="font-medium dark:text-gray-300">{Math.floor(studentProgress.total_time_spent_minutes / 60)}{t('onlineCourses.card.hours')} {studentProgress.total_time_spent_minutes % 60}{t('onlineCourses.viewer.min')}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Status:</span>
-                        <Badge variant={studentProgress.status === 'completed' ? 'default' : 'outline'}>
-                          {studentProgress.status}
+                        <span className="text-gray-600 dark:text-gray-400">{t('onlineCourses.viewer.status')}:</span>
+                        <Badge variant={studentProgress.status === 'completed' ? 'default' : 'outline'} className={studentProgress.status !== 'completed' ? 'dark:text-gray-300 dark:border-gray-600' : ''}>
+                          {t(`onlineCourses.filters.${studentProgress.status}`)}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Certificate */}
                     {studentProgress.certificate_issued && (
-                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <div className="flex items-center gap-2 text-yellow-800">
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-800">
+                        <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
                           <Award className="h-4 w-4" />
-                          <span className="text-sm font-medium">Certificate Earned!</span>
+                          <span className="text-sm font-medium">{t('onlineCourses.viewer.certificateEarned')}</span>
                         </div>
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <BarChart3 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">Start learning to see your progress</p>
+                    <BarChart3 className="h-8 w-8 text-gray-400 dark:text-gray-600 mx-auto mb-2" />
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{t('onlineCourses.viewer.startLearning')}</p>
                   </div>
                 )}
               </CardContent>
@@ -335,18 +336,19 @@ export default function OnlineCourseViewerPage() {
             {currentLesson && showVideoPlayer && currentLesson.content_type === 'video' ? (
               <div className="space-y-6">
                 {/* Video Player */}
-                <Card>
+                <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div>
-                        <CardTitle>{currentLesson.title}</CardTitle>
-                        <CardDescription>{currentLesson.description}</CardDescription>
+                        <CardTitle className="dark:text-white">{currentLesson.title}</CardTitle>
+                        <CardDescription className="dark:text-gray-400">{currentLesson.description}</CardDescription>
                       </div>
                       <Button 
                         variant="outline" 
                         onClick={() => setShowVideoPlayer(false)}
+                        className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                       >
-                        Show Lessons
+                        {t('onlineCourses.viewer.showLessons')}
                       </Button>
                     </div>
                   </CardHeader>
@@ -368,9 +370,10 @@ export default function OnlineCourseViewerPage() {
                       if (prevLesson) startLesson(prevLesson)
                     }}
                     disabled={!getPreviousLesson()}
+                    className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:disabled:opacity-50"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
-                    Previous Lesson
+                    {t('onlineCourses.viewer.previousLesson')}
                   </Button>
                   
                   <Button 
@@ -379,18 +382,19 @@ export default function OnlineCourseViewerPage() {
                       if (nextLesson) startLesson(nextLesson)
                     }}
                     disabled={!getNextLesson()}
+                    className="dark:disabled:opacity-50"
                   >
-                    Next Lesson
+                    {t('onlineCourses.viewer.nextLesson')}
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </div>
               </div>
             ) : (
               /* Lessons List */
-              <Card>
+              <Card className="dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle>Course Lessons</CardTitle>
-                  <CardDescription>Choose a lesson to start learning</CardDescription>
+                  <CardTitle className="dark:text-white">{t('onlineCourses.viewer.courseLessons')}</CardTitle>
+                  <CardDescription className="dark:text-gray-400">{t('onlineCourses.viewer.chooseLesson')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -403,48 +407,48 @@ export default function OnlineCourseViewerPage() {
                           key={lesson.lesson_id}
                           className={`p-4 border rounded-lg transition-all ${
                             isAccessible 
-                              ? 'hover:bg-gray-50 cursor-pointer' 
+                              ? 'hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer' 
                               : 'opacity-60 cursor-not-allowed'
                           } ${
                             currentLesson?.lesson_id === lesson.lesson_id
-                              ? 'border-blue-300 bg-blue-50'
-                              : 'border-gray-200'
+                              ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-800'
+                              : 'border-gray-200 dark:border-gray-700 dark:bg-gray-800'
                           }`}
                           onClick={() => isAccessible && startLesson(lesson)}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                              <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full text-sm font-semibold">
+                              <div className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full text-sm font-semibold dark:text-gray-300">
                                 {lesson.lesson_order}
                               </div>
                               
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <h3 className="font-medium text-gray-900">{lesson.title}</h3>
+                                  <h3 className="font-medium text-gray-900 dark:text-white">{lesson.title}</h3>
                                   {getStatusIcon(status)}
                                   {lesson.is_preview && (
-                                    <Badge variant="outline" className="text-xs">
+                                    <Badge variant="outline" className="text-xs dark:text-gray-300 dark:border-gray-600">
                                       <Eye className="h-3 w-3 mr-1" />
-                                      Preview
+                                      {t('onlineCourses.viewer.preview')}
                                     </Badge>
                                   )}
                                   {!isAccessible && (
-                                    <Lock className="h-4 w-4 text-gray-400" />
+                                    <Lock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
                                   )}
                                 </div>
-                                <p className="text-sm text-gray-600">{lesson.description}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{lesson.description}</p>
                               </div>
                             </div>
                             
                             <div className="flex items-center gap-4">
                               {lesson.video_duration_minutes && (
-                                <div className="flex items-center gap-1 text-sm text-gray-500">
+                                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                                   <Clock className="h-4 w-4" />
-                                  {lesson.video_duration_minutes}min
+                                  {lesson.video_duration_minutes}{t('onlineCourses.viewer.min')}
                                 </div>
                               )}
                               
-                              <div className="flex items-center gap-1 text-sm text-gray-500">
+                              <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                                 {lesson.content_type === 'video' && <Play className="h-4 w-4" />}
                                 {lesson.content_type === 'text' && <BookOpen className="h-4 w-4" />}
                                 <span className="capitalize">{lesson.content_type}</span>

@@ -71,10 +71,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <CardTitle className="text-2xl dark:text-white mb-1">
-                {t('permissions.title') || 'Permissions & Preferences'}
+                {t('permissions.title')}
               </CardTitle>
               <CardDescription className="text-base dark:text-gray-300">
-                {t('permissions.subtitle') || 'Customize how we communicate with you and use your data'}
+                {t('permissions.subtitle')}
               </CardDescription>
             </div>
             <button className="text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-white ml-4">
@@ -89,7 +89,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
           <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-4 flex gap-3">
             <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-blue-700 dark:text-blue-300">
-              {t('permissions.info') || 'We respect your privacy. All preferences can be changed anytime in your settings.'}
+              {t('permissions.info')}
             </p>
           </div>
 
@@ -104,10 +104,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {t('permissions.notifications.title') || 'Push Notifications'}
+                      {t('permissions.notifications.title')}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('permissions.notifications.description') || 'Receive real-time alerts about course updates, assignments, and messages'}
+                      {t('permissions.notifications.description')}
                     </p>
                   </div>
                 </div>
@@ -137,10 +137,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {t('permissions.cookies.title') || 'Functional Cookies'}
+                      {t('permissions.cookies.title')}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('permissions.cookies.description') || 'Remember your preferences, language settings, and keep you logged in securely'}
+                      {t('permissions.cookies.description')}
                     </p>
                   </div>
                 </div>
@@ -170,10 +170,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {t('permissions.analytics.title') || 'Analytics & Improvements'}
+                      {t('permissions.analytics.title')}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('permissions.analytics.description') || 'Help us improve by sharing anonymous usage data. Helps us identify bugs and optimize performance'}
+                      {t('permissions.analytics.description')}
                     </p>
                   </div>
                 </div>
@@ -198,13 +198,13 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
           {/* Legal Links */}
           <div className="flex gap-6 text-xs text-gray-600 dark:text-gray-400 pt-4 border-t border-gray-200 dark:border-white/10">
             <a href="/privacy" className="hover:text-gray-900 dark:hover:text-white transition">
-              {t('permissions.privacy') || 'Privacy Policy'}
+              {t('permissions.privacy')}
             </a>
             <a href="/terms" className="hover:text-gray-900 dark:hover:text-white transition">
-              {t('permissions.terms') || 'Terms of Service'}
+              {t('permissions.terms')}
             </a>
             <a href="/cookies" className="hover:text-gray-900 dark:hover:text-white transition">
-              {t('permissions.cookiePolicy') || 'Cookie Policy'}
+              {t('permissions.cookiePolicy')}
             </a>
           </div>
         </CardContent>
@@ -217,7 +217,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
             disabled={isSubmitting}
             className="dark:border-white/20 dark:text-white dark:hover:bg-white/10"
           >
-            {t('permissions.declineAll') || 'Decline All'}
+            {t('permissions.declineAll')}
           </Button>
           <Button
             variant="outline"
@@ -228,10 +228,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
             {isSubmitting ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
-                <span>{t('common.saving') || 'Saving...'}</span>
+                <span>{t('common.saving')}</span>
               </div>
             ) : (
-              t('permissions.savePreferences') || 'Save Preferences'
+              t('permissions.savePreferences')
             )}
           </Button>
           <Button
@@ -242,10 +242,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
             {isSubmitting ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                <span>{t('common.saving') || 'Saving...'}</span>
+                <span>{t('common.saving')}</span>
               </div>
             ) : (
-              t('permissions.acceptAll') || 'Accept All'
+              t('permissions.acceptAll')
             )}
           </Button>
         </div>

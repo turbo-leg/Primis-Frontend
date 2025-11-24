@@ -95,17 +95,17 @@ export default function SettingsPage() {
     e.preventDefault()
     
     if (formData.newPassword !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+      setMessage({ type: 'error', text: t('settings.messages.passwordMismatch') })
       return
     }
 
     if (formData.newPassword.length < 8) {
-      setMessage({ type: 'error', text: 'Password must be at least 8 characters' })
+      setMessage({ type: 'error', text: t('settings.messages.passwordLength') })
       return
     }
 
     if (formData.currentPassword === formData.newPassword) {
-      setMessage({ type: 'error', text: 'New password must be different from current password' })
+      setMessage({ type: 'error', text: t('settings.messages.passwordSame') })
       return
     }
 
@@ -117,7 +117,7 @@ export default function SettingsPage() {
         confirm_password: formData.confirmPassword,
       })
       
-      setMessage({ type: 'success', text: 'Password changed successfully' })
+      setMessage({ type: 'success', text: t('settings.messages.passwordSuccess') })
       setFormData({
         ...formData,
         currentPassword: '',
@@ -131,7 +131,7 @@ export default function SettingsPage() {
       console.error('Password change error:', error)
       
       // Extract error message from various possible error structures
-      let errorMessage = 'Failed to change password'
+      let errorMessage = t('settings.messages.passwordError')
       
       if (error?.response?.data?.detail) {
         errorMessage = error.response.data.detail
@@ -198,11 +198,11 @@ export default function SettingsPage() {
         throw new Error(`${failedRequests.length} preference updates failed`)
       }
 
-      setMessage({ type: 'success', text: 'Notification preferences updated successfully' })
+      setMessage({ type: 'success', text: t('settings.messages.notificationsSuccess') })
       setTimeout(() => setMessage(null), 3000)
     } catch (error) {
       console.error('Notification save error:', error)
-      setMessage({ type: 'error', text: 'Failed to update notification preferences' })
+      setMessage({ type: 'error', text: t('settings.messages.notificationsError') })
     } finally {
       setLoading(false)
     }
@@ -217,11 +217,11 @@ export default function SettingsPage() {
             <div className="flex items-center space-x-3 mb-2">
               <Settings className="h-8 w-8 text-primis-navy dark:text-white" />
               <h1 className="text-3xl sm:text-4xl font-serif font-semibold text-gray-900 dark:text-white">
-                Settings
+                {t('settings.title')}
               </h1>
             </div>
             <p className="text-gray-600 dark:text-gray-400 font-light">
-              Manage your account preferences and security settings
+              {t('settings.subtitle')}
             </p>
           </div>
 
@@ -253,9 +253,9 @@ export default function SettingsPage() {
             <div className="lg:col-span-1">
               <div className="space-y-1 bg-white dark:bg-primis-navy-dark rounded-lg shadow p-4">
                 {[
-                  { id: 'profile', label: 'Profile', icon: User },
-                  { id: 'security', label: 'Security', icon: Lock },
-                  { id: 'notifications', label: 'Notifications', icon: Bell },
+                  { id: 'profile', label: t('settings.menu.profile'), icon: User },
+                  { id: 'security', label: t('settings.menu.security'), icon: Lock },
+                  { id: 'notifications', label: t('settings.menu.notifications'), icon: Bell },
                 ].map(item => (
                   <button
                     key={item.id}
@@ -280,9 +280,9 @@ export default function SettingsPage() {
                   <div className="flex items-center space-x-2">
                     <User className="h-5 w-5 text-primis-navy dark:text-white" />
                     <div>
-                      <CardTitle className="text-gray-900 dark:text-white">Profile Information</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">{t('settings.profile.title')}</CardTitle>
                       <CardDescription className="text-gray-600 dark:text-gray-400">
-                        Your account details
+                        {t('settings.profile.description')}
                       </CardDescription>
                     </div>
                   </div>
@@ -292,7 +292,7 @@ export default function SettingsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Full Name
+                        {t('settings.profile.fullName')}
                       </label>
                       <div className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-primis-navy text-gray-900 dark:text-white font-light">
                         {user?.name}
@@ -300,7 +300,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Account Type
+                        {t('settings.profile.accountType')}
                       </label>
                       <div className="flex items-center space-x-2">
                         <Badge variant="outline" className="capitalize dark:border-gray-700 dark:text-gray-300">
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Email
+                        {t('settings.profile.email')}
                       </label>
                       <div className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-primis-navy text-gray-900 dark:text-white font-light flex items-center space-x-2">
                         <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -319,7 +319,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Member Since
+                        {t('settings.profile.memberSince')}
                       </label>
                       <div className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-primis-navy text-gray-900 dark:text-white font-light flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -336,9 +336,9 @@ export default function SettingsPage() {
                   <div className="flex items-center space-x-2">
                     <Lock className="h-5 w-5 text-primis-navy dark:text-white" />
                     <div>
-                      <CardTitle className="text-gray-900 dark:text-white">Security</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">{t('settings.security.title')}</CardTitle>
                       <CardDescription className="text-gray-600 dark:text-gray-400">
-                        Manage your password and security settings
+                        {t('settings.security.description')}
                       </CardDescription>
                     </div>
                   </div>
@@ -348,7 +348,7 @@ export default function SettingsPage() {
                     {/* Current Password */}
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Current Password
+                        {t('settings.security.currentPassword')}
                       </label>
                       <input
                         type="password"
@@ -356,14 +356,14 @@ export default function SettingsPage() {
                         value={formData.currentPassword}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-primis-navy text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primis-navy dark:focus:ring-white font-light"
-                        placeholder="Enter your current password"
+                        placeholder={t('settings.security.currentPasswordPlaceholder')}
                       />
                     </div>
 
                     {/* New Password */}
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        New Password
+                        {t('settings.security.newPassword')}
                       </label>
                       <div className="relative">
                         <input
@@ -372,7 +372,7 @@ export default function SettingsPage() {
                           value={formData.newPassword}
                           onChange={handleInputChange}
                           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-primis-navy text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primis-navy dark:focus:ring-white font-light"
-                          placeholder="Enter new password (min 8 characters)"
+                          placeholder={t('settings.security.newPasswordPlaceholder')}
                         />
                         <button
                           type="button"
@@ -391,7 +391,7 @@ export default function SettingsPage() {
                     {/* Confirm Password */}
                     <div>
                       <label className="block text-sm font-light text-gray-700 dark:text-gray-400 mb-2">
-                        Confirm Password
+                        {t('settings.security.confirmPassword')}
                       </label>
                       <input
                         type="password"
@@ -399,7 +399,7 @@ export default function SettingsPage() {
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-primis-navy text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primis-navy dark:focus:ring-white font-light"
-                        placeholder="Confirm your new password"
+                        placeholder={t('settings.security.confirmPasswordPlaceholder')}
                       />
                     </div>
 
@@ -409,7 +409,7 @@ export default function SettingsPage() {
                       className="w-full bg-primis-navy hover:bg-primis-navy/90 dark:bg-white dark:text-primis-navy dark:hover:bg-gray-100 text-white font-light"
                     >
                       <Lock className="h-4 w-4 mr-2" />
-                      {loading ? 'Updating...' : 'Change Password'}
+                      {loading ? t('settings.security.updating') : t('settings.security.submitButton')}
                     </Button>
                   </form>
                 </CardContent>
@@ -421,9 +421,9 @@ export default function SettingsPage() {
                   <div className="flex items-center space-x-2">
                     <Bell className="h-5 w-5 text-primis-navy dark:text-white" />
                     <div>
-                      <CardTitle className="text-gray-900 dark:text-white">Notification Preferences</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">{t('settings.notifications.title')}</CardTitle>
                       <CardDescription className="text-gray-600 dark:text-gray-400">
-                        Choose how you want to receive notifications
+                        {t('settings.notifications.description')}
                       </CardDescription>
                     </div>
                   </div>
@@ -435,8 +435,8 @@ export default function SettingsPage() {
                       <div className="flex items-center space-x-3">
                         <Mail className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         <div>
-                          <p className="text-sm font-light text-gray-900 dark:text-white">Email Notifications</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">Get updates via email</p>
+                          <p className="text-sm font-light text-gray-900 dark:text-white">{t('settings.notifications.email.title')}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">{t('settings.notifications.email.description')}</p>
                         </div>
                       </div>
                       <input
@@ -453,8 +453,8 @@ export default function SettingsPage() {
                       <div className="flex items-center space-x-3">
                         <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         <div>
-                          <p className="text-sm font-light text-gray-900 dark:text-white">In-App Notifications</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">See alerts within the app</p>
+                          <p className="text-sm font-light text-gray-900 dark:text-white">{t('settings.notifications.inApp.title')}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">{t('settings.notifications.inApp.description')}</p>
                         </div>
                       </div>
                       <input
@@ -471,8 +471,8 @@ export default function SettingsPage() {
                       <div className="flex items-center space-x-3">
                         <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         <div>
-                          <p className="text-sm font-light text-gray-900 dark:text-white">Push Notifications</p>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">Receive browser notifications</p>
+                          <p className="text-sm font-light text-gray-900 dark:text-white">{t('settings.notifications.push.title')}</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400">{t('settings.notifications.push.description')}</p>
                         </div>
                       </div>
                       <input
@@ -490,7 +490,7 @@ export default function SettingsPage() {
                       className="w-full bg-primis-navy hover:bg-primis-navy/90 dark:bg-white dark:text-primis-navy dark:hover:bg-gray-100 text-white font-light"
                     >
                       <Save className="h-4 w-4 mr-2" />
-                      {loading ? 'Saving...' : 'Save Preferences'}
+                      {loading ? t('settings.notifications.saving') : t('settings.notifications.submitButton')}
                     </Button>
                   </form>
                 </CardContent>

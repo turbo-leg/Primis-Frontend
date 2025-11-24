@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Navigation } from '@/components/navigation'
 import AuthRedirect from '@/components/AuthRedirect'
 import PrimisLogo from '@/components/PrimisLogo'
+import NewsCarousel from '@/components/NewsCarousel'
 import { BookOpen, Users, Calendar, BarChart, GraduationCap, Clock, Award, TrendingUp } from 'lucide-react'
 
 export default function HomePage() {
@@ -60,6 +61,9 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* News Carousel Section */}
+      <NewsCarousel autoPlayInterval={6000} />
 
       {/* Features Section */}
       <div className="bg-gray-50 dark:bg-primis-navy-light py-12 sm:py-16 md:py-20 lg:py-24">
