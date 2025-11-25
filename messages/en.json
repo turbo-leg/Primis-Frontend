@@ -1102,5 +1102,28 @@
         "description": "How to pay for courses securely"
       }
     }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team for any inquiries or support",
+    "info": {
+      "title": "Contact Information",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "workingHours": "Working Hours",
+      "workingHoursValue": "Mon - Fri: 09:00 - 18:00"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "name": "Your Name",
+      "email": "Your Email",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Failed to send message. Please try again."
+    }
   }
 }
