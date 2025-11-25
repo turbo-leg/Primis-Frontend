@@ -20,7 +20,8 @@ import {
   Settings,
   LogOut,
   Bell,
-  Search
+  Search,
+  PlayCircle
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import NotificationBell from '@/components/NotificationBell'
@@ -76,6 +77,7 @@ export function Navigation({ className }: NavigationProps) {
       return [
         { href: '/', label: 'Home', icon: Home },
         // { href: '/about', label: 'About', icon: BookOpen },
+        { href: '/tutorials', label: 'Tutorials', icon: PlayCircle },
         { 
           href: '/certificates', 
           label: 'Digital Certificates', 

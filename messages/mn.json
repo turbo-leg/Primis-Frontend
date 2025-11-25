@@ -39,8 +39,8 @@
   },
   "home": {
     "hero": {
-      "title": "Коллежид бэлтгэхэд тэргүүлэх чанар",
-      "subtitle": "Оюутан, багш, эцэг эхчүүдэд зориулсан хичээл удирдах, ирц бүртгэх, академик амжилтанд хүрэхэд туслах платформ.",
+      "title": "",
+      "subtitle": "Шинэ Primis Educare Платформ 1.0-тэй танилцана уу",
       "beginJourney": "Аялалаа эхлүүлэх",
       "signIn": "Нэвтрэх"
     },
@@ -155,18 +155,14 @@
     "team": {
       "title": "БАГШ НАР",
       "members": {
-        "m1": { "name": "П.НЯМГЭРЭЛ", "role": "IELTS" },
-        "m2": { "name": "В.ОЛГА", "role": "SAT" },
-        "m3": { "name": "Б.АРИУНГЭРЭЛ", "role": "IELTS" },
-        "m4": { "name": "О.НАНДИНБАЯР", "role": "IELTS, SAT" },
-        "m5": { "name": "У.АНУЖИН", "role": "SAT" },
-        "m6": { "name": "Э.ТЭМҮҮГЭЭ", "role": "IELTS" },
-        "m7": { "name": "Г.ГҮНБИШРЭЛТ", "role": "IELTS" },
-        "m8": { "name": "А.ХАЙДАР", "role": "Counselor" },
-        "m9": { "name": "Г.ЦЭЛМЭГ", "role": "IELTS" },
-        "m10": { "name": "Д.АНХБАЯР", "role": "IELTS, SAT" },
-        "m11": { "name": "Ж.АМИНА", "role": "IELTS" },
-        "m12": { "name": "Ж.АМИНА", "role": "HSK" }
+        "m1": { "name": "П.НЯМГЭРЭЛ", "role": "IELTS", "image": "team-1.jpg" },
+        "m2": { "name": "В.ОЛГА", "role": "SAT", "image": "team-2.jpg" },
+        "m3": { "name": "Б.АРИУНГЭРЭЛ", "role": "IELTS", "image": "team-3.jpg" },
+        "m6": { "name": "Э.ТЭМҮҮГЭЭ", "role": "SAT Math", "image": "team-6.jpg" },
+        "m7": { "name": "Г.ГҮНБИШРЭЛТ", "role": "IELTS", "image": "team-7.jpg" },
+        "m8": { "name": "А.ХАЙДАР", "role": "Counselor", "image": "team-8.jpg" },
+        "m11": { "name": "Ж.АМИНА", "role": "IELTS", "image": "team-11.jpg" },
+        "m12": { "name": "Ж.АМИНА", "role": "HSK", "image": "team-12.jpg" }
       }
     },
     "process": {
@@ -260,10 +256,6 @@
       "teachers": {
         "title": "Багш нар",
         "description": "Хичээлийн удирдлага • Үнэлгээ • Ирц бүртгэх • Шинжилгээ"
-      },
-      "admins": {
-        "title": "Админууд",
-        "description": "Системийн удирдлага • Шинжилгээ • Орлого хянах • Тайлан"
       },
       "parents": {
         "title": "Эцэг эх",
@@ -1093,6 +1085,38 @@
       "campus_life": "Кампусын амьдрал",
       "technology": "Технологи",
       "announcements": "Зарлал"
+    }
+  },
+  "tutorials": {
+    "title": "Видео Хичээлүүд",
+    "subtitle": "Primis платформыг хэрхэн үр дүнтэй ашиглах талаар суралцаарай",
+    "categories": {
+      "gettingStarted": "Эхлэл",
+      "students": "Оюутнуудад",
+      "teachers": "Багш нарт",
+      "parents": "Эцэг эхчүүдэд"
+    },
+    "videos": {
+      "websiteTour": {
+        "title": "Вебсайтын аялал",
+        "description": "Primis платформын бүрэн танилцуулга"
+      },
+      "registration": {
+        "title": "Хэрхэн бүртгүүлэх вэ",
+        "description": "Бүртгэл үүсгэх алхам алхмаар заавар"
+      },
+      "enrollment": {
+        "title": "Хичээл сонголт",
+        "description": "Хичээлүүдийг үзэх болон бүртгүүлэх заавар"
+      },
+      "dashboard": {
+        "title": "Хянах самбар ашиглах",
+        "description": "Таны хувийн хянах самбарын боломжууд"
+      },
+      "payments": {
+        "title": "Төлбөр төлөх",
+        "description": "Хичээлийн төлбөрийг хэрхэн найдвартай төлөх вэ"
+      }
     }
   }
 }

@@ -39,8 +39,8 @@
   },
   "home": {
     "hero": {
-      "title": "Excellence in College Preparation",
-      "subtitle": "A sophisticated platform for students, teachers, and parents to manage courses, track attendance, and achieve academic excellence.",
+      "title": "",
+      "subtitle": "Meet the new Primis Educare Platform 1.0",
       "beginJourney": "Begin Your Journey",
       "signIn": "Sign In"
     },
@@ -155,18 +155,14 @@
     "team": {
       "title": "TEACHERS",
       "members": {
-        "m1": { "name": "P.NYAMGEREL", "role": "IELTS" },
-        "m2": { "name": "V.OLGA", "role": "SAT" },
-        "m3": { "name": "B.ARIUNGEREL", "role": "IELTS" },
-        "m4": { "name": "O.NANDINBAYAR", "role": "IELTS, SAT" },
-        "m5": { "name": "U.ANUJIN", "role": "SAT" },
-        "m6": { "name": "E.TEMUUGEE", "role": "IELTS" },
-        "m7": { "name": "G.GUNBISHRELT", "role": "IELTS" },
-        "m8": { "name": "A.KHAIDAR", "role": "Counselor" },
-        "m9": { "name": "G.TSELMEG", "role": "IELTS" },
-        "m10": { "name": "D.ANKHBAYAR", "role": "IELTS, SAT" },
-        "m11": { "name": "J.AMINA", "role": "IELTS" },
-        "m12": { "name": "J.AMINA", "role": "HSK" }
+        "m1": { "name": "P.NYAMGEREL", "role": "IELTS", "image": "team-1.jpg" },
+        "m2": { "name": "V.OLGA", "role": "SAT", "image": "team-2.jpg" },
+        "m3": { "name": "B.ARIUNGEREL", "role": "IELTS", "image": "team-3.jpg" },
+        "m6": { "name": "E.TEMUUGEE", "role": "SAT Math", "image": "team-6.jpg" },
+        "m7": { "name": "G.GUNBISHRELT", "role": "IELTS", "image": "team-7.jpg" },
+        "m8": { "name": "A.KHAIDAR", "role": "Counselor", "image": "team-8.jpg" },
+        "m11": { "name": "J.AMINA", "role": "IELTS", "image": "team-11.jpg" },
+        "m12": { "name": "J.AMINA", "role": "HSK", "image": "team-12.jpg" }
       }
     },
     "process": {
@@ -260,10 +256,6 @@
       "teachers": {
         "title": "Teachers",
         "description": "Course management • Grading • Attendance marking • Analytics"
-      },
-      "admins": {
-        "title": "Admins",
-        "description": "System management • Analytics • Revenue tracking • Reports"
       },
       "parents": {
         "title": "Parents",
@@ -1061,6 +1053,54 @@
       "enrollmentRequired": "You need to enroll and pay for this course to access this lesson",
       "notFound": "Online course not found. This course may not be available as an online course yet.",
       "failedToLoad": "Failed to load course"
+    }
+  },
+  "tutorials": {
+    "title": "Video Tutorials",
+    "subtitle": "Learn how to use the Primis platform effectively",
+    "categories": {
+      "gettingStarted": "Getting Started",
+      "students": "For Students",
+      "teachers": "For Teachers",
+      "parents": "For Parents"
+    },
+    "videos": {
+      "registration": {
+        "title": "How to Register",
+        "description": "Step-by-step guide to creating your account"
+      },
+      "enrollment": {
+        "title": "Course Enrollment",
+        "description": "How to browse and enroll in courses"
+      },
+      "dashboard": {
+        "title": "Navigating the Dashboard",
+        "description": "Overview of your personal dashboard features"
+      },
+      "payments": {
+        "title": "Making Payments",
+        "description": "How to pay for courses securely"
+      },
+      "websiteTour": {
+        "title": "Website Tour",
+        "description": "A complete walkthrough of the Primis platform"
+      },
+      "registration": {
+        "title": "How to Register",
+        "description": "Step-by-step guide to creating your account"
+      },
+      "enrollment": {
+        "title": "Course Enrollment",
+        "description": "How to browse and enroll in courses"
+      },
+      "dashboard": {
+        "title": "Navigating the Dashboard",
+        "description": "Overview of your personal dashboard features"
+      },
+      "payments": {
+        "title": "Making Payments",
+        "description": "How to pay for courses securely"
+      }
     }
   }
 }
