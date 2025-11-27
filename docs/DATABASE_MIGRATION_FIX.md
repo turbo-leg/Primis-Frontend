@@ -47,6 +47,7 @@ If migrations fail, you can add the missing column directly:
 -- Connect to your PostgreSQL database and run:
 ALTER TABLE students ADD COLUMN IF NOT EXISTS school_grade VARCHAR(20);
 ALTER TABLE students ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(500);
+-- Note: DEFAULT true is used so existing users are considered verified
 ALTER TABLE students ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT true NOT NULL;
 ALTER TABLE students ADD COLUMN IF NOT EXISTS verification_token VARCHAR(100);
 
@@ -55,6 +56,7 @@ ALTER TABLE admins ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(500);
 
 ALTER TABLE parents ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(500);
 ALTER TABLE parents ADD COLUMN IF NOT EXISTS password VARCHAR(255);
+-- Note: DEFAULT true is used so existing users are considered verified
 ALTER TABLE parents ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT true NOT NULL;
 ALTER TABLE parents ADD COLUMN IF NOT EXISTS verification_token VARCHAR(100);
 ```
