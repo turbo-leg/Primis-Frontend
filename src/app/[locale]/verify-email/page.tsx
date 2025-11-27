@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiClient } from '@/lib/api';
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
@@ -20,32 +21,45 @@ function VerifyEmailContent() {
 
     const verifyEmail = async () => {
       try {
-        // Call the backend API
-        // Assuming the backend is proxied or available at NEXT_PUBLIC_API_URL
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-        const response = await fetch(`${apiUrl}/auth/verify-email/${token}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // Call the backend API using apiClient which handles base URL
+        console.log(`Verifying token: ${token}`);
+        const response = await apiClient.get(`/api/v1/auth/verify-email/${token}`);
+        console.log('Verification response:', response);
 
-        if (response.ok) {
-          setStatus('success');
-          setMessage('Email verified successfully! You can now log in.');
-          // Redirect to login after 3 seconds
-          setTimeout(() => {
-            router.push('/login');
-          }, 3000);
-        } else {
-          const data = await response.json();
-          setStatus('error');
-          setMessage(data.detail || 'Failed to verify email. The link may be invalid or expired.');
-        }
-      } catch (error) {
+        setStatus('success');
+        setMessage('Email verified successfully! You can now log in.');
+        // Redirect to login after 3 seconds
+        setTimeout(() => {
+          router.push('/login');
+        }, 3000);
+      } catch (error: any) {
         console.error('Verification error:', error);
         setStatus('error');
-        setMessage('An error occurred while verifying your email. Please try again later.');
+        
+        // Extract error message from axios error response
+        let errorMessage = 'Failed to verify email. The link may be invalid or expired.';
+        
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error('Error data:', error.response.data);
+            console.error('Error status:', error.response.status);
+            
+            if (error.response.status === 404) {
+                errorMessage = `Verification endpoint not found (404). Please contact support.`;
+            } else if (error.response.data && error.response.data.detail) {
+                errorMessage = error.response.data.detail;
+            }
+        } else if (error.request) {
+            // The request was made but no response was received
+            console.error('Error request:', error.request);
+            errorMessage = 'Network error. Unable to reach the server. Please try again later.';
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('Error message:', error.message);
+        }
+        
+        setMessage(errorMessage);
       }
     };
 
