@@ -19,7 +19,7 @@ interface AuthState {
   permissions: UserPermissions | null
   login: (email: string, password: string) => Promise<UserType>
   logout: () => void
-  register: (data: any) => Promise<void>
+  register: (data: any, userType?: UserType) => Promise<void>
   setUser: (user: any, userType: UserType, token: string) => void
   setPermissions: (permissions: UserPermissions) => void
   clearAuth: () => void
@@ -64,10 +64,10 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      register: async (data: any) => {
+      register: async (data: any, userType: UserType = 'student') => {
         set({ isLoading: true })
         try {
-          await apiClient.register(data)
+          await apiClient.register(data, userType)
           set({ isLoading: false })
         } catch (error) {
           set({ isLoading: false })
@@ -92,7 +92,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
-        localStorage.removeItem('user_permissions')
+        // Don't remove user_permissions on logout so they persist across sessions
         set({
           user: null,
           userType: null,
@@ -105,7 +105,7 @@ export const useAuthStore = create<AuthState>()(
       clearAuth: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
-        localStorage.removeItem('user_permissions')
+        // Don't remove user_permissions on clearAuth
         set({
           user: null,
           userType: null,

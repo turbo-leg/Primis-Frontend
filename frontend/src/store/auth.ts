@@ -112,7 +112,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
-        localStorage.removeItem('user_permissions')
+        // Don't remove user_permissions on logout so they persist across sessions
         set({
           user: null,
           userType: null,
@@ -125,7 +125,7 @@ export const useAuthStore = create<AuthState>()(
       clearAuth: () => {
         localStorage.removeItem('access_token')
         localStorage.removeItem('user_data')
-        localStorage.removeItem('user_permissions')
+        // Don't remove user_permissions on clearAuth
         set({
           user: null,
           userType: null,

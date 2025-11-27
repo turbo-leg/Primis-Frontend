@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Navigation } from '@/components/navigation'
 import PrimisLogo from '@/components/PrimisLogo'
-import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle, User, Phone, Calendar } from 'lucide-react'
+import { GraduationCap, Mail, Lock, Eye, EyeOff, AlertCircle, User, Phone, Calendar, Users } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
@@ -27,7 +27,7 @@ const registerSchema = z.object({
   phone: z.string().optional(),
   parentEmail: z.string().email('Please enter a valid parent email address').optional(),
   parentPhone: z.string().optional(),
-  userType: z.enum(['student', 'teacher'], {
+  userType: z.enum(['student', 'teacher', 'parent'], {
     required_error: 'Please select a user type',
   }),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -36,12 +36,21 @@ const registerSchema = z.object({
 }).refine((data) => {
   // If student, parent email and phone are required
   if (data.userType === 'student') {
-    return data.parentEmail && data.parentPhone;
+    return !!(data.parentEmail && data.parentPhone);
   }
   return true;
 }, {
   message: "Parent email and phone are required for students",
   path: ["parentEmail"],
+}).refine((data) => {
+  // If parent, phone is required
+  if (data.userType === 'parent') {
+    return !!data.phone;
+  }
+  return true;
+}, {
+  message: "Phone number is required for parents",
+  path: ["phone"],
 })
 
 type RegisterFormData = z.infer<typeof registerSchema>
@@ -50,7 +59,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedUserType, setSelectedUserType] = useState<'student' | 'teacher' | null>(null)
+  const [selectedUserType, setSelectedUserType] = useState<'student' | 'teacher' | 'parent' | null>(null)
   const router = useRouter()
   const { register: registerUser } = useAuthStore()
   const t = useTranslations()
@@ -67,6 +76,12 @@ export default function RegisterPage() {
       label: t('auth.teacher'),
       description: t('auth.teacherDescription'),
       color: 'bg-green-100 text-green-800 border-green-200',
+    },
+    {
+      value: 'parent' as const,
+      label: t('auth.parent'),
+      description: t('auth.parentDescription'),
+      color: 'bg-purple-100 text-purple-800 border-purple-200',
     },
   ];
 
@@ -101,7 +116,7 @@ export default function RegisterPage() {
       }
       
       console.log('Sending registration data:', registerData)
-      await registerUser(registerData)
+      await registerUser(registerData, data.userType)
       toast.success('Registration successful! Please log in to continue.')
       router.push('/login')
     } catch (error: any) {
@@ -112,7 +127,7 @@ export default function RegisterPage() {
     }
   }
 
-  const handleUserTypeSelect = (userType: 'student' | 'teacher') => {
+  const handleUserTypeSelect = (userType: 'student' | 'teacher' | 'parent') => {
     setSelectedUserType(userType)
     setValue('userType', userType)
   }

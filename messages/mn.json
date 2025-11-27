@@ -35,7 +35,10 @@
     "accessDenied": "Нэвтрэх эрх хүрэлцэхгүй байна",
     "and": "ба",
     "student": "Оюутан",
-    "date": "Огноо"
+    "date": "Огноо",
+    "footer": {
+      "copyright": "© 2025 Primis Educare. Бүх эрх хуулиар хамгаалагдсан."
+    }
   },
   "home": {
     "hero": {
@@ -308,7 +311,7 @@
     "signUp": "Бүртгүүлэх",
     "signIn": "Нэвтрэх",
     "selectRole": "Үүргээ сонгоно уу",
-    "student": "Оюутан",
+    "student": "Сурагч",
     "teacher": "Багш",
     "parent": "Эцэг эх",
     "admin": "Администратор",
@@ -318,6 +321,7 @@
     "registerError": "Бүртгэл амжилтгүй. Дахин оролдоно уу.",
     "studentDescription": "Би энд оюутан",
     "teacherDescription": "Би энд багш",
+    "parentDescription": "Би эцэг эх",
     "agreeTo": "Би зөвшөөрөлтэй",
     "termsOfService": "Үйлчилгээний нөхцөл",
     "privacyPolicy": "Нууцлалын бодлого",

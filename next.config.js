@@ -2,6 +2,7 @@
 const withNextIntl = require('next-intl/plugin')();
 
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   
   // Performance optimizations

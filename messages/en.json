@@ -35,7 +35,10 @@
     "accessDenied": "Access Denied",
     "and": "and",
     "student": "Student",
-    "date": "Date"
+    "date": "Date",
+    "footer": {
+      "copyright": "© 2025 Primis Educare. All rights reserved."
+    }
   },
   "home": {
     "hero": {
@@ -318,6 +321,7 @@
     "registerError": "Registration failed. Please try again.",
     "studentDescription": "I am a student here",
     "teacherDescription": "I am a teacher here",
+    "parentDescription": "I am a parent here",
     "agreeTo": "I agree to the",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",

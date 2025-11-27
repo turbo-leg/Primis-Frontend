@@ -34,13 +34,13 @@
     "online": "Онлайн",
     "accessDenied": "Нэвтрэх эрх хүрэлцэхгүй байна",
     "and": "ба",
-    "student": "Оюутан",
+    "student": "Сурагч",
     "date": "Огноо"
   },
   "home": {
     "hero": {
       "title": "Коллежид бэлтгэхэд тэргүүлэх чанар",
-      "subtitle": "Оюутан, багш, эцэг эхчүүдэд зориулсан хичээл удирдах, ирц бүртгэх, академик амжилтанд хүрэхэд туслах платформ.",
+      "subtitle": "Сурагч, багш, эцэг эхчүүдэд зориулсан хичээл удирдах, ирц бүртгэх, академик амжилтанд хүрэхэд туслах платформ.",
       "beginJourney": "Аялалаа эхлүүлэх",
       "signIn": "Нэвтрэх"
     },
@@ -67,7 +67,7 @@
     "stats": {
       "title": "Боловсролын манлайлагчдын итгэл",
       "subtitle": "Манай тэргүүний хамт олонд нэгдээрэй",
-      "activeStudents": "Идэвхтэй оюутан",
+      "activeStudents": "Идэвхтэй сурагчид",
       "expertTeachers": "Мэргэшсэн багш",
       "availableCourses": "Боломжтой хичээл",
       "successRate": "Амжилтын түвшин"
@@ -77,7 +77,7 @@
       "subtitle": "Боловсролын аялалаа гурван алхмаар эхлүүлээрэй",
       "step1": {
         "title": "Бүртгэл үүсгэх",
-        "description": "Оюутан, багш эсвэл админ байдлаар бүртгүүлж, мэргэжлийн профайлаа үүсгэн академик замналаа эхлүүлээрэй."
+        "description": "Сурагч, багш эсвэл админ байдлаар бүртгүүлж, мэргэжлийн профайлаа үүсгэн академик замналаа эхлүүлээрэй."
       },
       "step2": {
         "title": "Хичээлүүдтэй танилцах",
@@ -149,7 +149,7 @@
     "signUp": "Бүртгүүлэх",
     "signIn": "Нэвтрэх",
     "selectRole": "Үүргээ сонгоно уу",
-    "student": "Оюутан",
+    "student": "Сурагч",
     "teacher": "Багш",
     "parent": "Эцэг эх",
     "admin": "Администратор",
@@ -157,7 +157,7 @@
     "loginError": "Нэвтрэлт амжилтгүй. Өгөгдлөө шалгана уу.",
     "registerSuccess": "Амжилттай бүртгэгдлээ! Нэвтэрнэ үү.",
     "registerError": "Бүртгэл амжилтгүй. Дахин оролдоно уу.",
-    "studentDescription": "Би энд оюутан",
+    "studentDescription": "Би энд сурагч",
     "teacherDescription": "Би энд багш",
     "agreeTo": "Би зөвшөөрөлтэй",
     "termsOfService": "Үйлчилгээний нөхцөл",
@@ -195,11 +195,11 @@
     "recentActivity": "Сүүлийн үйл ажиллагаа",
     "quickActions": "Шуурхай үйлдэл",
     "upcomingEvents": "Удахгүй болох арга хэмжээ",
-    "totalStudents": "Нийт оюутан",
+    "totalStudents": "Нийт сурагч",
     "totalCourses": "Нийт хичээл",
     "totalTeachers": "Нийт багш",
     "totalRevenue": "Нийт орлого",
-    "activeStudents": "Идэвхитэй оюутан",
+    "activeStudents": "Идэвхитэй сурагч",
     "pendingPayments": "Хүлээгдэж буй төлбөр",
     "attendanceRate": "Ирцийн түвшин",
     "averageGrade": "Дундаж үнэлгээ",
@@ -207,8 +207,8 @@
       "title": "Администраторын хянах самбар",
       "welcomeBack": "Тавтай морилно уу, {name}! Платформыг удирдах.",
       "accessMessage": "Энэ хуудас зөвхөн администраторуудад нээлттэй.",
-      "totalStudents": "Нийт оюутан",
-      "registeredStudents": "Бүртгэгдсэн оюутнууд",
+      "totalStudents": "Нийт сурагчид",
+      "registeredStudents": "Бүртгэгдсэн сурагчид",
       "activeCourses": "Идэвхтэй хичээлүүд",
       "availableCourses": "Боломжтой хичээлүүд",
       "totalRevenue": "Нийт орлого",
@@ -251,14 +251,14 @@
       "holdCtrlToSelectMultiple": "Олон багш сонгохын тулд Ctrl/Cmd дарна уу",
       "teachersSelected": "багш сонгогдсон",
       "price": "Үнэ ($)",
-      "maxStudents": "Хамгийн их оюутан",
+      "maxStudents": "Хамгийн их сурагч",
       "onlineCourse": "Онлайн хичээл",
       "location": "Байршил",
       "startTime": "Эхлэх цаг",
       "endTime": "Дуусах цаг",
       "updateCourse": "Хичээл шинэчлэх",
       "noTeacherAssigned": "Багш оноогдоогүй",
-      "students": "оюутан",
+      "students": "сурагчид",
       "online": "Онлайн",
       "confirmDeleteCourse": "Та энэ хичээлийг устгахдаа итгэлтэй байна уу?"
     },
@@ -269,11 +269,11 @@
       "takeAttendance": "Ирц авах",
       "myCourses": "Миний хичээлүүд",
       "activeCourses": "Идэвхтэй хичээлүүд",
-      "totalStudents": "Нийт оюутан",
+      "totalStudents": "Нийт сурагчид",
       "acrossAllCourses": "Бүх хичээлээр",
       "averageAttendance": "Дундаж ирц",
       "classAttendanceRate": "Ангийн ирцийн түвшин",
-      "activeStudents": "Идэвхтэй оюутнууд",
+      "activeStudents": "Идэвхтэй сурагчид",
       "activeThisWeek": "Энэ долоо хоногт идэвхтэй",
       "coursesYoureTeaching": "Таны зааж буй хичээлүүд",
       "newCourse": "Шинэ хичээл",
@@ -408,7 +408,7 @@
       "full": "Дүүрсэн"
     },
     "labels": {
-      "students": "оюутан"
+      "students": "Сурагчид"
     },
     "buttons": {
       "viewDetails": "Дэлгэрэнгүй",
@@ -433,7 +433,7 @@
     "loading": "Хичээл ачааллаж байна...",
     "notFound": "Хичээл олдсонгүй",
     "backToCourses": "Хичээлүүд рүү буцах",
-    "maxStudents": "Хамгийн ихдээ {max} оюутан",
+    "maxStudents": "Хамгийн ихдээ {max} сурагчид",
     "tabs": {
       "overview": "Ерөнхий мэдээлэл",
       "materials": "Материал ({count})",
@@ -445,7 +445,7 @@
       "details": "Хичээлийн дэлгэрэнгүй",
       "startDate": "Эхлэх огноо",
       "endDate": "Дуусах огноо",
-      "maximumStudents": "Хамгийн их оюутан",
+    "maximumStudents": "Хамгийн ихдээ {max} сурагчид",
       "format": "Хэлбэр",
       "location": "Байршил"
     },
@@ -501,9 +501,9 @@
       "teachers": "Багш нар ({count})",
       "teachersDescription": "Энэ хичээлийн багш нар",
       "noTeachers": "Одоогоор багш томилоогүй байна",
-      "students": "Оюутнууд ({count})",
-      "studentsDescription": "Энэ хичээлд бүртгүүлсэн оюутнууд",
-      "noStudents": "Одоогоор оюутан бүртгүүлээгүй байна",
+      "students": "Сурагчид ({count})",
+      "studentsDescription": "Энэ хичээлд бүртгүүлсэн сурагчид",
+      "noStudents": "Одоогоор  бүртгүүлээгүй байна",
       "specialization": "Мэргэжил",
       "phone": "Утас",
       "enrolled": "Бүртгүүлсэн",
@@ -515,12 +515,12 @@
     }
   },
   "students": {
-    "title": "Оюутнууд",
-    "allStudents": "Бүх оюутнууд",
-    "addStudent": "Оюутан нэмэх",
-    "editStudent": "Оюутан засах",
-    "studentId": "Оюутны дугаар",
-    "studentName": "Оюутны нэр",
+    "title": "Сурагчид",
+    "allStudents": "Бүх сурагчид",
+    "addStudent": "Сурагч нэмэх",
+    "editStudent": "Сурагч засах",
+    "studentId": "Сурагчийн дугаар",
+    "studentName": "Сурагчийн нэр",
     "dateOfBirth": "Төрсөн огноо",
     "gender": "Хүйс",
     "male": "Эрэгтэй",

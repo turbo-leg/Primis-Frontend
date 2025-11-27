@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
-import { AuthToken, LoginCredentials, RegisterData } from '@/types'
+import { AuthToken, LoginCredentials, RegisterData, UserType } from '@/types'
 
 class ApiClient {
   private client: AxiosInstance
@@ -47,8 +47,9 @@ class ApiClient {
     return response.data
   }
 
-  async register(data: RegisterData): Promise<any> {
-    const response = await this.client.post('/api/v1/auth/register/student', data)
+  async register(data: RegisterData, userType: UserType = 'student'): Promise<any> {
+    const endpoint = `/api/v1/auth/register/${userType}`
+    const response = await this.client.post(endpoint, data)
     return response.data
   }
 

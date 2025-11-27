@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Bell, Cookie, X, Check, Info } from 'lucide-react'
+import { Bell, Cookie, X, Check, Info, Shield } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface PermissionsModalProps {
@@ -64,10 +64,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
-      <Card className="w-full max-w-2xl shadow-2xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+      <Card className="w-full max-w-2xl shadow-2xl border-0 bg-white dark:bg-primis-navy dark:border dark:border-white/10 flex flex-col max-h-[90vh]">
         {/* Header */}
-        <CardHeader className="border-b border-gray-200 dark:border-white/10 pb-4">
+        <CardHeader className="border-b border-gray-200 dark:border-white/10 pb-4 flex-shrink-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <CardTitle className="text-2xl dark:text-white mb-1">
@@ -84,7 +84,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
         </CardHeader>
 
         {/* Content */}
-        <CardContent className="py-6 space-y-6">
+        <CardContent className="py-6 space-y-6 overflow-y-auto flex-1">
           {/* Info Banner */}
           <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30 rounded-lg p-4 flex gap-3">
             <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
@@ -95,6 +95,28 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
 
           {/* Permission Items */}
           <div className="space-y-4">
+            {/* Essential Cookies (Always On) */}
+            <div className="border border-gray-200 dark:border-white/10 rounded-lg p-4 bg-gray-50 dark:bg-white/5">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3 flex-1">
+                  <div className="mt-1 p-2 bg-blue-100 dark:bg-blue-950/30 rounded-lg">
+                    <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      {t('permissions.essential.title') || 'Essential Cookies'}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t('permissions.essential.description') || 'These cookies are necessary for the website to function and cannot be switched off.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="ml-4 relative inline-flex h-6 w-11 flex-shrink-0 cursor-not-allowed rounded-full bg-blue-600 dark:bg-blue-500 opacity-50">
+                  <span className="translate-x-5 inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0" />
+                </div>
+              </div>
+            </div>
+
             {/* Notifications */}
             <div className="border border-gray-200 dark:border-white/10 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition">
               <div className="flex items-start justify-between">
@@ -128,7 +150,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
               </div>
             </div>
 
-            {/* Cookies */}
+            {/* Functional Cookies */}
             <div className="border border-gray-200 dark:border-white/10 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
@@ -137,10 +159,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {t('permissions.cookies.title')}
+                      {t('permissions.cookies.title') || 'Functional Cookies'}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('permissions.cookies.description')}
+                      {t('permissions.cookies.description') || 'Allow the site to remember your choices and preferences.'}
                     </p>
                   </div>
                 </div>
@@ -170,10 +192,10 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {t('permissions.analytics.title')}
+                      {t('permissions.analytics.title') || 'Analytics & Performance'}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('permissions.analytics.description')}
+                      {t('permissions.analytics.description') || 'Help us improve our website by collecting and reporting information on how you use it.'}
                     </p>
                   </div>
                 </div>
@@ -210,12 +232,12 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
         </CardContent>
 
         {/* Footer - Actions */}
-        <div className="border-t border-gray-200 dark:border-white/10 px-6 py-4 bg-gray-50 dark:bg-white/5 rounded-b-lg flex gap-3 justify-end">
+        <div className="border-t border-gray-200 dark:border-white/10 px-6 py-4 bg-gray-50 dark:bg-white/5 rounded-b-lg flex flex-col sm:flex-row gap-3 justify-end flex-shrink-0">
           <Button
             variant="outline"
             onClick={handleDeclineAll}
             disabled={isSubmitting}
-            className="dark:border-white/20 dark:text-white dark:hover:bg-white/10"
+            className="dark:border-white/20 dark:text-white dark:hover:bg-white/10 order-2 sm:order-1"
           >
             {t('permissions.declineAll')}
           </Button>
@@ -223,7 +245,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
             variant="outline"
             onClick={handleCustom}
             disabled={isSubmitting}
-            className="dark:border-white/20 dark:text-white dark:hover:bg-white/10"
+            className="dark:border-white/20 dark:text-white dark:hover:bg-white/10 order-3 sm:order-2"
           >
             {isSubmitting ? (
               <div className="flex items-center space-x-2">
@@ -237,7 +259,7 @@ export function PermissionsModal({ isOpen, onClose }: PermissionsModalProps) {
           <Button
             onClick={handleAcceptAll}
             disabled={isSubmitting}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-700 dark:hover:to-blue-800 order-1 sm:order-3"
           >
             {isSubmitting ? (
               <div className="flex items-center space-x-2">

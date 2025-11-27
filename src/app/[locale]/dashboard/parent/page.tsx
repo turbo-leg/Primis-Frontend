@@ -65,14 +65,13 @@ interface AttendanceRecord {
 
 interface Assignment {
   assignment_id: number
-  course_id: number
   title: string
-  description: string
+  course_title: string
   due_date: string
   max_points: number
-  course_title: string
-  submission_status?: 'submitted' | 'pending' | 'overdue'
+  status: string
   grade?: number
+  feedback?: string
 }
 
 export default function ParentDashboard() {
@@ -113,26 +112,14 @@ export default function ParentDashboard() {
       
       // Fetch parent's children
       try {
-        const childrenData = await apiClient.get(`/api/v1/parents/${user.parent_id}/children`)
+        const childrenData = await apiClient.get(`/api/v1/parents/me/children`)
         setChildren(childrenData)
         if (childrenData.length > 0) {
           setSelectedChild(childrenData[0])
         }
       } catch (error) {
-        console.log('Children endpoint not available, using mock data')
-        // Mock children data for development
-        const mockChildren: Student[] = [
-          {
-            student_id: 1,
-            name: "Alex Johnson",
-            email: "alex.johnson@email.com",
-            phone: "555-0123",
-            date_of_birth: "2008-03-15",
-            address: "123 Main St, City, State"
-          }
-        ]
-        setChildren(mockChildren)
-        setSelectedChild(mockChildren[0])
+        console.log('Error fetching children:', error)
+        setChildren([])
       }
 
     } catch (error) {
@@ -146,56 +133,37 @@ export default function ParentDashboard() {
     try {
       // Fetch child's enrollments
       try {
-        const enrollmentsData = await apiClient.get(`/api/v1/students/${studentId}/enrollments`)
+        const enrollmentsData = await apiClient.get(`/api/v1/parents/children/${studentId}/enrollments`)
         setEnrollments(enrollmentsData)
       } catch (error) {
-        console.log('Student enrollments endpoint not available')
+        console.log('Child enrollments endpoint error:', error)
         setEnrollments([])
       }
 
       // Fetch child's attendance
       try {
-        const attendanceData = await apiClient.getStudentAttendance(studentId)
+        const attendanceData = await apiClient.get(`/api/v1/parents/children/${studentId}/attendance`)
         setAttendance(attendanceData.slice(0, 10)) // Last 10 records
         
-        const statsData = await apiClient.getAttendanceStats(studentId)
-        setAttendanceStats(statsData)
+        // Try to get stats if available
+        try {
+            const statsData = await apiClient.getAttendanceStats(studentId)
+            setAttendanceStats(statsData)
+        } catch (e) {
+            setAttendanceStats(null)
+        }
       } catch (error) {
-        console.log('Student attendance endpoint not available')
+        console.log('Child attendance endpoint error:', error)
         setAttendance([])
-        setAttendanceStats(null)
       }
 
       // Fetch child's assignments
       try {
-        const assignmentsData = await apiClient.get(`/api/v1/students/assignments/upcoming?student_id=${studentId}`)
+        const assignmentsData = await apiClient.get(`/api/v1/parents/children/${studentId}/assignments`)
         setAssignments(assignmentsData)
       } catch (error) {
-        console.log('Student assignments endpoint not available, using mock data')
-        // Mock assignments for development
-        setAssignments([
-          {
-            assignment_id: 1,
-            course_id: 1,
-            title: "Math Homework Chapter 5",
-            description: "Complete exercises 1-20",
-            due_date: "2025-10-05T23:59:00",
-            max_points: 100,
-            course_title: "Advanced Mathematics",
-            submission_status: "submitted",
-            grade: 85
-          },
-          {
-            assignment_id: 2,
-            course_id: 2,
-            title: "Physics Lab Report",
-            description: "Submit lab report for experiment 3",
-            due_date: "2025-10-03T17:00:00",
-            max_points: 50,
-            course_title: "Physics Fundamentals",
-            submission_status: "pending"
-          }
-        ])
+        console.log('Child assignments endpoint error:', error)
+        setAssignments([])
       }
 
     } catch (error) {
@@ -210,6 +178,7 @@ export default function ParentDashboard() {
       case 'late': return 'bg-yellow-100 text-yellow-800'
       case 'excused': return 'bg-blue-100 text-blue-800'
       case 'submitted': return 'bg-green-100 text-green-800'
+      case 'graded': return 'bg-green-100 text-green-800'
       case 'pending': return 'bg-yellow-100 text-yellow-800'
       case 'overdue': return 'bg-red-100 text-red-800'
       case 'paid': return 'bg-green-100 text-green-800'
@@ -401,7 +370,7 @@ export default function ParentDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {assignments.filter(a => a.submission_status === 'pending').length}
+                  {assignments.filter(a => a.status === 'pending').length}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {t('dashboard.parent.dueThisWeek')}
@@ -527,16 +496,16 @@ export default function ParentDashboard() {
                           <div className="flex-1">
                             <h4 className="font-medium">{assignment.title}</h4>
                             <p className="text-sm text-gray-600">{assignment.course_title}</p>
-                            <p className="text-xs text-gray-500 mt-1">{assignment.description}</p>
+                            {/* Description removed as it's not in the new API response, or we can keep it if we add it back to backend */}
                           </div>
                           <div className="text-right">
-                            <Badge className={getStatusColor(assignment.submission_status || 'pending')}>
-                              {assignment.submission_status || 'pending'}
+                            <Badge className={getStatusColor(assignment.status || 'pending')}>
+                              {assignment.status || 'pending'}
                             </Badge>
                             <p className="text-sm font-medium mt-1">
                               {t('dashboard.parent.due')}: {formatDate(assignment.due_date)}
                             </p>
-                            {assignment.grade !== undefined && (
+                            {assignment.grade !== undefined && assignment.grade !== null && (
                               <p className="text-sm font-medium text-green-600">
                                 {t('dashboard.parent.grade')}: {assignment.grade}/{assignment.max_points}
                               </p>
