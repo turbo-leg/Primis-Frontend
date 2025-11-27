@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'react-hot-toast';
-import api from '@/lib/api';
+import { apiClient as api } from '@/lib/api';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
