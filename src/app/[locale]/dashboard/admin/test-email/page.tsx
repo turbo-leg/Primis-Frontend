@@ -35,7 +35,7 @@ export default function TestEmailPage() {
   const onSubmit = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      await api.post('/admin/test-email', data);
+      await api.post('/api/v1/admin/test-email', data);
       toast.success(`Test email (${data.template_type}) sent to ${data.email}`);
     } catch (error: any) {
       console.error('Error sending test email:', error);
