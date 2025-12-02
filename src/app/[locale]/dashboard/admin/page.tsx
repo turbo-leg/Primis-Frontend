@@ -268,11 +268,14 @@ export default function AdminDashboard() {
   // Course management functions
   const handleCreateCourse = async (courseData: any) => {
     try {
+      console.log('Creating course with data:', courseData)
       await apiClient.post('/api/v1/courses', courseData)
       await fetchDashboardData() // Refresh data
       setShowCreateCourse(false)
-    } catch (error) {
+      alert(t('dashboard.admin.courseCreatedSuccess') || 'Course created successfully')
+    } catch (error: any) {
       console.error('Failed to create course:', error)
+      alert(error.response?.data?.detail || 'Failed to create course. Please check the form and try again.')
     }
   }
 
@@ -281,8 +284,10 @@ export default function AdminDashboard() {
       await apiClient.put(`/api/v1/courses/${courseId}`, courseData)
       await fetchDashboardData() // Refresh data
       setEditingCourse(null)
-    } catch (error) {
+      alert(t('dashboard.admin.courseUpdatedSuccess') || 'Course updated successfully')
+    } catch (error: any) {
       console.error('Failed to update course:', error)
+      alert(error.response?.data?.detail || 'Failed to update course. Please try again.')
     }
   }
 
@@ -706,6 +711,7 @@ function CourseForm({ course, teachers, onSubmit, onCancel }: {
   onCancel: () => void;
 }) {
   const t = useTranslations()
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [formData, setFormData] = React.useState({
     title: course?.title || '',
     description: course?.description || '',
@@ -718,9 +724,16 @@ function CourseForm({ course, teachers, onSubmit, onCancel }: {
     teacher_ids: (course as any)?.teacher_ids || []
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+    if (isSubmitting) return
+    
+    setIsSubmitting(true)
+    try {
+      await onSubmit(formData)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -845,10 +858,17 @@ function CourseForm({ course, teachers, onSubmit, onCancel }: {
       </div>
 
       <div className="flex gap-2 pt-4">
-        <Button type="submit" className="flex-1 dark:bg-blue-600 dark:hover:bg-blue-700">
-          {course ? t('dashboard.admin.updateCourse') : t('dashboard.admin.createCourse')}
+        <Button type="submit" disabled={isSubmitting} className="flex-1 dark:bg-blue-600 dark:hover:bg-blue-700">
+          {isSubmitting ? (
+            <span className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              {t('common.processing') || 'Processing...'}
+            </span>
+          ) : (
+            course ? t('dashboard.admin.updateCourse') : t('dashboard.admin.createCourse')
+          )}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="flex-1 dark:border-white/20 dark:text-white dark:hover:bg-white/10">
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting} className="flex-1 dark:border-white/20 dark:text-white dark:hover:bg-white/10">
           {t('common.cancel')}
         </Button>
       </div>
