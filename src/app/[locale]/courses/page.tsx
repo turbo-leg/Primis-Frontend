@@ -66,11 +66,12 @@ export default function CoursesPage() {
   const fetchCourses = async () => {
     try {
       setLoading(true)
-      const data = await apiClient.get('/api/v1/courses')
+      const data = await apiClient.getCourses()
       setCourses(data.filter((c: Course) => c.status === 'active'))
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch courses:', error)
-      alert(t('courses.errors.fetchFailed'))
+      const errorMessage = error.response?.data?.detail || error.message || 'Unknown error'
+      alert(`${t('courses.errors.fetchFailed')}: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
