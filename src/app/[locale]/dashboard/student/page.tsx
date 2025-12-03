@@ -504,7 +504,7 @@ export default function StudentDashboard() {
               
               <div className="bg-white p-4 rounded-lg border-2 border-gray-200 inline-block">
                 <img 
-                  src={qrCodeUrl.startsWith('http') ? qrCodeUrl : `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}${qrCodeUrl}`}
+                  src={qrCodeUrl.startsWith('http') ? qrCodeUrl : qrCodeUrl}
                   alt="Student QR Code" 
                   className="w-64 h-64 cursor-pointer hover:scale-105 transition-transform"
                   onError={(e) => {

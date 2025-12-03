@@ -45,7 +45,7 @@ export default function CourseMaterials({
       setError(null)
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/courses/${courseId}/materials`,
+        `/api/v1/courses/${courseId}/materials`,
         {
           method: 'GET',
           headers: {
@@ -75,7 +75,7 @@ export default function CourseMaterials({
     setDeleting(materialId)
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/materials/${materialId}`,
+        `/api/v1/materials/${materialId}`,
         {
           method: 'DELETE',
           headers: {

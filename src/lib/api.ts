@@ -5,8 +5,10 @@ class ApiClient {
   private client: AxiosInstance
 
   constructor() {
+    // Use relative paths to leverage Next.js rewrites (proxy)
+    // This avoids CORS issues by making requests to the Next.js server, which then proxies to the backend
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com',
+      baseURL: '', 
       headers: {
         'Content-Type': 'application/json',
       },
@@ -60,38 +62,8 @@ class ApiClient {
 
   // Auth endpoints
   async login(credentials: LoginCredentials): Promise<AuthToken> {
-    // Use the Next.js proxy route instead of direct backend call
-    // This helps avoid CORS issues and provides better error logging on the server
-    try {
-      console.log('[API] Sending login request to proxy...')
-      const response = await fetch('/api/proxy/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error('[API] Proxy login failed:', response.status, data)
-        throw { response: { data, status: response.status } };
-      }
-
-      console.log('[API] Proxy login success')
-      return data;
-    } catch (error: any) {
-      // If the proxy fails (e.g. network error), fall back to direct call or rethrow
-      if (error.response) {
-        throw error; // It was a valid error response from the proxy
-      }
-      
-      console.warn('Proxy login failed, falling back to direct API call', error);
-      // Fallback to original direct call
-      const response = await this.client.post('/api/v1/auth/login', credentials);
-      return response.data;
-    }
+    const response = await this.client.post('/api/v1/auth/login', credentials)
+    return response.data
   }
 
   async register(data: RegisterData, userType: UserType = 'student'): Promise<any> {

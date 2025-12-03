@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { CldImage } from 'next-cloudinary';
 import { useTranslations, useLocale } from 'next-intl';
+import { apiClient } from '@/lib/api';
 import { Navigation } from '@/components/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,14 +56,12 @@ export default function NewsPage() {
   const fetchNews = async () => {
     setIsLoading(true);
     try {
-      const url = selectedCategory === 'all'
-        ? `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/?published_only=true`
-        : `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/category/${selectedCategory}`;
-      
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch news');
-      
-      const data = await response.json();
+      let data;
+      if (selectedCategory === 'all') {
+        data = await apiClient.getAllNews({ published_only: true });
+      } else {
+        data = await apiClient.getNewsByCategory(selectedCategory);
+      }
       setNews(data);
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -79,12 +78,7 @@ export default function NewsPage() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/search/query?q=${encodeURIComponent(searchQuery)}`
-      );
-      if (!response.ok) throw new Error('Failed to search news');
-      
-      const data = await response.json();
+      const data = await apiClient.searchNews(searchQuery);
       setNews(data);
     } catch (error) {
       console.error('Error searching news:', error);

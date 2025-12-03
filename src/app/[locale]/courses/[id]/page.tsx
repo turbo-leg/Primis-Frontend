@@ -161,7 +161,7 @@ export default function CoursePage() {
       }
       formData.append('is_public', 'false')
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/courses/${courseId}/materials`, {
+      const response = await fetch(`/api/v1/courses/${courseId}/materials`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -536,9 +536,10 @@ export default function CoursePage() {
                           onClick={async () => {
                             try {
                               // Check if URL is already absolute (starts with http:// or https://)
+                              // If relative, use it as is (it will be proxied by Next.js)
                               const url = material.url.startsWith('http') 
                                 ? material.url 
-                                : `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}${material.url}`
+                                : material.url
                               
                               // Get file extension from type or title
                               const getFileExtension = () => {
