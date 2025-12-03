@@ -161,7 +161,7 @@ export default function CoursePage() {
       }
       formData.append('is_public', 'false')
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/courses/${courseId}/materials`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/courses/${courseId}/materials`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -538,7 +538,7 @@ export default function CoursePage() {
                               // Check if URL is already absolute (starts with http:// or https://)
                               const url = material.url.startsWith('http') 
                                 ? material.url 
-                                : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${material.url}`
+                                : `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}${material.url}`
                               
                               // Get file extension from type or title
                               const getFileExtension = () => {

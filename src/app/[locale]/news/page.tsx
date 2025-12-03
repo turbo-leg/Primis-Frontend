@@ -56,8 +56,8 @@ export default function NewsPage() {
     setIsLoading(true);
     try {
       const url = selectedCategory === 'all'
-        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/?published_only=true`
-        : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/category/${selectedCategory}`;
+        ? `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/?published_only=true`
+        : `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/category/${selectedCategory}`;
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch news');
@@ -80,7 +80,7 @@ export default function NewsPage() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/search/query?q=${encodeURIComponent(searchQuery)}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/search/query?q=${encodeURIComponent(searchQuery)}`
       );
       if (!response.ok) throw new Error('Failed to search news');
       

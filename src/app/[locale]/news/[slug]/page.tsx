@@ -62,7 +62,7 @@ export default function NewsDetailPage() {
   const fetchNewsDetail = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/slug/${slug}`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/slug/${slug}`
       );
       
       if (!response.ok) throw new Error('Failed to fetch news');
@@ -84,7 +84,7 @@ export default function NewsDetailPage() {
   const fetchRelatedNews = async (category: string, excludeId: number) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/category/${category}?limit=3`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/category/${category}?limit=3`
       );
       
       if (!response.ok) return;
