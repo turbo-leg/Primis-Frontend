@@ -92,9 +92,20 @@ export const useAuthStore = create<AuthState>()(
 
           // Return user type for redirection
           return userType
-        } catch (error) {
+        } catch (error: any) {
           console.error('❌ Login flow failed:', error)
           set({ isLoading: false })
+          
+          // Check for verification error (403)
+          if (error.response?.status === 403 && error.response?.data?.detail?.includes('verified')) {
+            console.log('⚠️ User not verified, redirecting to verification page')
+            // We need to redirect to the not-verified page
+            // Since we are in a store, we can't use router directly easily, 
+            // but the component calling login should handle this or we can use window.location
+            window.location.href = `/not-verified?email=${encodeURIComponent(email)}`
+            return
+          }
+          
           throw error
         }
       },
