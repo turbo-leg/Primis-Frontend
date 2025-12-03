@@ -1113,17 +1113,26 @@
     "info": {
       "title": "Contact Information",
       "address": "Address",
+      "addressValue": "SBD, 1st khoroo, Soyombo Tower 202",
       "phone": "Phone",
+      "phoneValue": "+976 99112233",
       "email": "Email",
+      "facilities": "Facilities",
+      "facilitiesValue": "Modern classrooms, Computer lab, Library",
       "workingHours": "Working Hours",
-      "workingHoursValue": "Mon - Fri: 09:00 - 18:00"
+      "workingHoursValue": "Mon - Fri: 09:00 - 18:00",
+      "workingHoursWeekend": "Sat: 10:00 - 16:00, Sun: Closed"
     },
     "form": {
       "title": "Send us a Message",
       "name": "Your Name",
+      "namePlaceholder": "Enter your name",
       "email": "Your Email",
+      "emailPlaceholder": "Enter your email",
       "subject": "Subject",
+      "subjectPlaceholder": "Enter subject",
       "message": "Message",
+      "messagePlaceholder": "Enter your message",
       "submit": "Send Message",
       "sending": "Sending...",
       "success": "Message sent successfully!",
