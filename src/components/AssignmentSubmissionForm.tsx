@@ -86,7 +86,7 @@ export default function AssignmentSubmissionForm({
 
       // Make API call
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/students/assignments/${assignmentId}/submit`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/students/assignments/${assignmentId}/submit`,
         {
           method: 'POST',
           headers: {

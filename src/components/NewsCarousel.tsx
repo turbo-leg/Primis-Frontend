@@ -57,7 +57,7 @@ export default function NewsCarousel({ autoPlayInterval = 5000 }: NewsCarouselPr
   const fetchFeaturedNews = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/news/featured?limit=5`
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/featured?limit=5`
       );
       
       if (!response.ok) throw new Error('Failed to fetch news');

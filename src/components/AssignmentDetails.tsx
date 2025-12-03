@@ -54,7 +54,7 @@ export default function AssignmentDetails({
       // For now, we'll construct the assignment detail from what we know
       // In production, you might fetch from a dedicated endpoint
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/assignments/${assignmentId}`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/assignments/${assignmentId}`,
         {
           method: 'GET',
           headers: {

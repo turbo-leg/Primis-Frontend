@@ -56,7 +56,7 @@ export default function AssignmentList({
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}${endpoint}`,
         {
           method: 'GET',
           headers: {

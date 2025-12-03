@@ -58,7 +58,7 @@ export default function AssignmentGrading({
       setError(null)
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/teachers/assignments/${assignmentId}/submissions`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/teachers/assignments/${assignmentId}/submissions`,
         {
           method: 'GET',
           headers: {
@@ -104,7 +104,7 @@ export default function AssignmentGrading({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/teachers/assignments/${assignmentId}/submissions/${selectedSubmission.submission_id}/grade`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/teachers/assignments/${assignmentId}/submissions/${selectedSubmission.submission_id}/grade`,
         {
           method: 'PUT',
           headers: {

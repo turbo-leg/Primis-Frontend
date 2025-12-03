@@ -113,7 +113,7 @@ export default function MaterialUpload({
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/courses/${courseId}/materials`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/courses/${courseId}/materials`,
         {
           method: 'POST',
           headers: {
