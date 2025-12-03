@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, PersistStorage } from 'zustand/middleware'
 import { AuthToken, UserType, Student, Teacher, Admin } from '@/types'
 import { apiClient } from '@/lib/api'
 
@@ -23,6 +23,31 @@ interface AuthState {
   setUser: (user: any, userType: UserType, token: string) => void
   setPermissions: (permissions: UserPermissions) => void
   clearAuth: () => void
+}
+
+// Custom storage to handle JSON parse errors gracefully
+const customStorage: PersistStorage<AuthState> = {
+  getItem: (name) => {
+    const str = localStorage.getItem(name)
+    if (!str) return null
+    try {
+      return JSON.parse(str)
+    } catch (err) {
+      console.error('Error parsing auth storage, clearing it:', err)
+      localStorage.removeItem(name)
+      return null
+    }
+  },
+  setItem: (name, value) => {
+    try {
+      localStorage.setItem(name, JSON.stringify(value))
+    } catch (err) {
+      console.error('Error writing auth storage:', err)
+    }
+  },
+  removeItem: (name) => {
+    localStorage.removeItem(name)
+  },
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -117,6 +142,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
+      storage: customStorage,
       partialize: (state) => ({
         user: state.user,
         userType: state.userType,

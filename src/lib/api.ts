@@ -28,7 +28,17 @@ class ApiClient {
 
     // Response interceptor to handle auth errors
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Check if response is HTML (likely an error page) when we expect JSON
+        if (
+          response.headers['content-type']?.includes('text/html') &&
+          response.config.responseType !== 'text' &&
+          response.config.responseType !== 'blob'
+        ) {
+          return Promise.reject(new Error('Received HTML response instead of JSON. The server might be down or returning an error page.'))
+        }
+        return response
+      },
       (error) => {
         if (error.response?.status === 401) {
           localStorage.removeItem('access_token')
@@ -43,8 +53,35 @@ class ApiClient {
 
   // Auth endpoints
   async login(credentials: LoginCredentials): Promise<AuthToken> {
-    const response = await this.client.post('/api/v1/auth/login', credentials)
-    return response.data
+    // Use the Next.js proxy route instead of direct backend call
+    // This helps avoid CORS issues and provides better error logging on the server
+    try {
+      const response = await fetch('/api/proxy/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw { response: { data, status: response.status } };
+      }
+
+      return data;
+    } catch (error: any) {
+      // If the proxy fails (e.g. network error), fall back to direct call or rethrow
+      if (error.response) {
+        throw error; // It was a valid error response from the proxy
+      }
+      
+      console.warn('Proxy login failed, falling back to direct API call', error);
+      // Fallback to original direct call
+      const response = await this.client.post('/api/v1/auth/login', credentials);
+      return response.data;
+    }
   }
 
   async register(data: RegisterData, userType: UserType = 'student'): Promise<any> {

@@ -26,6 +26,7 @@ export function usePermissions() {
       }
     } catch (error) {
       console.error('Error loading permissions:', error)
+      localStorage.removeItem(STORAGE_KEY)
       setIsFirstLogin(true)
     } finally {
       setIsLoading(false)
