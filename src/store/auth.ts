@@ -63,13 +63,22 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
+          console.log('🔐 Authenticating user:', email)
           const authData = await apiClient.login({ email, password })
+          console.log('✅ Login response received:', authData)
+          
+          if (!authData?.access_token) {
+            console.error('❌ Login failed: Response missing access_token')
+            throw new Error('Login succeeded but no access token was returned')
+          }
           
           // Store token in localStorage
           localStorage.setItem('access_token', authData.access_token)
           
           // Get user details
+          console.log('👤 Fetching user profile...')
           const userData = await apiClient.getCurrentUser()
+          console.log('✅ User profile loaded:', userData)
           
           const userType = authData.user_type as UserType
           
@@ -84,6 +93,7 @@ export const useAuthStore = create<AuthState>()(
           // Return user type for redirection
           return userType
         } catch (error) {
+          console.error('❌ Login flow failed:', error)
           set({ isLoading: false })
           throw error
         }

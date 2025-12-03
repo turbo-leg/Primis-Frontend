@@ -19,6 +19,10 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
+        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+          hasToken: !!token,
+          headers: config.headers
+        })
         return config
       },
       (error) => {
@@ -35,12 +39,15 @@ class ApiClient {
           response.config.responseType !== 'text' &&
           response.config.responseType !== 'blob'
         ) {
+          console.error('[API Error] Received HTML response instead of JSON:', response.config.url)
           return Promise.reject(new Error('Received HTML response instead of JSON. The server might be down or returning an error page.'))
         }
         return response
       },
       (error) => {
+        console.error('[API Error] Request failed:', error.response?.status, error.config?.url)
         if (error.response?.status === 401) {
+          console.warn('[API] 401 Unauthorized - Clearing session')
           localStorage.removeItem('access_token')
           localStorage.removeItem('user_data')
           window.location.href = '/login'
@@ -56,6 +63,7 @@ class ApiClient {
     // Use the Next.js proxy route instead of direct backend call
     // This helps avoid CORS issues and provides better error logging on the server
     try {
+      console.log('[API] Sending login request to proxy...')
       const response = await fetch('/api/proxy/login', {
         method: 'POST',
         headers: {
@@ -67,9 +75,11 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
+        console.error('[API] Proxy login failed:', response.status, data)
         throw { response: { data, status: response.status } };
       }
 
+      console.log('[API] Proxy login success')
       return data;
     } catch (error: any) {
       // If the proxy fails (e.g. network error), fall back to direct call or rethrow
