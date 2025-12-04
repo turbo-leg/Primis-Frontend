@@ -5,10 +5,10 @@ class ApiClient {
   private client: AxiosInstance
 
   constructor() {
-    // Use relative paths to leverage Next.js rewrites (proxy)
-    // This avoids CORS issues by making requests to the Next.js server, which then proxies to the backend
+    // DIRECT BACKEND CONNECTION - BYPASSING NEXT.JS PROXY
+    // Using hardcoded URL to ensure no environment variable issues
     this.client = axios.create({
-      baseURL: '', 
+      baseURL: 'https://primis-full-stack.onrender.com',
       headers: {
         'Content-Type': 'application/json',
       },

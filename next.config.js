@@ -31,20 +31,6 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com',
   },
   
-  async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com';
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiUrl}/api/:path*`,
-      },
-      {
-        source: '/uploads/:path*',
-        destination: `${apiUrl}/uploads/:path*`,
-      },
-    ];
-  },
-  
   // Webpack optimizations for faster builds
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
