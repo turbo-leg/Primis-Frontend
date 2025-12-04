@@ -122,25 +122,47 @@ export default function CoursePage() {
       setLoading(true)
       console.group('CourseDetail Debug')
       console.log('Fetching course data for courseId:', courseId)
-      console.log('ApiClient Base URL:', apiClient.getBaseUrl())
       
-      const baseUrl = apiClient.getBaseUrl()
-      if (typeof window !== 'undefined' && window.location.protocol === 'https:' && baseUrl.startsWith('http:')) {
-        console.error('🚨 MIXED CONTENT WARNING: Page is HTTPS but API is HTTP!')
+      // Fetch course details first - this is critical
+      try {
+        const courseData = await apiClient.getCourse(courseId)
+        console.log('Course data loaded:', courseData)
+        setCourse(courseData)
+      } catch (error: any) {
+        console.error('Critical Error: Failed to fetch course details:', error)
+        throw error // Cannot proceed without course data
       }
 
-      const [courseData, materialsData, announcementsData, peopleData] = await Promise.all([
-        apiClient.getCourse(courseId),
-        apiClient.getCourseMaterials(courseId),
-        apiClient.getCourseAnnouncements(courseId),
-        apiClient.getCoursePeople(courseId)
-      ])
+      // Fetch sub-resources independently to prevent page crash if one fails
+      // (e.g. if user has no permission to view materials/people)
       
-      console.log('Course data loaded:', courseData)
-      setCourse(courseData)
-      setMaterials(materialsData)
-      setAnnouncements(announcementsData)
-      setPeople(peopleData)
+      // Materials
+      try {
+        const materialsData = await apiClient.getCourseMaterials(courseId)
+        setMaterials(materialsData)
+      } catch (error) {
+        console.warn('Failed to fetch materials (might be permission issue):', error)
+        setMaterials([])
+      }
+
+      // Announcements
+      try {
+        const announcementsData = await apiClient.getCourseAnnouncements(courseId)
+        setAnnouncements(announcementsData)
+      } catch (error) {
+        console.warn('Failed to fetch announcements:', error)
+        setAnnouncements([])
+      }
+
+      // People
+      try {
+        const peopleData = await apiClient.getCoursePeople(courseId)
+        setPeople(peopleData)
+      } catch (error) {
+        console.warn('Failed to fetch people:', error)
+        setPeople({ teachers: [], students: [], total_teachers: 0, total_students: 0 })
+      }
+
     } catch (error: any) {
       console.error('Error fetching course data:', error)
       console.error('Error Config:', error.config)
