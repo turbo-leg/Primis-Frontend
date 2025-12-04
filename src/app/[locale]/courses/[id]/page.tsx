@@ -161,28 +161,18 @@ export default function CoursePage() {
       }
       formData.append('is_public', 'false')
 
-      const response = await fetch(`/api/v1/courses/${courseId}/materials`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: formData
-      })
+      await apiClient.uploadCourseMaterial(courseId, formData)
 
-      if (response.ok) {
-        alert(t('courseDetails.materials.success.uploaded'))
-        setUploadTitle('')
-        setUploadDescription('')
-        setUploadFile(null)
-        setShowUploadForm(false)
-        fetchCourseData()
-      } else {
-        const error = await response.json()
-        alert(t('courseDetails.materials.errors.uploadFailed', { detail: error.detail }))
-      }
-    } catch (error) {
+      alert(t('courseDetails.materials.success.uploaded'))
+      setUploadTitle('')
+      setUploadDescription('')
+      setUploadFile(null)
+      setShowUploadForm(false)
+      fetchCourseData()
+    } catch (error: any) {
       console.error('Error uploading material:', error)
-      alert(t('courseDetails.materials.errors.uploadFailed', { detail: '' }))
+      const detail = error.response?.data?.detail || ''
+      alert(t('courseDetails.materials.errors.uploadFailed', { detail }))
     } finally {
       setUploading(false)
     }

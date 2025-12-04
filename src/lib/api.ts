@@ -108,6 +108,15 @@ class ApiClient {
     return response.data
   }
 
+  async uploadCourseMaterial(courseId: number, data: FormData): Promise<any> {
+    const response = await this.client.post(`/api/v1/courses/${courseId}/materials`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return response.data
+  }
+
   async deleteCourse(id: number): Promise<void> {
     await this.client.delete(`/api/v1/courses/${id}`)
   }
