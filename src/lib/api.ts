@@ -283,6 +283,21 @@ class ApiClient {
     return response.data
   }
 
+  // Student endpoints
+  async getStudentAssignments(studentId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/students/assignments/upcoming`, { 
+      params: { student_id: studentId } 
+    })
+    return response.data
+  }
+
+  async getStudentMaterials(studentId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/students/materials/recent`, { 
+      params: { student_id: studentId } 
+    })
+    return response.data
+  }
+
   // Generic methods
   async get(url: string, params?: any): Promise<any> {
     try {

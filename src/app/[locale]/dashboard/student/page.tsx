@@ -118,18 +118,18 @@ export default function StudentDashboard() {
 
       // Fetch assignments and materials from backend
       try {
-        const assignmentsData = await apiClient.get(`/api/v1/students/assignments/upcoming?student_id=${user.student_id}`)
+        const assignmentsData = await apiClient.getStudentAssignments(user.student_id)
         setUpcomingAssignments(assignmentsData)
       } catch (error) {
-        console.log('Assignments endpoint not implemented yet, using empty array')
+        console.warn('Failed to fetch assignments:', error)
         setUpcomingAssignments([])
       }
 
       try {
-        const materialsData = await apiClient.get(`/api/v1/students/materials/recent?student_id=${user.student_id}`)
+        const materialsData = await apiClient.getStudentMaterials(user.student_id)
         setRecentMaterials(materialsData)
       } catch (error) {
-        console.log('Materials endpoint not implemented yet, using empty array')
+        console.warn('Failed to fetch materials:', error)
         setRecentMaterials([])
       }
 
