@@ -139,6 +139,34 @@ class ApiClient {
     return response.data
   }
 
+  async getCourseMaterials(courseId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/courses/${courseId}/materials`)
+    return response.data
+  }
+
+  async getCourseAnnouncements(courseId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/courses/${courseId}/announcements`)
+    return response.data
+  }
+
+  async getCoursePeople(courseId: number): Promise<any> {
+    const response = await this.client.get(`/api/v1/courses/${courseId}/people`)
+    return response.data
+  }
+
+  async createAnnouncement(courseId: number, data: any): Promise<any> {
+    const response = await this.client.post(`/api/v1/courses/${courseId}/announcements`, data)
+    return response.data
+  }
+
+  async deleteAnnouncement(id: number): Promise<void> {
+    await this.client.delete(`/api/v1/announcements/${id}`)
+  }
+
+  async deleteMaterial(id: number): Promise<void> {
+    await this.client.delete(`/api/v1/materials/${id}`)
+  }
+
   // Attendance endpoints
   async markAttendance(data: any): Promise<any> {
     const response = await this.client.post('/api/v1/attendance/mark', data)

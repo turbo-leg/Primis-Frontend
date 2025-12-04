@@ -120,14 +120,20 @@ export default function CoursePage() {
   const fetchCourseData = async () => {
     try {
       setLoading(true)
+      console.group('CourseDetail Debug')
       console.log('Fetching course data for courseId:', courseId)
-      console.log('Current user:', user, 'UserType:', userType)
+      console.log('ApiClient Base URL:', apiClient.getBaseUrl())
       
+      const baseUrl = apiClient.getBaseUrl()
+      if (typeof window !== 'undefined' && window.location.protocol === 'https:' && baseUrl.startsWith('http:')) {
+        console.error('🚨 MIXED CONTENT WARNING: Page is HTTPS but API is HTTP!')
+      }
+
       const [courseData, materialsData, announcementsData, peopleData] = await Promise.all([
-        apiClient.get(`/api/v1/courses/${courseId}`),
-        apiClient.get(`/api/v1/courses/${courseId}/materials`),
-        apiClient.get(`/api/v1/courses/${courseId}/announcements`),
-        apiClient.get(`/api/v1/courses/${courseId}/people`)
+        apiClient.getCourse(courseId),
+        apiClient.getCourseMaterials(courseId),
+        apiClient.getCourseAnnouncements(courseId),
+        apiClient.getCoursePeople(courseId)
       ])
       
       console.log('Course data loaded:', courseData)
@@ -137,10 +143,16 @@ export default function CoursePage() {
       setPeople(peopleData)
     } catch (error: any) {
       console.error('Error fetching course data:', error)
-      console.error('Error response:', error.response?.data)
+      console.error('Error Config:', error.config)
+      
+      if (error.message === 'Network Error') {
+        console.error('Network Error detected. Checking for Mixed Content or CORS.')
+      }
+
       alert(t('courseDetails.errors.loadFailed', { message: error.response?.data?.detail || error.message }))
     } finally {
       setLoading(false)
+      console.groupEnd()
     }
   }
 
@@ -182,7 +194,7 @@ export default function CoursePage() {
     if (!confirm(t('courseDetails.materials.confirmDelete'))) return
 
     try {
-      await apiClient.delete(`/api/v1/materials/${materialId}`)
+      await apiClient.deleteMaterial(materialId)
       alert(t('courseDetails.materials.success.deleted'))
       fetchCourseData()
     } catch (error) {
@@ -200,7 +212,7 @@ export default function CoursePage() {
 
     try {
       setPosting(true)
-      await apiClient.post(`/api/v1/courses/${courseId}/announcements`, {
+      await apiClient.createAnnouncement(courseId, {
         title: announcementTitle,
         content: announcementContent,
         is_important: isImportant
@@ -224,7 +236,7 @@ export default function CoursePage() {
     if (!confirm(t('courseDetails.announcements.confirmDelete'))) return
 
     try {
-      await apiClient.delete(`/api/v1/announcements/${announcementId}`)
+      await apiClient.deleteAnnouncement(announcementId)
       alert(t('courseDetails.announcements.success.deleted'))
       fetchCourseData()
     } catch (error) {
