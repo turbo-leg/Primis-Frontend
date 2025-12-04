@@ -13,7 +13,7 @@ class ApiClient {
 
     // Force HTTPS for Render backend to avoid Mixed Content errors
     // This is critical because Vercel might have the env var set to http://
-    if (baseURL.includes('onrender.com') && baseURL.startsWith('http:')) {
+    if (baseURL.includes('onrender.com')) {
       console.log('[ApiClient] Upgrading insecure Render URL to HTTPS')
       baseURL = baseURL.replace('http:', 'https:')
     }
