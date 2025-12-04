@@ -104,32 +104,49 @@ export default function StudentDashboard() {
     try {
       setLoading(true)
       
-      // Fetch enrolled courses with enrollment details
-      const enrollmentsData = await apiClient.get('/api/v1/courses/my-enrollments')
-      setEnrollments(enrollmentsData)
+      // Execute all independent requests in parallel
+      const results = await Promise.allSettled([
+        apiClient.get('/api/v1/courses/my-enrollments'),
+        apiClient.getAttendanceStats(user.student_id),
+        apiClient.getStudentAttendance(user.student_id),
+        apiClient.getStudentAssignments(user.student_id),
+        apiClient.getStudentMaterials(user.student_id)
+      ])
 
-      // Fetch attendance stats
-      const statsData = await apiClient.getAttendanceStats(user.student_id)
-      setAttendanceStats(statsData)
+      // Process Enrollments
+      if (results[0].status === 'fulfilled') {
+        setEnrollments(results[0].value)
+      } else {
+        console.error('Failed to fetch enrollments:', results[0].reason)
+      }
 
-      // Fetch recent attendance
-      const attendanceData = await apiClient.getStudentAttendance(user.student_id)
-      setRecentAttendance(attendanceData.slice(0, 5)) // Last 5 records
+      // Process Attendance Stats
+      if (results[1].status === 'fulfilled') {
+        setAttendanceStats(results[1].value)
+      } else {
+        console.error('Failed to fetch attendance stats:', results[1].reason)
+      }
 
-      // Fetch assignments and materials from backend
-      try {
-        const assignmentsData = await apiClient.getStudentAssignments(user.student_id)
-        setUpcomingAssignments(assignmentsData)
-      } catch (error) {
-        console.warn('Failed to fetch assignments:', error)
+      // Process Recent Attendance
+      if (results[2].status === 'fulfilled') {
+        setRecentAttendance(results[2].value.slice(0, 5))
+      } else {
+        console.error('Failed to fetch recent attendance:', results[2].reason)
+      }
+
+      // Process Assignments
+      if (results[3].status === 'fulfilled') {
+        setUpcomingAssignments(results[3].value)
+      } else {
+        console.warn('Failed to fetch assignments:', results[3].reason)
         setUpcomingAssignments([])
       }
 
-      try {
-        const materialsData = await apiClient.getStudentMaterials(user.student_id)
-        setRecentMaterials(materialsData)
-      } catch (error) {
-        console.warn('Failed to fetch materials:', error)
+      // Process Materials
+      if (results[4].status === 'fulfilled') {
+        setRecentMaterials(results[4].value)
+      } else {
+        console.warn('Failed to fetch materials:', results[4].reason)
         setRecentMaterials([])
       }
 

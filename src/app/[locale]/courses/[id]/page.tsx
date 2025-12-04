@@ -121,7 +121,7 @@ export default function CoursePage() {
     try {
       setLoading(true)
       
-      // Fetch course details first - this is critical
+      // Fetch course details first - this is critical and blocking
       try {
         const courseData = await apiClient.getCourse(courseId)
         setCourse(courseData)
@@ -130,33 +130,34 @@ export default function CoursePage() {
         throw error // Cannot proceed without course data
       }
 
-      // Fetch sub-resources independently to prevent page crash if one fails
-      // (e.g. if user has no permission to view materials/people)
-      
-      // Materials
-      try {
-        const materialsData = await apiClient.getCourseMaterials(courseId)
-        setMaterials(materialsData)
-      } catch (error) {
-        console.warn('Failed to fetch materials (might be permission issue):', error)
+      // Fetch sub-resources in parallel to improve performance
+      const results = await Promise.allSettled([
+        apiClient.getCourseMaterials(courseId),
+        apiClient.getCourseAnnouncements(courseId),
+        apiClient.getCoursePeople(courseId)
+      ])
+
+      // Process Materials
+      if (results[0].status === 'fulfilled') {
+        setMaterials(results[0].value)
+      } else {
+        console.warn('Failed to fetch materials:', results[0].reason)
         setMaterials([])
       }
 
-      // Announcements
-      try {
-        const announcementsData = await apiClient.getCourseAnnouncements(courseId)
-        setAnnouncements(announcementsData)
-      } catch (error) {
-        console.warn('Failed to fetch announcements:', error)
+      // Process Announcements
+      if (results[1].status === 'fulfilled') {
+        setAnnouncements(results[1].value)
+      } else {
+        console.warn('Failed to fetch announcements:', results[1].reason)
         setAnnouncements([])
       }
 
-      // People
-      try {
-        const peopleData = await apiClient.getCoursePeople(courseId)
-        setPeople(peopleData)
-      } catch (error) {
-        console.warn('Failed to fetch people:', error)
+      // Process People
+      if (results[2].status === 'fulfilled') {
+        setPeople(results[2].value)
+      } else {
+        console.warn('Failed to fetch people:', results[2].reason)
         setPeople({ teachers: [], students: [], total_teachers: 0, total_students: 0 })
       }
 
