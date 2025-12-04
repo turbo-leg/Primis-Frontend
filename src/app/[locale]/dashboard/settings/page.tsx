@@ -45,16 +45,9 @@ export default function SettingsPage() {
   useEffect(() => {
     const loadNotificationPreferences = async () => {
       try {
-        const response = await fetch('/api/v1/notifications/preferences', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        })
+        const preferences = await apiClient.get('/api/v1/notifications/preferences')
 
-        if (response.ok) {
-          const preferences = await response.json()
-
+        if (preferences) {
           // Determine overall settings from preferences
           // If any preference has email enabled, set email to true, etc.
           const emailEnabled = preferences.length > 0 && preferences.some((pref: any) => pref.email_enabled)
@@ -67,9 +60,6 @@ export default function SettingsPage() {
             notificationsInApp: inAppEnabled,
             notificationsPush: pushEnabled,
           }))
-        } else {
-          console.log('No notification preferences found or API error, using defaults')
-          // Keep default values if API fails or returns empty
         }
       } catch (error) {
         console.error('Failed to load notification preferences:', error)
@@ -167,34 +157,24 @@ export default function SettingsPage() {
 
       // Update preferences for each notification type
       const updatePromises = notificationTypes.map(notificationType => {
-        return fetch('/api/v1/notifications/preferences', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-          },
-          body: JSON.stringify({
-            notification_type: notificationType,
-            in_app_enabled: formData.notificationsInApp,
-            email_enabled: formData.notificationsEmail,
-            push_enabled: formData.notificationsPush,
-          }),
+        return apiClient.put('/api/v1/notifications/preferences', {
+          notification_type: notificationType,
+          in_app_enabled: formData.notificationsInApp,
+          email_enabled: formData.notificationsEmail,
+          push_enabled: formData.notificationsPush,
         })
       })
 
       // Wait for all updates to complete
-      const responses = await Promise.all(updatePromises)
+      const results = await Promise.allSettled(updatePromises)
       
       // Check if all requests were successful
-      const failedRequests = responses.filter(response => !response.ok)
+      const failedRequests = results.filter(result => result.status === 'rejected')
+      
       if (failedRequests.length > 0) {
-        // Log response details for debugging
-        const errorDetails = await Promise.all(
-          failedRequests.map(r => r.json().catch(() => ({ status: r.status, statusText: r.statusText })))
-        )
-        console.error('Failed request details:', errorDetails)
         console.error('Failed request count:', failedRequests.length)
-        console.error('First failed status:', failedRequests[0]?.status)
+        // @ts-ignore
+        console.error('First failure reason:', failedRequests[0].reason)
         throw new Error(`${failedRequests.length} preference updates failed`)
       }
 
