@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar, User, Eye, ArrowLeft, Share2, Tag } from 'lucide-react';
 import 'next-cloudinary/dist/cld-video-player.css';
+import { apiClient } from '@/lib/api';
 
 interface MediaFile {
   url: string;
@@ -61,13 +62,7 @@ export default function NewsDetailPage() {
 
   const fetchNewsDetail = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/slug/${slug}`
-      );
-      
-      if (!response.ok) throw new Error('Failed to fetch news');
-      
-      const data = await response.json();
+      const data = await apiClient.getNewsBySlug(slug);
       setNews(data);
 
       // Fetch related news
@@ -83,13 +78,7 @@ export default function NewsDetailPage() {
 
   const fetchRelatedNews = async (category: string, excludeId: number) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/v1/news/category/${category}?limit=3`
-      );
-      
-      if (!response.ok) return;
-      
-      const data = await response.json();
+      const data = await apiClient.getNewsByCategory(category, 0, 3);
       setRelatedNews(data.filter((item: RelatedNewsItem) => item.news_id !== excludeId));
     } catch (error) {
       console.error('Error fetching related news:', error);
