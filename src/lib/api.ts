@@ -96,7 +96,8 @@ class ApiClient {
 
   // Course endpoints
   async getCourses(params?: any): Promise<any> {
-    const response = await this.client.get('/api/v1/courses', { params })
+    // Add trailing slash to avoid 307 redirect to HTTP which causes Mixed Content error
+    const response = await this.client.get('/api/v1/courses/', { params })
     return response.data
   }
 
@@ -106,7 +107,7 @@ class ApiClient {
   }
 
   async createCourse(data: any): Promise<any> {
-    const response = await this.client.post('/api/v1/courses', data)
+    const response = await this.client.post('/api/v1/courses/', data)
     return response.data
   }
 
