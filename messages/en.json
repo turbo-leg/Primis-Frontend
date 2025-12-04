@@ -36,6 +36,7 @@
     "and": "and",
     "student": "Student",
     "date": "Date",
+    "refresh": "Refresh",
     "footer": {
       "copyright": "© 2025 Primis Educare. All rights reserved."
     }
@@ -338,6 +339,10 @@
     "notifications": {
       "title": "Push Notifications",
       "description": "Receive real-time alerts about course updates, assignments, and messages"
+    },
+    "essential": {
+      "title": "Essential Cookies",
+      "description": "These cookies are necessary for the website to function and cannot be switched off."
     },
     "cookies": {
       "title": "Functional Cookies",

@@ -6,7 +6,12 @@ class ApiClient {
 
   constructor() {
     // Use environment variable for API URL, fallback to production URL
-    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'
+    let baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'
+    
+    // Force HTTPS for Render backend to avoid Mixed Content errors
+    if (baseURL.includes('onrender.com') && baseURL.startsWith('http://')) {
+      baseURL = baseURL.replace('http://', 'https://')
+    }
     
     this.client = axios.create({
       baseURL,
