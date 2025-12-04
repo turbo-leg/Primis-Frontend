@@ -58,6 +58,10 @@ export default function CoursesPage() {
     try {
       setLoading(true)
       setError(null)
+      
+      // Debug log to check which URL is being used
+      console.log('[CoursesPage] Fetching courses using baseURL:', apiClient.getBaseUrl())
+      
       // Pass status='active' to filter on the server side
       const data = await apiClient.getCourses({ status: 'active' })
       setCourses(data)

@@ -8,10 +8,17 @@ class ApiClient {
     // Use environment variable for API URL, fallback to production URL
     let baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'
     
+    // Clean up whitespace/quotes
+    baseURL = baseURL.trim().replace(/['"]/g, '')
+
     // Force HTTPS for Render backend to avoid Mixed Content errors
-    if (baseURL.includes('onrender.com') && baseURL.startsWith('http://')) {
-      baseURL = baseURL.replace('http://', 'https://')
+    // This is critical because Vercel might have the env var set to http://
+    if (baseURL.includes('onrender.com') && baseURL.startsWith('http:')) {
+      console.log('[ApiClient] Upgrading insecure Render URL to HTTPS')
+      baseURL = baseURL.replace('http:', 'https:')
     }
+    
+    console.log('[ApiClient] Initialized with baseURL:', baseURL)
     
     this.client = axios.create({
       baseURL,
@@ -278,6 +285,11 @@ class ApiClient {
 
   async delete(url: string): Promise<void> {
     await this.client.delete(url)
+  }
+
+  // Debug helper
+  getBaseUrl(): string {
+    return this.client.defaults.baseURL || ''
   }
 }
 
