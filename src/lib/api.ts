@@ -213,6 +213,31 @@ class ApiClient {
     await this.client.delete(`/api/v1/news/${newsId}`)
   }
 
+  // Assignment endpoints
+  async getAssignment(id: number): Promise<any> {
+    const response = await this.client.get(`/api/assignments/${id}`)
+    return response.data
+  }
+
+  async submitAssignment(id: number, data: FormData): Promise<any> {
+    const response = await this.client.post(`/api/students/assignments/${id}/submit`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return response.data
+  }
+
+  async getAssignmentSubmissions(assignmentId: number): Promise<any> {
+    const response = await this.client.get(`/api/teachers/assignments/${assignmentId}/submissions`)
+    return response.data
+  }
+
+  async gradeAssignmentSubmission(assignmentId: number, submissionId: number, data: any): Promise<any> {
+    const response = await this.client.put(`/api/teachers/assignments/${assignmentId}/submissions/${submissionId}/grade`, data)
+    return response.data
+  }
+
   // Generic methods
   async get(url: string, params?: any): Promise<any> {
     try {

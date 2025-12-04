@@ -84,22 +84,8 @@ export default function AssignmentSubmissionForm({
         formData.append('file', selectedFile)
       }
 
-      // Make API call
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/students/assignments/${assignmentId}/submit`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: formData
-        }
-      )
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Failed to submit assignment')
-      }
+      // Make API call using apiClient
+      await apiClient.submitAssignment(assignmentId, formData)
 
       setSubmitted(true)
       setSubmissionText('')

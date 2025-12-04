@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeft, Calendar, Award, Loader2 } from 'lucide-react'
 import AssignmentSubmissionForm from './AssignmentSubmissionForm'
 import AssignmentGrading from './AssignmentGrading'
+import { apiClient } from '@/lib/api'
 
 interface AssignmentDetailsProps {
   assignmentId: number
@@ -51,25 +52,9 @@ export default function AssignmentDetails({
       setLoading(true)
       setError(null)
 
-      // For now, we'll construct the assignment detail from what we know
-      // In production, you might fetch from a dedicated endpoint
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/assignments/${assignmentId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      )
-
-      if (response.ok) {
-        const data = await response.json()
-        setAssignment(data)
-      } else {
-        // Fallback: We'll handle this in the component using props
-        setError('Assignment details not available')
-      }
+      // Fetch assignment details using apiClient
+      const data = await apiClient.getAssignment(assignmentId)
+      setAssignment(data)
     } catch (err) {
       console.log('Could not fetch assignment details, using passed props')
       // This is okay - we can work without full details

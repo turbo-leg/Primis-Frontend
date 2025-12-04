@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Loader2, Download, CheckCircle, AlertCircle, Send } from 'lucide-react'
+import { apiClient } from '@/lib/api'
 
 interface Submission {
   submission_id: number
@@ -57,21 +58,8 @@ export default function AssignmentGrading({
       setLoadingSubmissions(true)
       setError(null)
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/teachers/assignments/${assignmentId}/submissions`,
-        {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      )
+      const data = await apiClient.getAssignmentSubmissions(assignmentId)
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch submissions')
-      }
-
-      const data = await response.json()
       setSubmissions(data)
       if (data.length > 0) {
         setSelectedSubmissionId(data[0].submission_id)
@@ -103,25 +91,14 @@ export default function AssignmentGrading({
     setError(null)
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'}/api/teachers/assignments/${assignmentId}/submissions/${selectedSubmission.submission_id}/grade`,
+      await apiClient.gradeAssignmentSubmission(
+        assignmentId,
+        selectedSubmission.submission_id,
         {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            grade: gradeValue,
-            feedback: gradingData.feedback || null
-          })
+          grade: gradeValue,
+          feedback: gradingData.feedback || null
         }
       )
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Failed to grade submission')
-      }
 
       setGradeSuccess(true)
       setGradingData({ grade: '', feedback: '' })
