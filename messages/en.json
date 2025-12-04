@@ -1093,22 +1093,6 @@
       "websiteTour": {
         "title": "Website Tour",
         "description": "A complete walkthrough of the Primis platform"
-      },
-      "registration": {
-        "title": "How to Register",
-        "description": "Step-by-step guide to creating your account"
-      },
-      "enrollment": {
-        "title": "Course Enrollment",
-        "description": "How to browse and enroll in courses"
-      },
-      "dashboard": {
-        "title": "Navigating the Dashboard",
-        "description": "Overview of your personal dashboard features"
-      },
-      "payments": {
-        "title": "Making Payments",
-        "description": "How to pay for courses securely"
       }
     }
   },
