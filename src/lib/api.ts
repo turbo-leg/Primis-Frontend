@@ -14,11 +14,8 @@ class ApiClient {
     // Force HTTPS for Render backend to avoid Mixed Content errors
     // This is critical because Vercel might have the env var set to http://
     if (baseURL.includes('onrender.com')) {
-      console.log('[ApiClient] Upgrading insecure Render URL to HTTPS')
       baseURL = baseURL.replace('http:', 'https:')
     }
-    
-    console.log('[ApiClient] Initialized with baseURL:', baseURL)
     
     this.client = axios.create({
       baseURL,
@@ -34,10 +31,6 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
-        console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
-          hasToken: !!token,
-          headers: config.headers
-        })
         return config
       },
       (error) => {

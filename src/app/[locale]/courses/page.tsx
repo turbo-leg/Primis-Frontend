@@ -53,51 +53,22 @@ export default function CoursesPage() {
   const [enrollingCourseId, setEnrollingCourseId] = useState<number | null>(null)
   const [filter, setFilter] = useState<'all' | 'online' | 'in-person'>('all')
 
-  // Debug logging effect
-  useEffect(() => {
-    console.group('Courses Page Debug Info')
-    console.log('Timestamp:', new Date().toISOString())
-    console.log('Environment NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL)
-    console.log('ApiClient Base URL:', apiClient.getBaseUrl())
-    console.log('Current Locale:', locale)
-    console.log('User Type:', userType)
-    console.groupEnd()
-  }, [locale, userType])
-
   // Fetch courses function
   const fetchCourses = useCallback(async () => {
-    console.group('fetchCourses Execution')
     try {
       setLoading(true)
       setError(null)
       
-      const baseUrl = apiClient.getBaseUrl()
-      console.log('Initiating request with Base URL:', baseUrl)
-      
-      // Check for mixed content potential
-      if (typeof window !== 'undefined' && window.location.protocol === 'https:' && baseUrl.startsWith('http:')) {
-        console.error('🚨 MIXED CONTENT WARNING: Page is HTTPS but API is HTTP!')
-      }
-
       // Pass status='active' to filter on the server side
-      console.log('Calling apiClient.getCourses({ status: "active" })')
       const data = await apiClient.getCourses({ status: 'active' })
-      console.log('Courses fetched successfully:', data)
       setCourses(data)
     } catch (err: any) {
-      console.error('❌ Failed to fetch courses:', err)
-      console.error('Error Config:', err.config)
-      console.error('Error Response:', err.response)
+      console.error('Failed to fetch courses:', err)
       
-      if (err.message === 'Network Error') {
-        console.error('Network Error detected. This often means CORS issues or Mixed Content blocking.')
-      }
-
       const errorMessage = err.response?.data?.detail || err.message || 'Unknown error occurred'
       setError(errorMessage)
     } finally {
       setLoading(false)
-      console.groupEnd()
     }
   }, [])
 

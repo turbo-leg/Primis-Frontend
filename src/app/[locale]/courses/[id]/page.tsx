@@ -120,13 +120,10 @@ export default function CoursePage() {
   const fetchCourseData = async () => {
     try {
       setLoading(true)
-      console.group('CourseDetail Debug')
-      console.log('Fetching course data for courseId:', courseId)
       
       // Fetch course details first - this is critical
       try {
         const courseData = await apiClient.getCourse(courseId)
-        console.log('Course data loaded:', courseData)
         setCourse(courseData)
       } catch (error: any) {
         console.error('Critical Error: Failed to fetch course details:', error)
@@ -165,16 +162,9 @@ export default function CoursePage() {
 
     } catch (error: any) {
       console.error('Error fetching course data:', error)
-      console.error('Error Config:', error.config)
-      
-      if (error.message === 'Network Error') {
-        console.error('Network Error detected. Checking for Mixed Content or CORS.')
-      }
-
       alert(t('courseDetails.errors.loadFailed', { message: error.response?.data?.detail || error.message }))
     } finally {
       setLoading(false)
-      console.groupEnd()
     }
   }
 
