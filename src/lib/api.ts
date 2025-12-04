@@ -5,10 +5,11 @@ class ApiClient {
   private client: AxiosInstance
 
   constructor() {
-    // DIRECT BACKEND CONNECTION - BYPASSING NEXT.JS PROXY
-    // Using hardcoded URL to ensure no environment variable issues
+    // Use environment variable for API URL, fallback to production URL
+    const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://primis-full-stack.onrender.com'
+    
     this.client = axios.create({
-      baseURL: 'https://primis-full-stack.onrender.com',
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
